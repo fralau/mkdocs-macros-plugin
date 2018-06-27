@@ -2,14 +2,15 @@
 
 
 <!-- To update, run the following command: markdown-toc -i README.md -->
+
 <!-- toc -->
 
 - [Overview](#overview)
 - [Context and purpose](#context-and-purpose)
   * [Sources of inspiration](#sources-of-inspiration)
     + [mkdocs-markdownextradata (rosscdh)](#mkdocs-markdownextradata-rosscdh)
-  * [jinja2: variables can also be Python callables](#jinja2-variables-can-also-be-python-callables)
-  * [Macros in Wiki engines](#macros-in-wiki-engines)
+    + [jinja2: variables can also be Python callables](#jinja2-variables-can-also-be-python-callables)
+    + [Macros in Wiki engines](#macros-in-wiki-engines)
   * [Use Case: Overcoming the Intrinsic Limitations of Markdown Syntax](#use-case-overcoming-the-intrinsic-limitations-of-markdown-syntax)
     + [Solution 1: Markdown extensions](#solution-1-markdown-extensions)
     + [Solution 2: Custom HTML Code](#solution-2-custom-html-code)
@@ -88,7 +89,7 @@ templating engine for that purpose was  simple and beautiful:
 all it took for this plugin was a few lines of code.
 
 
-### jinja2: variables can also be Python callables
+#### jinja2: variables can also be Python callables
 
 And then I discovered that the creators of jinja2,
 in their great wisdom (thanks also to them!),
@@ -104,7 +105,7 @@ but it was a diamond in plain sight.
 
 **Oh yeah?** So let's support them also in the markdown pages of MkDocs!
 
-### Macros in Wiki engines
+#### Macros in Wiki engines
 > **The idea of using 'macros' to speed up the process of writing web pages
 is in fact rather old**.
 
@@ -342,5 +343,5 @@ should be done inside that
 hook function. On the other hand, nothing prevents you from making imports or
 declarations **outside** of this function.
 
-> **Note:** You can export a wide type of objects, and their attributes
+> **Note:** You can export a wide range of objects, and their attributes
 remain accessible (see [more information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
