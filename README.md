@@ -42,7 +42,7 @@ Regular **variables** can be defined in three ways:
  statement
 
 
-Similarly programmers can define **macros**, as Python functions in the `main.py` file (this is done with a ), which the users will then be able to
+Similarly programmers can define **macros**, as Python functions in the `main.py` file, which the users will then be able to
 use without much difficulty inside of the Python code.
 
 With these two tools, you could write e.g.:
@@ -50,7 +50,7 @@ With these two tools, you could write e.g.:
 ```markdown
 The unit price of product A is {{ unit_price }} EUR.
 Taking the standard discount into account,
-the sale price of 50 units is {{ price(unit_price, 50)] }} EUR.
+the sale price of 50 units is {{ price(unit_price, 50) }} EUR.
 ```
 
 Which could translate into:
@@ -262,12 +262,12 @@ The price of the product is {{ price }}.
 
 See [more information on the website]({{ company.website }}).
 
-See <a href="{{ customer.website }}">more information on the website</a>.
+See <a href="{{ company.website }}">more information on the website</a>.
 ```
 
 ### Defining variables in the markdown page
 
-If you need a variable that is local to a page, you can use a standard
+If you need a variable that is local to a markdown page, you can use a standard
 Jinja2 declaration, e.g.:
 
 ```jinja2
@@ -276,8 +276,10 @@ Jinja2 declaration, e.g.:
 Please buy the great products from {{ acme }}!
 ```
 
-In fact, you can do
+> In fact, you can do
 [all the fancy footwork you want with Jinja2](http://jinja.pocoo.org/docs/2.10/templates/)!
+Only remember that you don't need to define any header, footer or navigation,
+as this is already taken care of by MkDocs.
 
 ### Defining variables and macros in Python code
 
