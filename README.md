@@ -1,5 +1,31 @@
 # mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros
 
+
+<!-- To update, run the following command: markdown-toc -i README.md -->
+<!-- toc -->
+
+- [Overview](#overview)
+- [Context and purpose](#context-and-purpose)
+  * [Sources of inspiration](#sources-of-inspiration)
+    + [mkdocs-markdownextradata (rosscdh)](#mkdocs-markdownextradata-rosscdh)
+  * [jinja2: variables can also be Python callables](#jinja2-variables-can-also-be-python-callables)
+  * [Macros in Wiki engines](#macros-in-wiki-engines)
+  * [Use Case: Overcoming the Intrinsic Limitations of Markdown Syntax](#use-case-overcoming-the-intrinsic-limitations-of-markdown-syntax)
+    + [Solution 1: Markdown extensions](#solution-1-markdown-extensions)
+    + [Solution 2: Custom HTML Code](#solution-2-custom-html-code)
+    + [Solution 3: Enter Macros](#solution-3-enter-macros)
+- [Installation](#installation)
+  * [Prerequisites](#prerequisites)
+  * [Procedure](#procedure)
+- [How to use it](#how-to-use-it)
+  * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
+  * [Defining variables in the markdown page](#defining-variables-in-the-markdown-page)
+  * [Defining variables and macros in Python code](#defining-variables-and-macros-in-python-code)
+  * [Location of the module](#location-of-the-module)
+  * [Content of the module](#content-of-the-module)
+
+<!-- tocstop -->
+
 ## Overview
 **mkdocs-macros-plugin** is a plugin to make it easier for the contributors
 to a [MkDocs](mkdocs-macros-plugin) website to make richer and more beautiful
