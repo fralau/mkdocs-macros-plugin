@@ -3,6 +3,7 @@
 # Defines the VariablesPlugin class
 #
 # Laurent Franceschetti (c) 2018
+# MIT License
 # --------------------------------------------
 
 from mkdocs.plugins import BasePlugin

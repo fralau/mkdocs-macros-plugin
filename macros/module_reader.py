@@ -5,6 +5,7 @@
 # so as to be testable (plugin.py does not run on its own)
 #
 # Laurent Franceschetti (c) 2018
+# MIT License
 # --------------------------------------------
 
 import repackage, importlib
@@ -37,9 +38,9 @@ def load_variables(variables, config):
 
     """
 
-    def template_function(v, name=''):
+    def macro(v, name=''):
         """
-        Registers a variable as part of the template,
+        Registers a variable as a macro in the template,
         i.e. in the variables dictionary:
 
             template_function(myfunc)
@@ -78,7 +79,7 @@ def load_variables(variables, config):
         module = importlib.import_module(python_module)
         print("Found module '%s'" % python_module)
         # execute the hook, passing the template decorator function
-        module.declare_variables(variables, template_function)
+        module.declare_variables(variables, macro)
     except ModuleNotFoundError:
         print("No module found.")
 
@@ -90,10 +91,17 @@ if __name__ == '__main__':
     from jinja2 import Template
 
     # simulation of the environment:
-    markdown = "I say, {{foo}}. This is {{bar(5)}} and {{baz}}"
+    markdown = """
+{% set company = 'Acme company' %}
+I say, {{foo}}. This is {{bar(5)}} and {{baz}} ({{barbaz(0.4)}}).
+Please buy products from {{ company }}.
+"""
     extra = {'foo': 'Hello world'}
-    config = {'config_file_path':'./mkdocs.yaml',
+    config = { # 'config file' is in this directory
+               'config_file_path':'./mkdocs.yaml',
+               # the extra variables:
                'extra':extra,
+               # name of the main module:
                'python_module': 'test'}
 
 
