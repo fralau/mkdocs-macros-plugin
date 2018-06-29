@@ -15,7 +15,7 @@ def read_file(fname):
 
 setup(
     name='mkdocs-macros-plugin',
-    version='0.0.1',
+    version='0.1.0',
     description="Unleash the power of MkDocs with macros and variables",
     long_description=read_file('README.md'),
     keywords='mkdocs python markdown macros',
