@@ -52,7 +52,7 @@ class MacrosPlugin(BasePlugin):
 
 
     def on_page_markdown(self, markdown, page, config,
-                          site_navigation, **kwargs):
+                          **kwargs):
         "Provide a hook for defining functions from an external module"
 
         if not self.variables:
