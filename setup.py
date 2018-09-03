@@ -15,17 +15,18 @@ def read_file(fname):
 
 setup(
     name='mkdocs-macros-plugin',
-    version='0.1.0',
+    version='0.2.2',
     description="Unleash the power of MkDocs with macros and variables",
     long_description=read_file('README.md'),
+    long_description_content_type="text/markdown",
     keywords='mkdocs python markdown macros',
-    url='www.settlenext.com',
-    author='Laurent Franceschetti',
-    author_email='info@settlenext.com',
+    url='https://github.com/Useurmind/mkdocs_macros_plugin',
+    author='Laurent Franceschetti <info@settlenext.com>, Jochen Grün <jochen.gruen@googlemail.com>',
+    author_email='jochen.gruen@googlemail.com',
     license='MIT',
-    python_requires='>=3.5',
+    python_requires='>=3.7',
     install_requires=[
-        'mkdocs>=0.17',
+        'mkdocs>=1.0.2',
         'repackage',
         'jinja2',
         'mkdocs'
@@ -37,7 +38,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.7',
     ],
     packages=find_packages(exclude=['*.tests']),
     entry_points={
