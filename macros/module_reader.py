@@ -22,16 +22,16 @@ def load_variables(variables, config):
 
     The python module must contain the following hook:
 
-    declare_variables(variables, template_function):
+    declare_variables(variables, macro):
 
         variables['a'] = 5
 
 
-        @template_function
+        @macro
         def bar(x):
             ....
 
-        @template_function
+        @macro
         def baz(x):
             ....
 
@@ -43,16 +43,16 @@ def load_variables(variables, config):
         Registers a variable as a macro in the template,
         i.e. in the variables dictionary:
 
-            template_function(myfunc)
+            macro(myfunc)
 
         Optionally, you can assign a different name:
 
-            template_function(myfunc, 'funcname')
+            macro(myfunc, 'funcname')
 
 
         You can also use it as a decorator:
 
-        @template_function
+        @macro
         def foo(a):
             return a ** 2
 

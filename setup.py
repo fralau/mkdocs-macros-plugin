@@ -15,11 +15,12 @@ def read_file(fname):
 
 setup(
     name='mkdocs-macros-plugin',
-    version='0.1.0',
+    version='0.1.1',
     description="Unleash the power of MkDocs with macros and variables",
     long_description=read_file('README.md'),
+    long_description_content_type='text/markdown',
     keywords='mkdocs python markdown macros',
-    url='www.settlenext.com',
+    url='https://github.com/fralau/mkdocs_macros_plugin',
     author='Laurent Franceschetti',
     author_email='info@settlenext.com',
     license='MIT',

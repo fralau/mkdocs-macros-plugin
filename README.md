@@ -20,10 +20,12 @@
   * [Procedure](#procedure)
 - [How to use it](#how-to-use-it)
   * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
-  * [Defining variables in the markdown page](#defining-variables-in-the-markdown-page)
   * [Defining variables and macros in Python code](#defining-variables-and-macros-in-python-code)
   * [Location of the module](#location-of-the-module)
   * [Content of the module](#content-of-the-module)
+  * [Defining local variables and macros within the markdown page](#defining-local-variables-and-macros-within-the-markdown-page)
+    + [Variables](#variables)
+    + [Macros and other templating tools](#macros-and-other-templating-tools)
 
 <!-- tocstop -->
 
@@ -265,21 +267,7 @@ See [more information on the website]({{ company.website }}).
 See <a href="{{ company.website }}">more information on the website</a>.
 ```
 
-### Defining variables in the markdown page
 
-If you need a variable that is local to a markdown page, you can use a standard
-Jinja2 declaration, e.g.:
-
-```jinja2
-{% set acme = 'Acme Company Ltd' %}
-
-Please buy the great products from {{ acme }}!
-```
-
-> In fact, you can do
-[all the fancy footwork you want with Jinja2](http://jinja.pocoo.org/docs/2.10/templates/)!
-Only remember that you don't need to define any header, footer or navigation,
-as this is already taken care of by MkDocs.
 
 ### Defining variables and macros in Python code
 
@@ -340,6 +328,18 @@ def declare_variables(variables, macro):
 
 ```
 
+Here is the code for the `button` function:
+
+```
+@macro
+def button(label, url):
+    "Add a button"
+    url = fix_url(url)
+    HTML = """<a class='button' href="%s">%s</a>"""
+    return HTML % (url, label)
+```
+
+
 Your **registration** of variables or macros for MkDocs
 should be done inside that
 hook function. On the other hand, nothing prevents you from making imports or
@@ -347,3 +347,47 @@ declarations **outside** of this function.
 
 > **Note:** You can export a wide range of objects, and their attributes
 remain accessible (see [more information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
+
+
+
+
+### Defining local variables and macros within the markdown page
+
+If you really need a variable or macro that needs to remain **local**
+to the markdown page,
+you can use a standard Jinja2 declaration.
+
+#### Variables
+Variables can be defined with the `set` keyword, e.g.:
+
+```jinja2
+{% set acme = 'Acme Company Ltd' %}
+
+Please buy the great products from {{ acme }}!
+```
+
+#### Macros and other templating tools
+> In fact, you can do
+[all the fancy footwork you want with Jinja2](http://jinja.pocoo.org/docs/2.10/templates/),
+including defining pure Jina2 macros, conditionals and for loops!
+
+Here is an example of macro, from the official Jinja2 documentation:
+
+```jinja2
+{% macro input(name, value='', type='text', size=20) -%}
+    <input type="{{ type }}" name="{{ name }}" value="{{
+        value|e }}" size="{{ size }}">
+{%- endmacro %}
+```
+
+Which can be called (within the page) as:
+
+```jinja2
+<p>{{ input('username') }}</p>
+<p>{{ input('password', type='password') }}</p>
+```
+
+
+> Only remember that you don't need to define any header, footer or navigation,
+as this is already taken care of by MkDocs.
+Also, all definitions will remain **local** to the page.
