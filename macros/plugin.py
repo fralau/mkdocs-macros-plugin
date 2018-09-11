@@ -52,8 +52,12 @@ class MacrosPlugin(BasePlugin):
 
 
     def on_page_markdown(self, markdown, page, config,
-                          site_navigation, **kwargs):
+                          site_navigation=None, **kwargs):
         "Provide a hook for defining functions from an external module"
+
+        # the site_navigation argument has been made optional
+        # (deleted in post 1.0 mkdocs, but maintained here
+        # for backward compatibility)
 
         if not self.variables:
             return markdown

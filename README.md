@@ -215,16 +215,21 @@ All of this becomes possible, thanks to **mkdocs-macros-plugin**!
 ### Prerequisites
 
   - Python version > 3.5
-  - MkDocs version > 0.17
+  - MkDocs version > 0.17 (compatible with post 1.0 versions)
 
+### Standard installation
+```
+pip install mkdocs-macros-plugin
+```
 
-### Procedure
+### "Manual installation"
 To install the package, download it and run:
 
 ```python
 python setup.py install
 ```
 
+### Declaration of plugin
 Declare the plugin in the the file `mkdocs.yml`:
 
 ```yaml
