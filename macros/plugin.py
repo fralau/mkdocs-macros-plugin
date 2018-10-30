@@ -7,7 +7,9 @@
 # --------------------------------------------
 
 from mkdocs.plugins import BasePlugin
-from jinja2 import Template
+from jinja2 import Environment
+from mkdocs.config import config_options
+from mkdocs import utils
 
 from . import module_reader
 
@@ -16,7 +18,6 @@ YAML_SUBSET = 'extra'
 
 # the list of variables (including functions) to be injected
 variables = {}
-
 
 class MacrosPlugin(BasePlugin):
     """
@@ -29,6 +30,12 @@ class MacrosPlugin(BasePlugin):
     in the mkdocs.yml file)
     """
 
+    config_scheme = (
+        ('block_start_string', config_options.Type(utils.string_types, default='{%')),
+        ('block_end_string', config_options.Type(utils.string_types, default='%}')),
+        ('variable_start_string', config_options.Type(utils.string_types, default='{{')),
+        ('variable_end_string', config_options.Type(utils.string_types, default='}}')),
+    )
 
     @property
     def variables(self):
@@ -44,6 +51,14 @@ class MacrosPlugin(BasePlugin):
 
         # fetch variables from YAML file:
         self._variables = config.get(YAML_SUBSET)
+
+        jinja_env_config = {
+            'block_start_string': self.config['block_start_string'],
+            'block_end_string': self.config['block_end_string'],
+            'variable_start_string': self.config['variable_start_string'],
+            'variable_end_string': self.config['variable_end_string'],
+        }
+        self.jinja_env = Environment(**jinja_env_config)
 
         # add variables and functions from the module:
         module_reader.load_variables(self._variables, config)
@@ -64,8 +79,8 @@ class MacrosPlugin(BasePlugin):
 
         else:
 
-            # Create templae and get the variables
-            md_template = Template(markdown)
+            # Create template and get the variables
+            md_template = self.jinja_env.from_string(markdown)
 
             # Execute the jinja2 template and return
             return md_template.render(**self.variables)

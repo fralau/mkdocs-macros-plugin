@@ -243,6 +243,22 @@ you should also add the `search` plugin.
 If no `plugins` entry is set, MkDocs enables `search` by default; but
 if you use it, then you have to declare it explicitly.
 
+#### (Optional) configuration
+
+If you deal with Markdown files that already include the default Jinja block
+or variable markers ('{{', '{%', '%}', '}}') this plugin will throw an error,
+as it can't find the right variables. In that case, it's possible to change
+the markers like so:
+
+``` yaml
+plugins:
+  - search
+  - macros:
+      block_start_string: "{{%="
+      block_end_string: "=%}}"
+      variable_start_string: "{{=="
+      variable_end_string: "==}}"
+```
 
 ## How to use it
 
