@@ -7,7 +7,7 @@
 # --------------------------------------------
 
 from mkdocs.plugins import BasePlugin
-from jinja2 import Template
+from jinja2 import Environment, FileSystemLoader
 
 from . import module_reader
 
@@ -49,6 +49,11 @@ class MacrosPlugin(BasePlugin):
         module_reader.load_variables(self._variables, config)
 
         print("Variables:", self.variables)
+        
+        env_config = {
+            'loader': FileSystemLoader(config.get('docs_dir'))
+        }
+        self.env = Environment(**env_config)
 
 
     def on_page_markdown(self, markdown, page, config,
@@ -64,8 +69,8 @@ class MacrosPlugin(BasePlugin):
 
         else:
 
-            # Create templae and get the variables
-            md_template = Template(markdown)
+            # Create template and get the variables
+            md_template = self.env.from_string(markdown)
 
             # Execute the jinja2 template and return
             return md_template.render(**self.variables)
