@@ -7,6 +7,8 @@
 import os
 from setuptools import setup, find_packages
 
+VERSION_NUMBER = '0.2.5'
+
 
 def read_file(fname):
     "Read a local file"
@@ -15,7 +17,7 @@ def read_file(fname):
 
 setup(
     name='mkdocs-macros-plugin',
-    version='0.2.0',
+    version=VERSION_NUMBER,
     description="Unleash the power of MkDocs with macros and variables",
     long_description=read_file('README.md'),
     long_description_content_type='text/markdown',

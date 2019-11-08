@@ -14,6 +14,7 @@ from . import module_reader
 # The subset of the YAML file that will be used for the variables:
 YAML_SUBSET = 'extra'
 
+
 # the list of variables (including functions) to be injected
 variables = {}
 
@@ -40,6 +41,11 @@ class MacrosPlugin(BasePlugin):
 
     def on_config(self, config):
         "Fetch the variables and functions"
+
+        # the docs_dir directory (default: 'docs')
+        DOCS_DIR = config.get('docs_dir')
+        print("Docs directory:", DOCS_DIR)
+
         #print("Here is the config:", config)
 
         # fetch variables from YAML file:
@@ -49,9 +55,9 @@ class MacrosPlugin(BasePlugin):
         module_reader.load_variables(self._variables, config)
 
         print("Variables:", self.variables)
-        
+
         env_config = {
-            'loader': FileSystemLoader(config.get('docs_dir'))
+            'loader': FileSystemLoader(DOCS_DIR)
         }
         self.env = Environment(**env_config)
 

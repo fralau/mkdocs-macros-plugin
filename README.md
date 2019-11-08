@@ -17,15 +17,21 @@
     + [Solution 3: Enter Macros](#solution-3-enter-macros)
 - [Installation](#installation)
   * [Prerequisites](#prerequisites)
-  * [Procedure](#procedure)
+  * [Standard installation](#standard-installation)
+  * ["Manual installation"](#manual-installation)
+  * [Declaration of plugin](#declaration-of-plugin)
 - [How to use it](#how-to-use-it)
   * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
   * [Defining variables and macros in Python code](#defining-variables-and-macros-in-python-code)
   * [Location of the module](#location-of-the-module)
   * [Content of the module](#content-of-the-module)
+    + [The `declare_variables() function`](#the-declare_variables-function)
+    + [Accessing environment variables from within a function](#accessing-environment-variables-from-within-a-function)
+    + [Example: Button Function](#example-button-function)
   * [Defining local variables and macros within the markdown page](#defining-local-variables-and-macros-within-the-markdown-page)
-    + [Variables](#variables)
+    + [Local variables](#local-variables)
     + [Macros and other templating tools](#macros-and-other-templating-tools)
+  * [Using includes](#using-includes)
 
 <!-- tocstop -->
 
@@ -284,7 +290,7 @@ Python code must go into a `main.py` file in the main website's directory
 as long as the `declare_variables` function is accessible.
 
 If you wish, you can change the name of that module by adding a
-`python_module` parameter to the `mkdocs.yml` file
+`python_module` entry to the `mkdocs.yml` file
 (no need to add the `.py` suffix):
 
 ```yaml
@@ -292,16 +298,18 @@ python_module: source_code
 ```
 
 
-### Content of the module
+### Content of the python module
 As a first step, you need declare a hook function
 called `declare_variables`, with two arguments:
 
-   - `variables`: the dictionary that will contain your variables.
+   - `variables`: the dictionary that contains the variables.
+ It is initialized with the values contained in the `extra` section of the
+ `mkdocs.yml` file.
    - `macro`: a decorator function that you can use to declare a Python
 function as a Jinja2 callable ('macro' for MkDocs).
 
 
-
+#### The `declare_variables() function`
 The example should be self-explanatory:
 
 ```python
@@ -309,7 +317,7 @@ def declare_variables(variables, macro):
     """
     This is the hook for the functions
 
-    - variables: the dictionary that contains the variables
+    - variables: the dictionary that contains the environment variables
     - macro: a decorator function, to declare a macro.
     """
 
@@ -333,16 +341,7 @@ def declare_variables(variables, macro):
 
 ```
 
-Here is the code for the `button` function:
 
-```
-@macro
-def button(label, url):
-    "Add a button"
-    url = fix_url(url)
-    HTML = """<a class='button' href="%s">%s</a>"""
-    return HTML % (url, label)
-```
 
 
 Your **registration** of variables or macros for MkDocs
@@ -354,6 +353,40 @@ declarations **outside** of this function.
 remain accessible (see [more information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
 
 
+#### Accessing environment variables from within a function
+In case you need to access some environment variables defined in the config
+file, use the `variables` dictionary:
+
+Suppose you have:
+```yaml
+extra:
+    price: 12.50
+```
+
+You could write a macro:
+
+```python
+@macro
+def compare_price(my_price):
+    "Compare the price to the price in config file"
+    if my_price > variables['price']:
+        return("Price is higher than standard")
+    else:
+        return("Price is lower than standard")
+```
+
+
+#### Example: Button Function
+Here is the code for the `button` function:
+
+```python
+@macro
+def button(label, url):
+    "Add a button"
+    url = fix_url(url)
+    HTML = """<a class='button' href="%s">%s</a>"""
+    return HTML % (url, label)
+```
 
 
 ### Defining local variables and macros within the markdown page
@@ -362,14 +395,18 @@ If you really need a variable or macro that needs to remain **local**
 to the markdown page,
 you can use a standard Jinja2 declaration.
 
-#### Variables
-Variables can be defined with the `set` keyword, e.g.:
+#### Local variables
+Variables can be defined in the template with the `set` keyword, e.g.:
 
 ```jinja2
 {% set acme = 'Acme Company Ltd' %}
 
 Please buy the great products from {{ acme }}!
 ```
+
+Contrary to variables defined in the `extra` section of the `mkdocs.yml` file,
+they are accessible only within the template.
+They are not accessible from the python code.
 
 #### Macros and other templating tools
 > In fact, you can do
@@ -392,7 +429,30 @@ Which can be called (within the page) as:
 <p>{{ input('password', type='password') }}</p>
 ```
 
+All definitions will remain **local** to the page.
 
-> Only remember that you don't need to define any header, footer or navigation,
+
+### Using includes
+
+You may use the `include` directive from jinja2, e.g.:
+
+```Jinja2
+{% include 'snippet.md' %}
+```
+
+Including another file **will** therefore interpret the macros.
+
+The root directory for your included files is in
+[docs_dir](https://www.mkdocs.org/user-guide/configuration/#docs_dir),
+
+
+You could conceivably also include HTML files, since markdown can contain
+pure HTML code:
+```Jinja2
+{% include 'html/content1.html' %}
+```
+The above would fetch the file from a
+in a html subdirectory (by default: `docs/html`).
+
+> Remember that you don't need to define any header, footer or navigation,
 as this is already taken care of by MkDocs.
-Also, all definitions will remain **local** to the page.
