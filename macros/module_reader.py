@@ -13,12 +13,12 @@ import os
 
 DEFAULT_MODULE_NAME = 'main'
 
-
-
-def load_variables(variables, config):
+def load_module(variables, config):
     """
     Add the template functions, via the python module
     located in the same directory as the Yaml config file.
+
+    This function enriches the variables dictionary
 
     The python module must contain the following hook:
 

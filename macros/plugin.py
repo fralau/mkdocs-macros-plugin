@@ -9,7 +9,7 @@
 from mkdocs.plugins import BasePlugin
 from jinja2 import Environment, FileSystemLoader
 
-from . import module_reader
+from .module_reader import load_module
 
 # The subset of the YAML file that will be used for the variables:
 YAML_SUBSET = 'extra'
@@ -52,7 +52,7 @@ class MacrosPlugin(BasePlugin):
         self._variables = config.get(YAML_SUBSET)
 
         # add variables and functions from the module:
-        module_reader.load_variables(self._variables, config)
+        load_module(self._variables, config)
 
         print("Variables:", self.variables)
 
