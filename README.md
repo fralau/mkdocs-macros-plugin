@@ -20,14 +20,15 @@
   * [Standard installation](#standard-installation)
   * ["Manual installation"](#manual-installation)
   * [Declaration of plugin](#declaration-of-plugin)
-- [How to use it](#how-to-use-it)
+- [How to use the macros pluging](#how-to-use-the-macros-pluging)
+  * [Definitions](#definitions)
   * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
-  * [Defining variables and macros in Python code](#defining-variables-and-macros-in-python-code)
-  * [Location of the module](#location-of-the-module)
-  * [Content of the module](#content-of-the-module)
-    + [The `declare_variables() function`](#the-declare_variables-function)
-    + [Accessing environment variables from within a function](#accessing-environment-variables-from-within-a-function)
-    + [Example: Button Function](#example-button-function)
+  * [Defining variables, macros, and filters in Python code](#defining-variables-macros-and-filters-in-python-code)
+    + [Location of the module](#location-of-the-module)
+    + [The `define_env()` function](#the-define_env-function)
+    + [The `declare_variables()` function](#the-declare_variables-function)
+    + [Accessing variables from within a function](#accessing-variables-from-within-a-function)
+    + [Accessing the whole config file from within a function](#accessing-the-whole-config-file-from-within-a-function)
   * [Defining local variables and macros within the markdown page](#defining-local-variables-and-macros-within-the-markdown-page)
     + [Local variables](#local-variables)
     + [Macros and other templating tools](#macros-and-other-templating-tools)
@@ -36,9 +37,11 @@
 <!-- tocstop -->
 
 ## Overview
-**mkdocs-macros-plugin** is a plugin to make it easier for the contributors
-to a [MkDocs](mkdocs-macros-plugin) website to make richer and more beautiful
-pages, by using **variables** and calls to **macros** in the markdown code.
+**mkdocs-macros-plugin** is a plugin that makes it easier for contributors
+of a [MkDocs](mkdocs-macros-plugin) website to produce richer and more beautiful
+pages. It transforms the markdown pages
+into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
+that use **variables**, calls to **macros** and custom **filters**.
 
 Regular **variables** can be defined in three ways:
 
@@ -50,10 +53,12 @@ Regular **variables** can be defined in three ways:
  statement
 
 
-Similarly programmers can define **macros**, as Python functions in the `main.py` file, which the users will then be able to
-use without much difficulty inside of the Python code.
+Similarly programmers can define **macros** and **filters**,
+as Python functions in the `main.py` file, which the users will then be able to
+use without much difficulty, as jinja2 directives in the markdown page.
 
-With these two tools, you could write e.g.:
+By combining markdown and Python thanks to jinja2, you could write in
+one of the pages, e.g.:
 
 ```markdown
 The unit price of product A is {{ unit_price }} EUR.
@@ -73,7 +78,7 @@ the sale price of 50 units is 450.00 EUR.
 this makes macros especially useful
 to make custom extensions to the syntax of markdown.
 
-In reality, it is possible to use the full range of facilities of
+It is possible to use the wide range of facilities provided by
 [Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
 
 
@@ -89,41 +94,45 @@ from the `mkdocs.yml` file,  and allows you to insert them
 with double curly brackets:
 
 ```
-The price of the item is {{price}}.
+The price of the item is {{ price }}.
 ```
 
-His concept of using the [jinja2](http://jinja.pocoo.org/docs/2.10/)
+His idea of using the [jinja2](http://jinja.pocoo.org/docs/2.10/)
 templating engine for that purpose was  simple and beautiful:
 all it took for this plugin was a few lines of code.
 
 
 #### jinja2: variables can also be Python callables
 
-And then I discovered that the creators of jinja2,
+I then discovered that the creators of jinja2,
 in their great wisdom (thanks also to them!),
 had decided to support *any* kind of Python variables,
-*including the callables*, typically functions, e.g.:
+*including callables*, typically functions, e.g.:
 
 ```
-The price of the item is {{calculate(2, 7.4)}}.
+The price of the item is {{ calculate(2, 7.4) }}.
 ```
 
-They did not think it was worth more a few words,
-but it was a diamond in plain sight.
+Perhaps they did not think it was worth more than a few words in their
+documentation, but it was a diamond in plain sight.
 
-**Oh yeah?** So let's support them also in the markdown pages of MkDocs!
+> **Oh yeah?** So let's call Python functions from the
+markdown pages of MkDocs!
 
 #### Macros in Wiki engines
+
 > **The idea of using 'macros' to speed up the process of writing web pages
 is in fact rather old**.
 
-Most wiki engines,
+> Most wiki **engines**,
 which also rely on some [markup](http://wiki.c2.com/?MarkupLanguage)
-language, had the same problems of enriching the presentation of the pages,
+language, had the same issue of enriching the markup language of their pages,
 at the turn of the year 2000.
+
 In response, they often implemented macros in one form or another
 (in mediawiki, they were confusingly called [templates](https://www.mediawiki.org/wiki/Help:Templates)).
-And in many cases, these wiki engines relied on the double-curly-braces syntax.
+And in many cases, these wiki engines already relied on
+the double-curly-braces syntax.
 
 After all, a **static website generator** can be defined as a wiki whose
 online editing features have been removed, to make it "wiki-wikier"!
@@ -131,20 +140,26 @@ online editing features have been removed, to make it "wiki-wikier"!
 
 ### Use Case: Overcoming the Intrinsic Limitations of Markdown Syntax
 
-[MkDocs](https://www.mkdocs.org/) is a powerful and simple
-tool for generating websites. Pages are based on markdown, which is simple by design. The downside is that the expressiveness of markdown is
+[MkDocs](https://www.mkdocs.org/) is a powerful, elegant and simple
+tool for generating websites. Pages are based on **markdown**,
+which is simple by design.
+
+The power and appeal of markdown comes from its extreme simplicity.
+
+> The downside of markdown's powerful simplicity is that its expressiveness
 necessarily limited.
 
-What do you do if you want to enrich your web with new features like buttons,
-fancy images, etc. without messing up with templates?
+> ** What do you do if you want to enrich markdown pages with features
+like buttons, fancy images, etc.? **
 
 
 #### Solution 1: Markdown extensions
 
-In order to express more things with it, the standard recourse is to extend
-markdown through standard
+In order to express more concepts with markdown,
+one possible recourse is to extend
+its through **standard**
 [markdown extensions](https://python-markdown.github.io/extensions/).
-Adding extensions is straightforward, as they
+Adding extensions to mkdocs is straightforward, since those extensions
 can be directly activated through the `mkdocs.yml`configuration file
 of the website e.g.:
 
@@ -161,8 +176,13 @@ you will want to do, for which there is no markdown extension available.
 Or the extension will be too complicated, or not quite what you wanted.
 
 Furthermore, the are limitations to the number of possible extensions,
-because extending the grammar of markdown is always a little tricky and
-can create incompabilities with the standard syntax or other extensions.
+because extending the grammar of markdown is always a little tricky.
+
+Some markdown extensions could alter what you meant with the standard
+markdown syntax
+(in other words, some markdown text you already wrote could be
+accidentally reinterpreted);
+or it could be incompatible with other extensions.
 
 #### Solution 2: Custom HTML Code
 If don't have an extension, the standard recourse
@@ -221,7 +241,8 @@ All of this becomes possible, thanks to **mkdocs-macros-plugin**!
 ### Prerequisites
 
   - Python version > 3.5
-  - MkDocs version > 0.17 (compatible with post 1.0 versions)
+  - MkDocs version >= 1.0 (it should work > 0.17
+    (it should be compatible with post 1.0 versions)
 
 ### Standard installation
 ```
@@ -250,9 +271,27 @@ If no `plugins` entry is set, MkDocs enables `search` by default; but
 if you use it, then you have to declare it explicitly.
 
 
-## How to use it
+## How to use the macros pluging
 
+### Definitions
 
+- A **variable** is a predefined value.
+  - The primary source of variables
+    is the `extra` namespace in the **config** file (by default: `mkdocs.yml`).
+  - You can add variables in the Python module.
+  - Finally **local variables** can be added directly to each markdown page,
+    thanks to jinja2 directives, called `set`
+   (those local variables are accessible by jinja2 directives,
+   but not the Python code).
+- We call **macros**, Python functions (or callables) that will be
+  used in jinja2 snippets within the markdown pages.
+  A macro should return a *string* that can be plain, markdown
+  or HTML.
+- A custom *filter* is a jinja2 concept. It is essentially a Python
+  function used with a different syntax, e.g. `{{ 'my text ' | uppercase}}`
+  (supposing there was a custom function called `uppercase` and declared
+  as a filter). Just as a macro, a filter should return a *string*
+  that can be plain, markdown or HTML.
 
 ### Defining variables in the configuration file
 
@@ -280,14 +319,17 @@ See <a href="{{ company.website }}">more information on the website</a>.
 
 
 
-### Defining variables and macros in Python code
+### Defining variables, macros, and filters in Python code
 
-### Location of the module
-Python code must go into a `main.py` file in the main website's directory
+
+#### Location of the module
+By default, the Python code must go into a `main.py` file
+in the main website's directory
 (beside the `mkdocs.yml` file).
 
->In can also be a package (i.e. a `main` directory),
-as long as the `declare_variables` function is accessible.
+>Instead of a module file, it also be a *package* (i.e. a `main` subdirectory),
+as long as the `declare_env` function is accessible through the __init__.py
+file.
 
 If you wish, you can change the name of that module by adding a
 `python_module` entry to the `mkdocs.yml` file
@@ -298,7 +340,84 @@ python_module: source_code
 ```
 
 
-### Content of the python module
+#### The `define_env()` function
+
+> New as of version 0.3.0
+
+As a first step, you need declare a hook function
+called `define_env`, with one argument: `env` (object).
+
+This object contains the following attributes:
+
+   - `variables`: the dictionary that contains the variables and macros
+ It is initialized with the values contained in the `extra` section of the
+ `mkdocs.yml` file.
+   - `macro`: a decorator function that you can use to declare a Python
+     function as a Jinja2 callable ('macro' for MkDocs).
+  - `filters`: a list list of jinja2 filters (default None)
+  - `filter`: a decorator for declaring a Python function as a jinja2
+    custom filter.
+
+The example should be self-explanatory:
+
+```python
+def define_env(env):
+    """
+    This is the hook for defining variables, macros and filters
+
+    - variables: the dictionary that contains the environment variables
+    - macro: a decorator function, to declare a macro.
+    """
+
+    env.variables['baz'] = "John Doe"
+
+    @env.macro
+    def bar(x):
+        return (2.3 * x) + 7
+
+    # If you wish, you can  declare a macro with a different name:
+    def f(x):
+        return x * x
+
+    env.macro(f, 'barbaz')
+
+    # or to export some predefined function
+    import math
+    env.macro(math.floor) # will be exported as 'floor'
+
+
+    # create a jinja2 filter
+    @env.filter
+    def reverse(x):
+        "Reverse a string (and uppercase)"
+        return x.upper()[::-1]
+```
+
+
+Your **registration** of variables or macros for MkDocs
+should be done *within* that
+hook function.
+
+No special imports are required (the `env` object does all the 'magic').
+On the other hand, nothing prevents you from making imports or
+declarations **outside** of the `declare_env` function.
+
+
+
+> **Note:** You can export a wide range of objects,
+and their attributes
+will remain accessible to the jinja2 template via the
+standard Python convention, e.g. `{{ foo.bar }}`.
+Jinja2 will even
+(see [more information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
+
+
+
+#### The `declare_variables()` function
+
+> This is the old paradigm, before 0.3.0 (still supported).
+> Prefer the `define_env` function.
+
 As a first step, you need declare a hook function
 called `declare_variables`, with two arguments:
 
@@ -308,8 +427,6 @@ called `declare_variables`, with two arguments:
    - `macro`: a decorator function that you can use to declare a Python
 function as a Jinja2 callable ('macro' for MkDocs).
 
-
-#### The `declare_variables() function`
 The example should be self-explanatory:
 
 ```python
@@ -353,9 +470,9 @@ declarations **outside** of this function.
 remain accessible (see [more information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
 
 
-#### Accessing environment variables from within a function
-In case you need to access some environment variables defined in the config
-file, use the `variables` dictionary:
+#### Accessing variables from within a function
+In case you need to access some variables defined in the config
+file (under `extra`), use the `variables` dictionary:
 
 Suppose you have:
 ```yaml
@@ -369,11 +486,30 @@ You could write a macro:
 @macro
 def compare_price(my_price):
     "Compare the price to the price in config file"
-    if my_price > variables['price']:
+    if my_price > env.variables['price']:
         return("Price is higher than standard")
     else:
         return("Price is lower than standard")
 ```
+
+For the pre 3.0 version (`define_variables()`), use `variables` directly,
+without prefixing with `env`.
+
+#### Accessing the whole config file from within a function
+Sometimes, you might need information from the whole config file,
+e.g. `site_description`, `theme`, `copyright`, etc.
+
+The property `conf` of `env` object contains that information
+
+For example you could defined such a function:
+
+```python
+@env.macro
+def site_info():
+    "Return general info on the website (name, description and theme)"
+    info = (env.conf['site_name'], env.conf['site_description'],
+            env.conf['theme'].name)
+    return "%s/%s (theme: %s)" % info
 
 
 #### Example: Button Function

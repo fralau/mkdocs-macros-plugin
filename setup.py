@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.2.5'
+VERSION_NUMBER = '0.3.0'
 
 
 def read_file(fname):
@@ -31,7 +31,7 @@ setup(
         'mkdocs>=0.17',
         'repackage',
         'jinja2',
-        'mkdocs'
+        'termcolor'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
