@@ -9,27 +9,31 @@
 import os, importlib
 
 import repackage
-from mkdocs.plugins import BasePlugin
+import yaml
 from jinja2 import Environment, FileSystemLoader
 
-from termcolor import colored
-
-from .module_reader import load_module
-
-# The subset of the YAML file that will be used for the variables:
-YAML_SUBSET = 'extra'
-DEFAULT_MODULE_NAME = 'main'
 
 
-def trace(*args, **kwargs):
-    "General purpose print function, with first item emphasized"
-    COLOR = 'green'
-    first = args[0]
-    rest = args[1:]
-    emphasized = colored("[macros] " + first, COLOR)
-    print(emphasized, *rest, **kwargs)
+from mkdocs.plugins import BasePlugin
+from mkdocs.config.config_options import Type as PluginType
+from mkdocs.utils import string_types
+
+from .util import trace, update
 
 
+# ------------------------------------------
+# Initialization
+# ------------------------------------------
+
+# The subsets of the YAML file that will be used for the variables:
+YAML_VARIABLES  = 'extra'
+
+# The default name of the Python module:
+DEFAULT_MODULE_NAME = 'main' # main.py
+
+# ------------------------------------------
+# Plugin
+# ------------------------------------------
 class MacrosPlugin(BasePlugin):
     """
     Inject config 'extra' variables into the markdown
@@ -41,35 +45,61 @@ class MacrosPlugin(BasePlugin):
     in the mkdocs.yml file)
     """
 
+    # what is under the 'macros' namespace (will go into the config property):
+    config_scheme = (
+        ('module_name', PluginType(string_types, default=DEFAULT_MODULE_NAME)),
+        ('include_yaml', PluginType(list, default=[]))
+    )
+
+
     # ------------------------------------------------
     # These properties are available in the env object
     # ------------------------------------------------
     @property
+    def conf(self):
+        """
+        Dictionary containing of the whole config file (by default: mkdocs.yml)
+
+        This property may be useful if the code in the module needs to access
+        general configuration information.
+
+        NOTE: this property is called 'conf', because there is already
+              a 'config' property in a BasePlugin object,
+              which is the data connected to the macros plugin
+              (in the yaml file)
+        """
+        try:
+            return self._conf
+        except AttributeError:
+            raise AttributeError("Conf property of macros plugin "
+                                 "was called before it was initialized!")
+
+
+    @property
     def variables(self):
-        "The list of variables"
+        "The cumulative list of variables, initialized by on_config()"
         try:
             return self._variables
         except AttributeError:
-            return None
+            raise AttributeError("Property called before on_config()")
+
 
     @property
     def filters(self):
-        "The list of variables"
+        "The list of filters defined in the module, initialized by on_config()"
         try:
             return self._filters
         except AttributeError:
             self._filters = {}
             return self._filters
 
-    @property
-    def conf(self):
-        """
-        Content of the whole config file (by default: mkdocs.yml)
 
-        This property may be useful if the code in the module needs to access
-        general configuration information.
-        """
-        return self._conf
+    @property
+    def project_dir(self):
+        "The directory of project"
+        # we calculate it from the configuration file
+        CONFIG_FILE = self.conf['config_file_path']
+        return os.path.dirname(CONFIG_FILE)
 
 
     def macro(self, v, name=''):
@@ -101,8 +131,8 @@ class MacrosPlugin(BasePlugin):
 
     def filter(self, v, name=''):
         """
-        Registers a variable as a macro in the template,
-        i.e. in the variables dictionary:
+        Register a filter in the template,
+        i.e. in the filters dictionary:
 
             env.filter(myfunc)
 
@@ -126,13 +156,31 @@ class MacrosPlugin(BasePlugin):
         return v
 
 
-    # ------------------------------------------------
-    # Initialization
-    # ------------------------------------------------
-    def load_module(self, config):
+    # ----------------------------------
+    # load elements
+    # ----------------------------------
+
+    def _load_yaml(self):
+        "Load the the external yaml files"
+        for el in self.config['include_yaml']:
+            # get the directory of the yaml file:
+            filename = os.path.join(self.project_dir, el)
+            if os.path.isfile(filename):
+                with open(filename) as f:
+                    # load the yaml file
+                    # NOTE: for the SafeLoader argument, see: https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
+                    content = yaml.load(f, Loader=yaml.SafeLoader)
+                    trace("Loading yaml file:", filename)
+                    update(self.variables, content)
+            else:
+                trace("WARNING: YAML configuration file was not found!",
+                    filename)
+
+    def _load_module(self):
         """
-        Add the template functions, via the python module
-        located in the same directory as the Yaml config file.
+        Add variables and functions to the config dictionary,
+        via the python module
+        (located in the same directory as the Yaml config file).
 
         This function enriches the variables dictionary
 
@@ -156,25 +204,16 @@ class MacrosPlugin(BasePlugin):
                 ...
 
         """
-
-
-        # fetch variables from YAML file:
-        self._conf = config # export the whole file, in case of need
-        self._variables = config.get(YAML_SUBSET)
+        config = self.conf
 
         # determine the package name, from the filename:
-        python_module = config.get('python_module') or DEFAULT_MODULE_NAME
-        # get the directory of the yaml file:
-        config_file = config['config_file_path']
-        yaml_dir = os.path.dirname(config_file)
-        # print("Found yaml directory: %s" % yaml_dir)
+        python_module = self.config['module_name']
 
-        # that's the directory of the package:
-        repackage.add(yaml_dir)
+        repackage.add(self.project_dir)
         try:
             module = importlib.import_module(python_module)
             trace("Found external Python module '%s' in:" % python_module,
-                    yaml_dir)
+                    self.project_dir)
             # execute the hook, passing the template decorator function
             function_found = False
             if hasattr(module, 'define_env'):
@@ -182,6 +221,9 @@ class MacrosPlugin(BasePlugin):
                 function_found = True
             if hasattr(module, 'declare_variables'):
                 module.declare_variables(self.variables, self.macro)
+                trace("You are using declare_variables() in the python "
+                      "module '%s'. Prefer the define_env() function "
+                      "(see documentation)!" % python_module)
                 function_found = True
             if not function_found:
                 raise NameError("No valid function found in module '%s'" %
@@ -199,20 +241,28 @@ class MacrosPlugin(BasePlugin):
     def on_config(self, config):
         """
         Called once (initialization)
-        Provide a hook for defining variables, functions and filters
-        from an external module
+        From the configuration file, builds a Jinj2 environment
+        with variables, functions and filters.
         """
+        trace("Macros arguments:", self.config)
+        # define the variables as a plain dictionary
+        # (for update function to work):
+        self._variables = dict(config.get(YAML_VARIABLES))
 
-        # the docs_dir directory (default: 'docs')
-        DOCS_DIR = config.get('docs_dir')
-        trace("Docs directory:", DOCS_DIR)
+        # export the whole data, in case of need:
+        self._conf = config
 
-        # add variables and functions from the module:
-        self.load_module(config)
-
+        # load other yaml files
+        self._load_yaml()
+        # add variables, functions and filters from the Python module:
+        self._load_module()
+        # Provide information:
         trace("Variables:", self.variables)
         trace("Filters:", self.filters)
 
+        # Create the jinja2 environment:
+        DOCS_DIR = config.get('docs_dir')
+        trace("Docs directory:", DOCS_DIR)
         env_config = {
             'loader': FileSystemLoader(DOCS_DIR)
         }
@@ -223,20 +273,17 @@ class MacrosPlugin(BasePlugin):
     def on_page_markdown(self, markdown, page, config,
                           site_navigation=None, **kwargs):
         """
-        Rendering of each page
+        Pre-rendering for each page of the website.
+        It uses the jinja2 directives, together with
+        variables, macros and filters, to create pure markdown code.
         """
-
         # the site_navigation argument has been made optional
-        # (deleted in post 1.0 mkdocs, but maintained here
+        # (deleted in post-1.0 mkdocs, but maintained here
         # for backward compatibility)
-
         if not self.variables:
             return markdown
-
         else:
-
             # Create template and get the variables
             md_template = self.env.from_string(markdown)
-
             # Execute the jinja2 template and return
             return md_template.render(**self.variables)
