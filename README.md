@@ -20,15 +20,20 @@
   * [Standard installation](#standard-installation)
   * ["Manual installation"](#manual-installation)
   * [Declaration of plugin](#declaration-of-plugin)
-- [How to use the macros pluging](#how-to-use-the-macros-pluging)
+- [How to use the macros plugin](#how-to-use-the-macros-plugin)
   * [Definitions](#definitions)
   * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
+  * [Separating documentation variables from configuration variables: using external yaml files](#separating-documentation-variables-from-configuration-variables-using-external-yaml-files)
+    + [Use case](#use-case)
+    + [Declaring the external files](#declaring-the-external-files)
+    + [Merging granches](#merging-granches)
   * [Defining variables, macros, and filters in Python code](#defining-variables-macros-and-filters-in-python-code)
     + [Location of the module](#location-of-the-module)
     + [The `define_env()` function](#the-define_env-function)
-    + [The `declare_variables()` function](#the-declare_variables-function)
+    + [The `declare_variables()` function (old)](#the-declare_variables-function-old)
     + [Accessing variables from within a function](#accessing-variables-from-within-a-function)
     + [Accessing the whole config file from within a function](#accessing-the-whole-config-file-from-within-a-function)
+    + [Validating environment variables in Python code](#validating-environment-variables-in-python-code)
   * [Defining local variables and macros within the markdown page](#defining-local-variables-and-macros-within-the-markdown-page)
     + [Local variables](#local-variables)
     + [Macros and other templating tools](#macros-and-other-templating-tools)
@@ -38,15 +43,15 @@
 
 ## Overview
 **mkdocs-macros-plugin** is a plugin that makes it easier for contributors
-of a [MkDocs](mkdocs-macros-plugin) website to produce richer and more beautiful
-pages. It transforms the markdown pages
+of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It transforms the markdown pages
 into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
 
-Regular **variables** can be defined in three ways:
+Regular **variables** can be defined in four ways:
 
-  1. global (for contributors): in the `mkdocs.yml` file,
-  under the 'extra' heading
+  1. global (for designers of the website): in the `mkdocs.yml` file,
+  under the `extra` heading
+  1. global(for contributors): in external yaml definition files
   1. global (for programmers): in a `main.py` file (Python),
   by adding them to a dictionary
   1. local (for contributors): in the markdown file, with a `{%set variable = value %}`
@@ -57,7 +62,7 @@ Similarly programmers can define **macros** and **filters**,
 as Python functions in the `main.py` file, which the users will then be able to
 use without much difficulty, as jinja2 directives in the markdown page.
 
-By combining markdown and Python thanks to jinja2, you could write in
+By leverage the power of Python in markdown thanks to jinja2, you could write in
 one of the pages, e.g.:
 
 ```markdown
@@ -76,7 +81,8 @@ the sale price of 50 units is 450.00 EUR.
 
 > The result of a macro can be **HTML code**:
 this makes macros especially useful
-to make custom extensions to the syntax of markdown.
+to make custom extensions to the syntax of markdown, such as buttons,
+calls to email, embedding YouTube videos, etc.
 
 It is possible to use the wide range of facilities provided by
 [Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
@@ -271,7 +277,7 @@ If no `plugins` entry is set, MkDocs enables `search` by default; but
 if you use it, then you have to declare it explicitly.
 
 
-## How to use the macros pluging
+## How to use the macros plugin
 
 ### Definitions
 
@@ -317,6 +323,54 @@ See [more information on the website]({{ company.website }}).
 See <a href="{{ company.website }}">more information on the website</a>.
 ```
 
+### Separating documentation variables from configuration variables: using external yaml files
+
+#### Use case
+
+When a documentation site is growing in number of pages and complexity,
+the number of variables in the yaml configuration file may start to grow.
+At this point it contains not only configuration data
+to help build the website (environment, repetitive snippets, etc.),
+but it has started including
+information that is pertinent to the subject one is documenting.
+
+The solution is to use external yaml files, which contain the
+domain-specific information. This creates a separation of concerns.
+
+It also reduces the number of modifications to the configuration file,
+and thus the risk that it becomes accidentally corrupted.
+
+> **Tip:** You may also want to generate some of these external yaml
+files automatically, e.g. from a database.
+
+#### Declaring the external files
+To inlude external data files, add the `include_yaml` to the configuration file
+of mkdocs (`mkdocs.yml` by default), followed by the list of external files:
+
+```yaml
+plugins:
+    - search
+    - macros:
+        include_yaml:
+          - data/foo.yaml
+          - data/bar.yaml
+```
+The default directory is the project directory.
+
+Upon loading, the plugin will read each yaml file in order and merge the variables with those read from the main configuration file.
+In case of conflicts, the latest value will override the earlier ones.
+
+#### Merging granches
+The "branches" of the trees of dictionaries will be merged and,
+in case of conflict, the plugin will attempt to privilege the latest branch.
+
+> The purpose of this feature is only to allow a separation of concerns.
+> For organizational purposes, you should separate your yaml files in a
+> clean way, so that each yaml file covers a specific part of the tree.
+> Otherwise, this might create complicated cases were the merging
+> algorithm might not work as you expect.
+
+
 
 
 ### Defining variables, macros, and filters in Python code
@@ -351,12 +405,18 @@ This object contains the following attributes:
 
    - `variables`: the dictionary that contains the variables and macros
  It is initialized with the values contained in the `extra` section of the
- `mkdocs.yml` file.
+configuration file (and optionally, with external yaml files).
    - `macro`: a decorator function that you can use to declare a Python
      function as a Jinja2 callable ('macro' for MkDocs).
   - `filters`: a list list of jinja2 filters (default None)
   - `filter`: a decorator for declaring a Python function as a jinja2
     custom filter.
+
+
+> In case of conflict, jinja2 variables declared in Python will override
+> those created by users in yaml files.
+> This is a safety feature, to ensure that
+> contributors will not accidentally break the setup defined by programmers.
 
 The example should be self-explanatory:
 
@@ -392,11 +452,12 @@ def define_env(env):
         "Reverse a string (and uppercase)"
         return x.upper()[::-1]
 ```
+> For the pre 0.3.0 version (`define_variables()`), use `variables` directly,
+without prefixing with `env`.
 
 
 Your **registration** of variables or macros for MkDocs
-should be done *within* that
-hook function.
+should be done *within* that hook function.
 
 No special imports are required (the `env` object does all the 'magic').
 On the other hand, nothing prevents you from making imports or
@@ -412,8 +473,7 @@ Jinja2 will even
 (see [more information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
 
 
-
-#### The `declare_variables()` function
+#### The `declare_variables()` function (old)
 
 > This is the old paradigm, before 0.3.0 (still supported).
 > Prefer the `define_env` function.
@@ -492,8 +552,7 @@ def compare_price(my_price):
         return("Price is lower than standard")
 ```
 
-For the pre 3.0 version (`define_variables()`), use `variables` directly,
-without prefixing with `env`.
+
 
 #### Accessing the whole config file from within a function
 Sometimes, you might need information from the whole config file,
@@ -524,6 +583,39 @@ def button(label, url):
     return HTML % (url, label)
 ```
 
+#### Validating environment variables in Python code
+
+By design, the call to define_env() is the last stage of
+the build process, to create the jinja2 environment that will interpret
+the jinja2 directives inserted in the markdown code.
+
+It means in particular, that you can test the variables dictionary
+to validate its key/values, and to take appropriate action.
+
+For example, to check that root branches are present
+in the variables tree:
+
+```python
+MINIMAL_BRANCHES = ('foo', 'bar', 'baz')
+def define_env(env):
+    """
+    This is the hook for defining variables, macros and filters
+    ...
+    """
+
+    # initial checks
+    for branch in MINIMAL_BRANCHES:
+        if branch not in env.variables:
+            raise KeyError("Branch '%s' is not in environment variables! ")
+```
+
+> This is a place where you could check that you code will not
+> conflict with variables defined in the configuration files.
+
+
+> You may also verify other aspects of the configuration file (`env.conf`).
+> Note that the attributes of the `pluging->macro` branch are automatically
+> checked by mkdocs (type and default value).
 
 ### Defining local variables and macros within the markdown page
 
@@ -570,19 +662,21 @@ All definitions will remain **local** to the page.
 
 ### Using includes
 
-You may use the `include` directive from jinja2, e.g.:
+You may use the `include` directive from jinja2, directly
+in your markdown code e.g.:
 
 ```Jinja2
+## Paragraph
 {% include 'snippet.md' %}
 ```
 
-Including another file **will** therefore interpret the macros.
+Including another markdown file **will** therefore the macros.
 
 The root directory for your included files is in
 [docs_dir](https://www.mkdocs.org/user-guide/configuration/#docs_dir),
 
 
-You could conceivably also include HTML files, since markdown can contain
+You could conceivably also include HTML files, since markdown may contain
 pure HTML code:
 ```Jinja2
 {% include 'html/content1.html' %}
@@ -590,5 +684,10 @@ pure HTML code:
 The above would fetch the file from a
 in a html subdirectory (by default: `docs/html`).
 
-> Remember that you don't need to define any header, footer or navigation,
+
+> Remember that you do not need to define any header, footer or navigation,
 as this is already taken care of by MkDocs.
+
+> *Tip:* To further enhance your website, you could generate some of these
+> includes automatically (markdown or html),
+> e.g. from information contained in a database.

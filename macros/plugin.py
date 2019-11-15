@@ -231,7 +231,7 @@ class MacrosPlugin(BasePlugin):
         except ImportError:
             raise ImportError("Macro plugin could not find custom '%s' "
                               "module in '%s'." %
-                             (python_module, yaml_dir))
+                             (python_module, self.project_dir))
 
 
 
@@ -254,7 +254,10 @@ class MacrosPlugin(BasePlugin):
 
         # load other yaml files
         self._load_yaml()
+
         # add variables, functions and filters from the Python module:
+        # by design, this MUST be the last step, so that programmers have
+        # full control on what happened in the configuration files
         self._load_module()
         # Provide information:
         trace("Variables:", self.variables)
