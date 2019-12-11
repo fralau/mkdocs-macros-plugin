@@ -386,11 +386,11 @@ as long as the `declare_env` function is accessible through the __init__.py
 file.
 
 If you wish, you can change the name of that module by adding a
-`python_module` entry to the `mkdocs.yml` file
+`module_name` entry to the `mkdocs.yml` file
 (no need to add the `.py` suffix):
 
 ```yaml
-python_module: source_code
+module_name: source_code
 ```
 
 
