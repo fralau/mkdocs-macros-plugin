@@ -229,9 +229,13 @@ class MacrosPlugin(BasePlugin):
                 raise NameError("No valid function found in module '%s'" %
                                 config_file)
         except ImportError:
-            raise ImportError("Macro plugin could not find custom '%s' "
-                              "module in '%s'." %
-                             (python_module, self.project_dir))
+            if python_module == DEFAULT_MODULE_NAME:
+                # do not do anything if there is no main module
+                pass
+            else:
+                raise ImportError("Macro plugin could not find custom '%s' "
+                                "module in '%s'." %
+                                (python_module, self.project_dir))
 
 
 

@@ -569,13 +569,13 @@ def site_info():
     info = (env.conf['site_name'], env.conf['site_description'],
             env.conf['theme'].name)
     return "%s/%s (theme: %s)" % info
-
+```
 
 #### Example: Button Function
 Here is the code for the `button` function:
 
 ```python
-@macro
+@env.macro
 def button(label, url):
     "Add a button"
     url = fix_url(url)

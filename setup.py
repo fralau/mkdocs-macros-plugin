@@ -1,13 +1,13 @@
 # --------------------------------------------
 # Setup file for the package
 #
-# Laurent Franceschetti (c) 2018
+# Laurent Franceschetti (c) 2018-2019
 # --------------------------------------------
 
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.3.2'
+VERSION_NUMBER = '0.3.3'
 
 
 def read_file(fname):
