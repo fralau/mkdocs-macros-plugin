@@ -99,7 +99,7 @@ class MacrosPlugin(BasePlugin):
         "The directory of project"
         # we calculate it from the configuration file
         CONFIG_FILE = self.conf['config_file_path']
-        return os.path.dirname(CONFIG_FILE)
+        return os.path.dirname(os.path.abspath(CONFIG_FILE))
 
 
     def macro(self, v, name=''):
