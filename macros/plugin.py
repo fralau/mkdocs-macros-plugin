@@ -312,6 +312,10 @@ class MacrosPlugin(BasePlugin):
         if not self.variables:
             return markdown
         else:
+            # Update the page info in the document
+            # page is a tuple (title, url)
+            self.variables["page"] = page
+            # Update the page no, to be used in the 
             # Create template and get the variables
             md_template = self.env.from_string(markdown)
             # Execute the jinja2 template and return

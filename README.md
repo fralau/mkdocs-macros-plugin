@@ -560,14 +560,13 @@ def compare_price(my_price):
 ```
 
 
-
 #### Accessing the whole config file from within a function
 Sometimes, you might need information from the whole config file,
 e.g. `site_description`, `theme`, `copyright`, etc.
 
-The property `conf` of `env` object contains that information
+The property `conf` of the `env` object contains that information.
 
-For example you could defined such a function:
+For example you could define such a function:
 
 ```python
 @env.macro
@@ -640,8 +639,11 @@ Please buy the great products from {{ acme }}!
 ```
 
 Contrary to variables defined in the `extra` section of the `mkdocs.yml` file,
-they are accessible only within the template.
+they are accessible only within the specific page.
 They are not accessible from the python code.
+
+> If you need reference information on the page
+you can use it in the form `{{ page.title }}` and `{{ page.url }}`. 
 
 #### Macros and other templating tools
 > In fact, you can do
@@ -712,10 +714,11 @@ Django Template Language, Liquid, or Twig. The markdown page
 will therefore provides examples that should _not_ be interpreted 
 ([here is a list of templating languages](https://medium.com/@i5ar/template-languages-a7b362971cbc)).
 
-> Fencing these parts as blocks of code
+> Fencing these parts as blocks of code with the markdown convention
 (using three backticks or three tildes) will not prevent interpretation,
 because the plugin deliberately ignores them.
-This is to allow advanced use cases where the content of the code field
+
+This is to allow advanced use cases where the content of the code block
 can be computed on the fly. 
 
 #### Solution 1: Explicitly marking the snippets as 'raw'
@@ -735,7 +738,7 @@ for that purpose:
 #### Solution 2: Altering the syntax of jinja2
 Sometimes the use of mkdocs-macros comes late in the chain, 
 and rather than refactoring all the markdown pages, it may be
-preferable to alter the separators for variables or blocks.
+preferable to alter the markers for variables or blocks.
 
 For example, you may want to replace the curly brackets by square ones,
 like this:
