@@ -1,7 +1,9 @@
 # mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros
 
 
-<!-- To update, run the following command: markdown-toc -i README.md -->
+<!-- To update, run the following command:
+markdown-toc -i README.md 
+-->
 
 <!-- toc -->
 
@@ -33,11 +35,16 @@
     + [The `declare_variables()` function (old)](#the-declare_variables-function-old)
     + [Accessing variables from within a function](#accessing-variables-from-within-a-function)
     + [Accessing the whole config file from within a function](#accessing-the-whole-config-file-from-within-a-function)
+    + [Example: Button Function](#example-button-function)
     + [Validating environment variables in Python code](#validating-environment-variables-in-python-code)
   * [Defining local variables and macros within the markdown page](#defining-local-variables-and-macros-within-the-markdown-page)
     + [Local variables](#local-variables)
     + [Macros and other templating tools](#macros-and-other-templating-tools)
   * [Using includes](#using-includes)
+  * [Solving syntax conflicts](#solving-syntax-conflicts)
+    + [Issue](#issue)
+    + [Solution 1: Explicitly marking the snippets as 'raw'](#solution-1-explicitly-marking-the-snippets-as-raw)
+    + [Solution 2: Altering the syntax of jinja2](#solution-2-altering-the-syntax-of-jinja2)
 
 <!-- tocstop -->
 
@@ -155,8 +162,8 @@ The power and appeal of markdown comes from its extreme simplicity.
 > The downside of markdown's powerful simplicity is that its expressiveness
 necessarily limited.
 
-> ** What do you do if you want to enrich markdown pages with features
-like buttons, fancy images, etc.? **
+> What do you do if you want to enrich markdown pages with features like buttons, 
+fancy images, etc.?
 
 
 #### Solution 1: Markdown extensions
@@ -691,3 +698,84 @@ as this is already taken care of by MkDocs.
 > *Tip:* To further enhance your website, you could generate some of these
 > includes automatically (markdown or html),
 > e.g. from information contained in a database.
+
+### Solving syntax conflicts
+#### Issue
+Sometimes, the form of the block or variable markers in the template 
+(e.g. `{{ foo }}` or `{{%if ....%}}`) may cause a conflict,
+because the plugin will try to interpret 
+snippets of code which should not be interpreted.
+
+This may happen typically when the markdown document is documenting
+a "djangolike" language that could be confused with jinja2: typically
+Django Template Language, Liquid, or Twig. The markdown page 
+will therefore provides examples that should _not_ be interpreted 
+([here is a list of templating languages](https://medium.com/@i5ar/template-languages-a7b362971cbc)).
+
+> Fencing these parts as blocks of code
+(using three backticks or three tildes) will not prevent interpretation,
+because the plugin deliberately ignores them.
+This is to allow advanced use cases where the content of the code field
+can be computed on the fly. 
+
+#### Solution 1: Explicitly marking the snippets as 'raw'
+The prefered solution is to isolate each snippet of code 
+that should not be interpreted, using the standard jinja2 directive
+for that purpose:
+```
+{% raw %}
+- task: "create a directory
+  file:
+    path: "{{ folder_path }}"
+    state: directory
+    recurse: true
+{% endraw %}
+```
+
+#### Solution 2: Altering the syntax of jinja2
+Sometimes the use of mkdocs-macros comes late in the chain, 
+and rather than refactoring all the markdown pages, it may be
+preferable to alter the separators for variables or blocks.
+
+For example, you may want to replace the curly brackets by square ones,
+like this:
+
+```
+# This is a title
+
+It costs [[ unit_price ]].
+
+[[% if unit_price > 5 %]]
+This is expensive!
+[[% endif %]]
+```
+
+
+> **Caution 1:** **You are walking out of the beaten path.**
+Altering the standard markers used in jinja2 has
+far-reaching consequences, because it will oblige you henceforth use a
+new form for templates, which is specific to your project.
+When reading the standard documentation, 
+you will have to mentally convert all the examples. 
+
+
+
+To obtain this result, simply add the following parameters in the 
+`macros` section. There are two parameters for code blocks (start and end) 
+and two for variables (start and end).
+
+```
+  - macros:
+      j2_block_start_string: '[[%'
+      j2_block_end_string: '%]]'
+      j2_variable_start_string: '[['
+      j2_variable_end_string: ']]'
+```
+
+You may of course chose the combination that best suits your needs
+
+> **Caution 2:** Errors in defining these new markers, or some
+accidental combinations of markers may have unpredictable consequences.
+**Use with discretion, and at your own risk**.
+In case of trouble, please do not expect help from the maintainers
+of this plugin.

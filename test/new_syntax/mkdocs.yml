@@ -1,0 +1,17 @@
+# The purpose of this config is to test change of variable/block syntax
+site_name: My own
+theme: mkdocs
+
+nav:
+    - Home: index.md
+
+plugins:
+  - search
+  - macros:
+      j2_block_start_string: '[[%'
+      j2_block_end_string: '%]]'
+      j2_variable_start_string: '[['
+      j2_variable_end_string: ']]'
+
+extra:
+  unit_price: 50

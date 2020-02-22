@@ -46,9 +46,16 @@ class MacrosPlugin(BasePlugin):
     """
 
     # what is under the 'macros' namespace (will go into the config property):
+    J2_STRING = PluginType(string_types, default='')
     config_scheme = (
-        ('module_name', PluginType(string_types, default=DEFAULT_MODULE_NAME)),
-        ('include_yaml', PluginType(list, default=[]))
+        ('module_name',  PluginType(string_types, 
+                                    default=DEFAULT_MODULE_NAME)),
+        ('include_yaml', PluginType(list, default=[])),
+        # for altering the j2 markers, in case of need:
+        ('j2_block_start_string',    J2_STRING),
+        ('j2_block_end_string',      J2_STRING),
+        ('j2_variable_start_string', J2_STRING),
+        ('j2_variable_end_string',   J2_STRING)
     )
 
 
@@ -267,14 +274,29 @@ class MacrosPlugin(BasePlugin):
         trace("Variables:", self.variables)
         trace("Filters:", self.filters)
 
+        # -------------------
         # Create the jinja2 environment:
+        # -------------------
         DOCS_DIR = config.get('docs_dir')
         trace("Docs directory:", DOCS_DIR)
+        # will contain all parameters:
         env_config = {
             'loader': FileSystemLoader(DOCS_DIR)
         }
+        # read the config variables for jinja2:
+        for key, value in self.config.items():
+            # take definitions in config_scheme where key starts with 'j2_'
+            # (if value is not empty) 
+            # and forward them to jinja2
+            # this is used for the markers
+            if key.startswith('j2_') and value:
+                variable_name = key.split('_', 1)[1] # remove prefix
+                trace("Found j2 variable '%s': '%s'" %
+                            (variable_name, value))
+                env_config[variable_name] = value
+        # finally build the environment
         self.env = Environment(**env_config)
-        self.env.filters = self.filters
+        self.env.filters.update(self.filters)
 
 
     def on_page_markdown(self, markdown, page, config,
