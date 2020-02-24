@@ -1,13 +1,13 @@
 # --------------------------------------------
 # Setup file for the package
 #
-# Laurent Franceschetti (c) 2018-2019
+# Laurent Franceschetti (c) 2018-2020
 # --------------------------------------------
 
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.3.5'
+VERSION_NUMBER = '0.4.0'
 
 
 def read_file(fname):
@@ -43,6 +43,7 @@ setup(
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.5',
     ],
+    include_package_data=True,
     packages=find_packages(exclude=['*.tests']),
     entry_points={
         'mkdocs.plugins': [

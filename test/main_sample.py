@@ -7,7 +7,7 @@
 
 def define_env(env):
     """
-    This is the hook for the functions (new form)
+    This is the hook for declaring variables, macros and filters (new form)
     """
     env.variables['baz'] = "John Doe"
 

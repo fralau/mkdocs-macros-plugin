@@ -22,6 +22,7 @@ markdown-toc -i README.md
   * [Standard installation](#standard-installation)
   * ["Manual installation"](#manual-installation)
   * [Declaration of plugin](#declaration-of-plugin)
+  * [Check that it works](#check-that-it-works)
 - [How to use the macros plugin](#how-to-use-the-macros-plugin)
   * [Definitions](#definitions)
   * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
@@ -43,8 +44,14 @@ markdown-toc -i README.md
   * [Using includes](#using-includes)
   * [Solving syntax conflicts](#solving-syntax-conflicts)
     + [Issue](#issue)
-    + [Solution 1: Explicitly marking the snippets as 'raw'](#solution-1-explicitly-marking-the-snippets-as-raw)
-    + [Solution 2: Altering the syntax of jinja2](#solution-2-altering-the-syntax-of-jinja2)
+    + [Solution 1: Inline snippets as jinja2 strings](#solution-1-inline-snippets-as-jinja2-strings)
+    + [Solution 2: Explicitly marking the snippets as 'raw'](#solution-2-explicitly-marking-the-snippets-as-raw)
+    + [Solution 1: Altering the syntax of jinja2](#solution-1-altering-the-syntax-of-jinja2)
+  * [Troubleshooting](#troubleshooting)
+    + [Error Information in case of module error](#error-information-in-case-of-module-error)
+    + [`macros_info()` as the go-to tool](#macros_info-as-the-go-to-tool)
+    + [Is there some function or variable for information XYZ?](#is-there-some-function-or-variable-for-information-xyz)
+    + [How can I get detailed debug information on an object?](#how-can-i-get-detailed-debug-information-on-an-object)
 
 <!-- tocstop -->
 
@@ -283,6 +290,38 @@ you should also add the `search` plugin.
 If no `plugins` entry is set, MkDocs enables `search` by default; but
 if you use it, then you have to declare it explicitly.
 
+### Check that it works
+The recommended way to check that the plugin works properly is to add the 
+following command in one of the pages of your site (let's say `info.md`):
+
+```
+{{ macros_info() }}
+```
+
+In the terminak, restart the environment:
+
+```
+> mkdocs serve
+````
+You will notice that additional information now appears in the terminal:
+
+```
+INFO    -  Building documentation...
+[macros] Macros arguments: {'module_name': 'main', 'include_yaml': [], 'j2_block_start_string': '', 'j2_block_end_string': '', 'j2_variable_start_string': '', 'j2_variable_end_string': ''}
+Found: Darwin
+```
+
+Within the browser (e.g. http://127.0.0.1:8000/info), you should
+see a description of the plugins environment: 
+
+![macros_info()](macros_info.png)
+
+If you see it that information, you should be all set.
+
+Give a good look at the General List, since it gives you an overview
+of what you can do out of the box with the macros plugin.
+
+The other parts give you more detailed information.
 
 ## How to use the macros plugin
 
@@ -642,8 +681,9 @@ Contrary to variables defined in the `extra` section of the `mkdocs.yml` file,
 they are accessible only within the specific page.
 They are not accessible from the python code.
 
-> If you need reference information on the page
-you can use it in the form `{{ page.title }}` and `{{ page.url }}`. 
+> If you need reference information on the page, there is a page object,
+which you could use in the form e.g.: `{{ page.title }}`, `{{ page.url }}`,
+`{{ page.is_homepage }}`, etc. 
 
 #### Macros and other templating tools
 > In fact, you can do
@@ -679,7 +719,7 @@ in your markdown code e.g.:
 {% include 'snippet.md' %}
 ```
 
-Including another markdown file **will** therefore the macros.
+Including another markdown file **will** therefore execute the macros.
 
 The root directory for your included files is in
 [docs_dir](https://www.mkdocs.org/user-guide/configuration/#docs_dir),
@@ -721,7 +761,26 @@ because the plugin deliberately ignores them.
 This is to allow advanced use cases where the content of the code block
 can be computed on the fly. 
 
-#### Solution 1: Explicitly marking the snippets as 'raw'
+> Note that, in principle, there is no risk that jinja2 syntax will
+interfere at a later stage, when mkdocs will convert the markdown
+into html.
+
+#### Solution 1: Inline snippets as jinja2 strings
+This works for simple one-line snippets. Suppose you want to prevent the string
+`{{ 2 + 2 }}` from being interpreted. It is sufficient to treat it
+as if it was a string in jinja2.
+
+```
+{{ "{{ 2 + 2 }}" }}
+```
+
+You could also use expressions with double quotes, but in this case use the 
+simple quotes:
+```
+{{ '{{ "Hello world" }}' }}
+```
+
+#### Solution 2: Explicitly marking the snippets as 'raw'
 The prefered solution is to isolate each snippet of code 
 that should not be interpreted, using the standard jinja2 directive
 for that purpose:
@@ -735,7 +794,7 @@ for that purpose:
 {% endraw %}
 ```
 
-#### Solution 2: Altering the syntax of jinja2
+#### Solution 1: Altering the syntax of jinja2
 Sometimes the use of mkdocs-macros comes late in the chain, 
 and rather than refactoring all the markdown pages, it may be
 preferable to alter the markers for variables or blocks.
@@ -782,3 +841,50 @@ accidental combinations of markers may have unpredictable consequences.
 **Use with discretion, and at your own risk**.
 In case of trouble, please do not expect help from the maintainers
 of this plugin.
+
+### Troubleshooting
+#### Error Information in case of module error
+In principle a rendering error in a macro will not stop the server, but
+display the error in the browser's page (as you would expect, e.g.
+with php).
+The terminal's running log also displays errors when they occur.
+
+#### `macros_info()` as the go-to tool
+Attempting to run the following line in a page:
+
+```
+{{ macros_info() }}
+```
+
+and restarting the server in the temrinal with `mkdocs serve` will usually give
+you a wealth of information within the browser:
+
+- If the information page appears (as e.g. phpinfo() for php),
+  then you know that the plugin must be working. 
+- If the page displays and an error message appears, then there
+  may be a problem with the plugin's installation.
+- If the page does not display at all, then the mkdocs server might not
+  be running or there can be a problem running it.
+
+#### Is there some function or variable for information XYZ?
+If you cannot find an answer in this readme,
+use `macros_info()` to display the information on all the variables,
+functions and filters available in a page.
+
+#### How can I get detailed debug information on an object?
+For example, if you want to have more information on the `config` object:
+
+```
+{{ context('config') | pretty }}
+```
+(the `pretty` filter displays the result in a nice table form)
+
+You can use this pattern for pretty much any object, even those
+you declared in a module.
+
+When used on its own, `context()` gives the general list of variables
+in the plugin's environment:
+```
+{{ context() | pretty }}
+```
+

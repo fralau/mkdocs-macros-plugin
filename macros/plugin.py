@@ -6,7 +6,8 @@
 # MIT License
 # --------------------------------------------
 
-import os, importlib
+import os, importlib, traceback
+from copy import copy
 
 import repackage
 import yaml
@@ -18,8 +19,9 @@ from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
 from mkdocs.utils import string_types
 
-from .util import trace, update
 
+from .util import trace, update
+from .context import define_env
 
 # ------------------------------------------
 # Initialization
@@ -246,6 +248,30 @@ class MacrosPlugin(BasePlugin):
 
 
 
+    def render(self, markdown):
+        """
+        Render a page through jinja2: it executes the macros
+        Must be run after on_config()
+
+        Returns a pure markdown/HTML page.
+        """
+        try:
+            md_template = self.env.from_string(markdown)
+            # Execute the jinja2 template and return
+            return md_template.render(**self.variables)
+        except Exception as e:
+            output = ["# _Macro Rendering Error_",
+                        "",
+                        "**%s**: %s" % (type(e).__name__, e),
+                        "", "",
+                        "```",
+                        traceback.format_exc(),
+                        "```"]
+            error = "\n".join(output) 
+            trace("ERROR", error)
+            return error
+
+
     # ----------------------------------
     # Standard Hooks for a mkdocs plugin
     # ----------------------------------
@@ -258,21 +284,37 @@ class MacrosPlugin(BasePlugin):
         trace("Macros arguments:", self.config)
         # define the variables as a plain dictionary
         # (for update function to work):
-        self._variables = dict(config.get(YAML_VARIABLES))
+        self._variables = {}
+
+        # load the extra variables
+        extra = dict(config.get(YAML_VARIABLES))
+        # make a copy for documentation:
+        self.variables['extra'] = extra 
+        # actual variables (top level will be loaded later)
 
         # export the whole data, in case of need:
         self._conf = config
+        self.variables['config'] = config # add it to the template variables
 
         # load other yaml files
         self._load_yaml()
+
+        # load the standard plugin context
+        define_env(self)
+
+        # at this point load the actual variables from extra
+        self.variables.update(extra)
+        
 
         # add variables, functions and filters from the Python module:
         # by design, this MUST be the last step, so that programmers have
         # full control on what happened in the configuration files
         self._load_module()
         # Provide information:
-        trace("Variables:", self.variables)
+        trace("YAML variables:", extra)
+        trace("Variables:", list(self.variables.keys()))
         trace("Filters:", self.filters)
+        
 
         # -------------------
         # Create the jinja2 environment:
@@ -294,9 +336,24 @@ class MacrosPlugin(BasePlugin):
                 trace("Found j2 variable '%s': '%s'" %
                             (variable_name, value))
                 env_config[variable_name] = value
-        # finally build the environment
+        
+        # finally build the environment:
         self.env = Environment(**env_config)
+
+        # -------------------
+        # Process filters
+        # -------------------
+        # reference all filters, for doc [these are copies, so no black magic]
+        # NOTE: self.variables is reflected in the list of variables
+        #       in the jinja2 environment (same object)
+        self.variables['filters'] = copy(self.filters) 
+        self.variables['filters_builtin'] = copy(self.env.filters) 
+        # update environment with the custom filters:
         self.env.filters.update(self.filters)
+
+        
+        
+        
 
 
     def on_page_markdown(self, markdown, page, config,
@@ -313,10 +370,7 @@ class MacrosPlugin(BasePlugin):
             return markdown
         else:
             # Update the page info in the document
-            # page is a tuple (title, url)
+            # page is an object with a number of properties (title, url, ...)
+            # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
             self.variables["page"] = page
-            # Update the page no, to be used in the 
-            # Create template and get the variables
-            md_template = self.env.from_string(markdown)
-            # Execute the jinja2 template and return
-            return md_template.render(**self.variables)
+            return self.render(markdown)
