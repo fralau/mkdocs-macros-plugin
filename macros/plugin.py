@@ -17,8 +17,10 @@ from jinja2 import Environment, FileSystemLoader
 
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
-from mkdocs.utils import string_types
-
+try:
+    from mkdocs.utils import string_types
+except ImportError:
+    string_types = str
 
 from .util import trace, update
 from .context import define_env
