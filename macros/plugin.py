@@ -17,6 +17,12 @@ from jinja2 import Environment, FileSystemLoader
 
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
+# -------------------------------------------
+# MkDocs removed string_types in version 1.1.0
+# See issue: https://github.com/mkdocs/mkdocs/issues/1926
+# In order to provide support for MkDocs < 1.1.0 & Python 2.7+
+# This fallback is introduced.
+# -------------------------------------------
 try:
     from mkdocs.utils import string_types
 except ImportError:
