@@ -200,7 +200,7 @@ def define_env(env):
         except jinja2.exceptions.UndefinedError as e:
             return [("<i>Error!</i>", type(e).__name__, str(e))]
         except AttributeError:
-            # Not an object or dictionary
+            # Not an object or dictionary (int, str, etc.)
             return [(obj, type(obj).__name__, repr(obj))]
 
     @env.filter

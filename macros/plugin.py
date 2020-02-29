@@ -17,16 +17,7 @@ from jinja2 import Environment, FileSystemLoader
 
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
-# -------------------------------------------
-# MkDocs removed string_types in version 1.1.0
-# See issue: https://github.com/mkdocs/mkdocs/issues/1926
-# In order to provide support for MkDocs < 1.1.0 & Python 2.7+
-# This fallback is introduced.
-# -------------------------------------------
-try:
-    from mkdocs.utils import string_types
-except ImportError:
-    string_types = str
+
 
 from .util import trace, update
 from .context import define_env
@@ -56,9 +47,9 @@ class MacrosPlugin(BasePlugin):
     """
 
     # what is under the 'macros' namespace (will go into the config property):
-    J2_STRING = PluginType(string_types, default='')
+    J2_STRING = PluginType(str, default='')
     config_scheme = (
-        ('module_name',  PluginType(string_types, 
+        ('module_name',  PluginType(str, 
                                     default=DEFAULT_MODULE_NAME)),
         ('include_yaml', PluginType(list, default=[])),
         # for altering the j2 markers, in case of need:
