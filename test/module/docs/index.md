@@ -11,3 +11,7 @@ Git version: {{ git_version }}
 Page: {{ page }}
 
 Date: {{ now().year }} {{ now().month }}
+
+## Included file
+
+{% include 'foo.md' %}

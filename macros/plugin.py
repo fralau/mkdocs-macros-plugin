@@ -18,7 +18,6 @@ from jinja2 import Environment, FileSystemLoader
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
 
-
 from .util import trace, update
 from .context import define_env
 
@@ -49,8 +48,12 @@ class MacrosPlugin(BasePlugin):
     # what is under the 'macros' namespace (will go into the config property):
     J2_STRING = PluginType(str, default='')
     config_scheme = (
+        # main python module:
         ('module_name',  PluginType(str, 
                                     default=DEFAULT_MODULE_NAME)),
+        # include directory for templates ({% include ....%}):
+        ('include_dir',  J2_STRING),
+        # list of additional yaml files:
         ('include_yaml', PluginType(list, default=[])),
         # for altering the j2 markers, in case of need:
         ('j2_block_start_string',    J2_STRING),
@@ -301,7 +304,7 @@ class MacrosPlugin(BasePlugin):
         # load the standard plugin context
         define_env(self)
 
-        # at this point load the actual variables from extra
+        # at this point load the actual variables from extra (YAML file)
         self.variables.update(extra)
         
 
@@ -320,9 +323,19 @@ class MacrosPlugin(BasePlugin):
         # -------------------
         DOCS_DIR = config.get('docs_dir')
         trace("Docs directory:", DOCS_DIR)
+        # define the include directory:
+        # NOTE: using DOCS_DIR as default is not ideal,
+        # because those files get rendered as well, which is incorrect
+        # since they are partials; but we do not want to break existing installs
+        include_dir = self.config['include_dir'] or DOCS_DIR
+        if not os.path.isdir(include_dir):
+            raise FileNotFoundError("MACROS ERROR: Include directory '%s' "
+                                    "does not exist!" %
+                                        include_dir)
+        trace("Includes directory:", include_dir)
         # will contain all parameters:
         env_config = {
-            'loader': FileSystemLoader(DOCS_DIR)
+            'loader': FileSystemLoader(include_dir)
         }
         # read the config variables for jinja2:
         for key, value in self.config.items():

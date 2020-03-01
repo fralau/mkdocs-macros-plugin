@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.4.0'
+VERSION_NUMBER = '0.4.1'
 
 
 def read_file(fname):

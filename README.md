@@ -76,8 +76,8 @@ Similarly programmers can define **macros** and **filters**,
 as Python functions in the `main.py` file, which the users will then be able to
 use without much difficulty, as jinja2 directives in the markdown page.
 
-By leverage the power of Python in markdown thanks to jinja2, you could write in
-one of the pages, e.g.:
+You can leverage the power of Python in markdown thanks to jinja2
+by writing this :
 
 ```markdown
 The unit price of product A is {{ unit_price }} EUR.
@@ -85,7 +85,7 @@ Taking the standard discount into account,
 the sale price of 50 units is {{ price(unit_price, 50) }} EUR.
 ```
 
-Which could translate into:
+If you defined a `price()` function, this could translate into:
 
 ```
 The unit price of product A is 10.00 EUR.
@@ -298,7 +298,7 @@ following command in one of the pages of your site (let's say `info.md`):
 {{ macros_info() }}
 ```
 
-In the terminak, restart the environment:
+In the terminal, restart the environment:
 
 ```
 > mkdocs serve
@@ -308,7 +308,6 @@ You will notice that additional information now appears in the terminal:
 ```
 INFO    -  Building documentation...
 [macros] Macros arguments: {'module_name': 'main', 'include_yaml': [], 'j2_block_start_string': '', 'j2_block_end_string': '', 'j2_variable_start_string': '', 'j2_variable_end_string': ''}
-Found: Darwin
 ```
 
 Within the browser (e.g. http://127.0.0.1:8000/info), you should
@@ -709,9 +708,11 @@ Which can be called (within the page) as:
 All definitions will remain **local** to the page.
 
 
-### Using includes
+### Including external files in pages
 
-You may use the `include` directive from jinja2, directly
+#### Usage
+To include markdown files within a markdown file,
+you may use the `include` directive from jinja2, directly
 in your markdown code e.g.:
 
 ```Jinja2
@@ -721,10 +722,39 @@ in your markdown code e.g.:
 
 Including another markdown file **will** therefore execute the macros.
 
-The root directory for your included files is in
+By default the root directory for your included files is in
 [docs_dir](https://www.mkdocs.org/user-guide/configuration/#docs_dir),
 
+#### Changing the directory of the includes
+You may change the directory of the includes, by setting the `include_dir`
+parameter in the plugin's configuration in the yaml file, e.g.:
 
+```
+plugins:
+  - search
+  - macros:
+      include_dir: include
+```
+
+In this case, all files to be included will be found in the `include`
+subdirectory of your project's directory.
+
+There are pros and cons for using a distinct directory for includes:
+
+  - PRO: the files to be included ("partials") will not be automatically
+    rendered into html
+  - PRO: a better separation between normal pages and included pages
+  - CON: if you often use `mkdocs serve`, modifying an included page
+    will not reload the pages
+    
+> Note: in the future, the plugin might
+add this directory to the list of watched directories to be updated,
+after [a bug in the configuration of mkdocs reloads is fixed](https://github.com/mkdocs/mkdocs/issues/1952))
+
+
+
+
+#### Other uses
 You could conceivably also include HTML files, since markdown may contain
 pure HTML code:
 ```Jinja2

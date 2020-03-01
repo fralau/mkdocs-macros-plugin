@@ -141,7 +141,7 @@ def system_name():
     if not r:
         # you never know
         return "<UNKNOWN>"
-    print("Found:", r)
+    # print("Found:", r)
     CONV = {'Win': 'Windows', 'Darwin':'MacOs'}
     return CONV.get(r, r)
     
