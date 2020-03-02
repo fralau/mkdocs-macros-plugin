@@ -364,7 +364,18 @@ class MacrosPlugin(BasePlugin):
         # update environment with the custom filters:
         self.env.filters.update(self.filters)
 
-        
+    def on_nav(self, nav, config, files):
+        """
+        Called after the site navigation is created.
+        Capture the nav and files objects so they can be used by
+        templates.
+        """
+        # nav has useful properties like 'pages' and 'items'
+        # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py
+        self.variables['nav'] = nav
+        # files has collection of files discovered in docs_dir
+        # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/files.py
+        self.variables['files'] = files
         
     def on_serve(self, server, config):
         """

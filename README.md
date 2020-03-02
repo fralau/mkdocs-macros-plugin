@@ -344,6 +344,15 @@ The other parts give you more detailed information.
   as a filter). Just as a macro, a filter should return a *string*
   that can be plain, markdown or HTML.
 
+### Built-in variables
+
+The following variables are available by default:
+
+- **config** - mkdocs [config](https://www.mkdocs.org/user-guide/configuration/)
+- **nav** - [Navigation](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py) include all `pages`
+- *files** - Collection of all `docs_dir` [files](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/files.py).
+- **page** - The current [page](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py) 
+
 ### Defining variables in the configuration file
 
 To easily and quickly define custom variables, declare them in you `mkdocs.yml`
@@ -405,7 +414,7 @@ The default directory is the project directory.
 Upon loading, the plugin will read each yaml file in order and merge the variables with those read from the main configuration file.
 In case of conflicts, the latest value will override the earlier ones.
 
-#### Merging granches
+#### Merging branches
 The "branches" of the trees of dictionaries will be merged and,
 in case of conflict, the plugin will attempt to privilege the latest branch.
 

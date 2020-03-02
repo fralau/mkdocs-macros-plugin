@@ -5,6 +5,7 @@ copyright: (C) SettleNext Laurent Franceschetti 2020
 nav:
     - Home: index.md
     - Environment: environment.md
+    - Nav: nav.md
 
 plugins:
   - search
