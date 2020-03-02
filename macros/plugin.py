@@ -277,6 +277,7 @@ class MacrosPlugin(BasePlugin):
     # ----------------------------------
     # Standard Hooks for a mkdocs plugin
     # ----------------------------------
+
     def on_config(self, config):
         """
         Called once (initialization)
@@ -313,8 +314,8 @@ class MacrosPlugin(BasePlugin):
         # full control on what happened in the configuration files
         self._load_module()
         # Provide information:
-        trace("YAML variables:", extra)
         trace("Variables:", list(self.variables.keys()))
+        trace("extra variables:", extra)
         trace("Filters:", self.filters)
         
 
@@ -365,7 +366,25 @@ class MacrosPlugin(BasePlugin):
 
         
         
-        
+    def on_serve(self, server, config):
+        """
+        Called when the serve command is used during development.
+        This is to add files or directories to the list of "watched" 
+        files for auto-reloading.
+        """
+        # define directories to add, keep non nulls
+        additional = [self.config['include_dir'] # markdown includes
+                     ]
+        additional = [el for el in additional if el]
+        trace("We will also watch: %s" % additional)
+        # necessary because of a bug in mkdocs:
+        # more information in:
+        # https://github.com/mkdocs/mkdocs/issues/1952))
+        builder = list(server.watcher._tasks.values())[0]["func"]
+        # go ahead and watch
+        for el in additional:
+            if el:
+                server.watch(el, builder)        
 
 
     def on_page_markdown(self, markdown, page, config,

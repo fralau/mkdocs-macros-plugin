@@ -744,12 +744,11 @@ There are pros and cons for using a distinct directory for includes:
   - PRO: the files to be included ("partials") will not be automatically
     rendered into html
   - PRO: a better separation between normal pages and included pages
-  - CON: if you often use `mkdocs serve`, modifying an included page
-    will not reload the pages
+
+If you often use `mkdocs serve`, modifying an included page
+_will_ auto-reload the pages int he browser
+(the directory is added to the list of the "watched" directories).
     
-> Note: in the future, the plugin might
-add this directory to the list of watched directories to be updated,
-after [a bug in the configuration of mkdocs reloads is fixed](https://github.com/mkdocs/mkdocs/issues/1952))
 
 
 
