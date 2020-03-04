@@ -2,6 +2,6 @@
 
 
 ## Updates
-{% for page in pages %}
+{% for page in navigation.pages %}
 1. {{ page.title }} ({{ page.update_date }})
 {% endfor %}

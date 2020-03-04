@@ -34,8 +34,8 @@ To have all titles of all pages, use:
 
 ```
 {% raw %}
-{% for page in pages %}
-{{ page.title }}
+{% for page in navigation.pages %}
+- {{ page.title }}
 {% endfor% }
 {% endraw %}
 ```

@@ -357,7 +357,8 @@ The following variables are, in particular, available by default:
   information on MkDocs' environment.
 - **page**: Info on the current page.
   ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py))
-- **pages**: list of all pages of the website.
+- **navigation**: list of all pages/sections of the website;
+  sections are themselves list of pages;
   ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py))
 - **environment**: data on the system on which MkDocs is currently running.
 - **git**: information on the git version of the website
@@ -366,6 +367,14 @@ The following variables are, in particular, available by default:
 For example,
 - `{{ config.site_name }}` returns the main title of the website
 - `{{ environment.system }}` returns the name of the OS.
+- `{{ navigation.pages }}` returns a flattened list of all pages
+
+To discover what each of these objects contain, you can use the `pretty`
+filter provided with the plugin, e.g.:
+
+```
+{{ context(page) | pretty }}
+```
 
 
 ### Defining variables in the configuration file

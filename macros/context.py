@@ -68,7 +68,7 @@ def format_value(value):
     "Properly format the value, to make it descriptive"
     # those classes will be processed as "dictionary type"
     # NOTE: using the name does nto force us to import them
-    LISTED_CLASSES = 'Config', 'File'
+    LISTED_CLASSES = 'Config', 'File', 'Section'
     # those types will be printed without question
     SHORT_TYPES = int, float, str, list  
     if callable(value):
@@ -229,10 +229,7 @@ def define_env(env):
                     (type(e).__name__, str(e)))
     env.variables['environment'] = system
 
-    # list the pages of the project
-    files = Files(env.variables['config'])
-    env.variables['pages'] = get_navigation(files, 
-                                          env.variables['config'])
+
 
     # git information:
     env.variables['git'] = get_git_info()
