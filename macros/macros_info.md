@@ -11,26 +11,34 @@ All available variables and filters within the macros plugin:
 {{ context() | pretty }}
 
 ## Config Information
-Standard mkdocs configuration information. Do not try to modify.
+Standard MkDocs configuration information. Do not try to modify.
 
 e.g. {{ "`{{ config.docs_dir }}`" }}
 
-See also the [MkDocs documentation on the config object](https://www.mkdocs.org/user-guide/custom-themes/#config).
+See also the [MkDocs documentation on the config object](https://www.MkDocs.org/user-guide/custom-themes/#config).
 
 {{ context(config)| pretty }}
 
 ## Page Attributes
-Provided by mkdocs. These attributes change for every page.
+Provided by MkDocs. These attributes change for every page
+(the attributes shown are for this page).
 
 e.g. {{ "`{{ page.title }}`" }}
 
-See also the [MkDocs documentation on the page object](https://www.mkdocs.org/user-guide/custom-themes/#page).
+See also the [MkDocs documentation on the page object](https://www.MkDocs.org/user-guide/custom-themes/#page).
 
 
 {{ context(page)| pretty }}
 
+To have all titles of all pages, use:
 
-
+```
+{% raw %}
+{% for page in pages %}
+{{ page.title }}
+{% endfor% }
+{% endraw %}
+```
 
 ## Plugin Filters
 These filters are provided as a standard by the macros plugin.

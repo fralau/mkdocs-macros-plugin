@@ -1,9 +1,12 @@
 """
-Basic context for the jinja2 templates
+Basic context for the jinja2 templates.
+
+"Batteries included": It defines standard variables, macros and filters
+that a template designer is likely to need.
 
 It contains in particular documentation functions.
 
-Laurent Franceschetti (c) 2019
+Laurent Franceschetti (c) 2020
 """
 import os, sys, subprocess, platform
 import pkg_resources
@@ -38,8 +41,11 @@ def list_items(obj):
     try:
         return obj.items()
     except AttributeError:
-        # it's an object
-        return obj.__dict__.items()
+            # it's an object
+            return obj.__dict__.items()
+    except TypeError:
+        # it's a list: enumerate
+        return enumerate(list(obj))
 
 
 def get_first_para(s):
@@ -62,7 +68,7 @@ def format_value(value):
     "Properly format the value, to make it descriptive"
     # those classes will be processed as "dictionary type"
     # NOTE: using the name does nto force us to import them
-    LISTED_CLASSES = 'Config',
+    LISTED_CLASSES = 'Config', 'File'
     # those types will be printed without question
     SHORT_TYPES = int, float, str, list  
     if callable(value):
@@ -153,6 +159,32 @@ def system_version():
     except (AttributeError, IndexError) as e:
         return str(e)
 
+# for the navigation
+from mkdocs.structure.files import File
+from mkdocs.structure.nav import get_navigation
+class Files(object):
+    "This helper class is needed to rebuild the navigation"
+    def __init__(self, config):
+        self.config = config
+        self._filenames = []
+
+    @property
+    def filenames(self):
+        "The list of filenames (not used at the moment"
+        return self._filenames
+
+    def get_file_from_path(self, path):
+        "Build the filenames"
+        self._filenames.append(path)
+        file = File(os.path.basename(path), 
+                    os.path.dirname(path),
+                    os.path.dirname(path), True)
+        return file
+
+    def documentation_pages(self):
+        return []
+
+
 # ---------------------------------
 # Exports to the environment
 # ---------------------------------
@@ -172,13 +204,19 @@ def define_env(env):
             'macros_plugin_version': 
                     pkg_resources.get_distribution(PACKAGE_NAME).version,
             'jinja2_version': jinja2.__version__,
-            'site_git_version': site_git_version()
+            'site_git_version': site_git_version(),
         }
     except Exception as e:
         # Avoid breaking the system if error in reading the system info:
         system = ("<i><b>Cannot read system info!</b> %s: %s</i>" % 
                     (type(e).__name__, str(e)))
     env.variables['environment'] = system
+
+    # list the pages of the project
+    files = Files(env.variables['config'])
+    env.variables['pages'] = get_navigation(files, 
+                                          env.variables['config'])
+
 
     def render_file(filename):
         """
@@ -216,7 +254,6 @@ def define_env(env):
             header = ['Variable','Type', 'Content']
             return make_html(rows, header)
 
-    
     @env.macro
     def macros_info():
         """

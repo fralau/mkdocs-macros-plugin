@@ -297,7 +297,10 @@ class MacrosPlugin(BasePlugin):
 
         # export the whole data, in case of need:
         self._conf = config
-        self.variables['config'] = config # add it to the template variables
+        # add a copy to the template variables
+        # that copy may be manipulated
+        self.variables['config'] = copy(config)
+        assert self.variables['config'] is not config
 
         # load other yaml files
         self._load_yaml()

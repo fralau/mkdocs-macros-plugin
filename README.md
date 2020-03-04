@@ -344,6 +344,24 @@ The other parts give you more detailed information.
   as a filter). Just as a macro, a filter should return a *string*
   that can be plain, markdown or HTML.
 
+### "Batteries included": defaut variables
+
+The following variables are, in particular, available by default:
+
+- **config**: the standard
+  [config](https://www.mkdocs.org/user-guide/configuration/#project-information)
+  information on MkDocs' environment.
+- **page**: Info on the current page.
+  ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py))
+- **pages**: list of all pages of the website.
+  ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py))
+- **environment**: data on the system on which MkDocs is currently running.
+
+For example,
+- `{{ config.site_name }}` returns the main title of the website
+- `{{ environment.system }}` returns the name of the OS.
+
+
 ### Defining variables in the configuration file
 
 To easily and quickly define custom variables, declare them in you `mkdocs.yml`
@@ -405,7 +423,7 @@ The default directory is the project directory.
 Upon loading, the plugin will read each yaml file in order and merge the variables with those read from the main configuration file.
 In case of conflicts, the latest value will override the earlier ones.
 
-#### Merging granches
+#### Merging branches
 The "branches" of the trees of dictionaries will be merged and,
 in case of conflict, the plugin will attempt to privilege the latest branch.
 
@@ -739,14 +757,14 @@ plugins:
 In this case, all files to be included will be found in the `include`
 subdirectory of your project's directory.
 
-There are pros and cons for using a distinct directory for includes:
+These are the advantages for using a distinct directory for includes:
 
-  - PRO: the files to be included ("partials") will not be automatically
+  - The files to be included ("partials") will not be automatically
     rendered into html
-  - PRO: a better separation between normal pages and included pages
+  - A better separation between normal pages and included pages
 
 If you often use `mkdocs serve`, modifying an included page
-_will_ auto-reload the pages int he browser
+_will_ auto-reload the pages in the browser
 (the directory is added to the list of the "watched" directories).
     
 
