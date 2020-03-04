@@ -25,11 +25,12 @@ markdown-toc -i README.md
   * [Check that it works](#check-that-it-works)
 - [How to use the macros plugin](#how-to-use-the-macros-plugin)
   * [Definitions](#definitions)
+  * ["Batteries included": defaut variables](#batteries-included-defaut-variables)
   * [Defining variables in the configuration file](#defining-variables-in-the-configuration-file)
   * [Separating documentation variables from configuration variables: using external yaml files](#separating-documentation-variables-from-configuration-variables-using-external-yaml-files)
     + [Use case](#use-case)
     + [Declaring the external files](#declaring-the-external-files)
-    + [Merging granches](#merging-granches)
+    + [Merging branches](#merging-branches)
   * [Defining variables, macros, and filters in Python code](#defining-variables-macros-and-filters-in-python-code)
     + [Location of the module](#location-of-the-module)
     + [The `define_env()` function](#the-define_env-function)
@@ -41,7 +42,10 @@ markdown-toc -i README.md
   * [Defining local variables and macros within the markdown page](#defining-local-variables-and-macros-within-the-markdown-page)
     + [Local variables](#local-variables)
     + [Macros and other templating tools](#macros-and-other-templating-tools)
-  * [Using includes](#using-includes)
+  * [Including external files in pages](#including-external-files-in-pages)
+    + [Usage](#usage)
+    + [Changing the directory of the includes](#changing-the-directory-of-the-includes)
+    + [Other uses](#other-uses)
   * [Solving syntax conflicts](#solving-syntax-conflicts)
     + [Issue](#issue)
     + [Solution 1: Inline snippets as jinja2 strings](#solution-1-inline-snippets-as-jinja2-strings)
@@ -356,6 +360,8 @@ The following variables are, in particular, available by default:
 - **pages**: list of all pages of the website.
   ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py))
 - **environment**: data on the system on which MkDocs is currently running.
+- **git**: information on the git version of the website
+  (if part of a git repository)
 
 For example,
 - `{{ config.site_name }}` returns the main title of the website

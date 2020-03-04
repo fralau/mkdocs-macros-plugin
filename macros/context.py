@@ -125,14 +125,31 @@ def make_html(rows, header=[], tb_class='pretty'):
     return templ.render(locals())
 
 
-def site_git_version():
-    "Get the git version"
-    GIT_VERSION = ['git', 'describe', '--tags']
+def get_git_info():
+    """
+    Get the abbreviated commit version (not provided by get_git_info())
+    Returns a dictionary
+    """
+    COMMANDS = {
+        'short_commit' : ['git', 'rev-parse', '--short', 'HEAD'],
+        'commit' : ['git', 'rev-parse', 'HEAD'],
+        'author': ['git', 'log', '-1', "--pretty=format:%an"],
+        'tag' : ['git', 'describe', '--tags'],
+        'date' : ['git', '--no-pager', 'log', '-1', '--format=%ai'],
+        'message' : ['git', 'log', '-1', "--pretty=%B"],
+        'raw' : ['git', 'log', '-1'],
+        }
     try:
-        return subprocess.check_output(GIT_VERSION, 
+        r = {}
+        for var, command in COMMANDS.items():
+            r[var] = subprocess.check_output(command, 
                                             text=True).strip()
+        # keep first part
+        r['tag'] = r['tag'].split('-')[0]
+        return r
     except subprocess.CalledProcessError:
-        return ''
+        # no git repository
+        return {}
 
 def python_version():
     "Get the python version"
@@ -204,7 +221,7 @@ def define_env(env):
             'macros_plugin_version': 
                     pkg_resources.get_distribution(PACKAGE_NAME).version,
             'jinja2_version': jinja2.__version__,
-            'site_git_version': site_git_version(),
+            # 'site_git_version': site_git_version(),
         }
     except Exception as e:
         # Avoid breaking the system if error in reading the system info:
@@ -217,6 +234,8 @@ def define_env(env):
     env.variables['pages'] = get_navigation(files, 
                                           env.variables['config'])
 
+    # git information:
+    env.variables['git'] = get_git_info()
 
     def render_file(filename):
         """
