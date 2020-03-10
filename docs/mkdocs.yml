@@ -1,6 +1,7 @@
 site_name: mkdocs-macros
 theme: 
-  name: material
+  name: readthedocs
+repo_url: https://github.com/fralau/mkdocs_macros_plugin
 copyright: (C) SettleNext Laurent Franceschetti 2020
 
 nav:
