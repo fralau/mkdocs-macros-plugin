@@ -1,5 +1,5 @@
 site_name: mkdocs-macros
-docs_dir: docs
+docs_dir: docs # indispensable or readthedocs will fail
 theme: 
   name: readthedocs
 repo_url: https://github.com/fralau/mkdocs_macros_plugin

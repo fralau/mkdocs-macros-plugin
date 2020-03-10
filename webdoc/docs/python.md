@@ -150,8 +150,7 @@ making imports or declarations **outside** of this function.
 > remain accessible (see [more
 > information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
 
-Accessing variables
--------------------
+### Accessing variables
 
 In case you need to access some variables defined in the config file
 (under `extra`), use the `variables` dictionary:
@@ -186,8 +185,7 @@ def compare_price(my_price):
         return("Price is lower than standard")
 ```
 
-Accessing macros
-----------------
+### Accessing macros
 > Note that since a macro is also a variable (function), you can also "import"
 it in a module. 
 For example, `fix_url` is a predefined macro that fixes relative
