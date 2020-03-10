@@ -41,6 +41,25 @@ def update(d1, d2):
         # if it is any kind of object
         d1 = deepcopy(d2)
 
+class SuperDict(dict):
+    """
+    A dictionary accessible with the dot notation
+
+    a['foo'] <=> a.foo
+
+    except for standard methods
+    """
+
+    def __getattr__(self, name):
+        "Allow dot notation on reading"
+        try:
+            return self[name]
+        except KeyError:
+            raise AttributeError("Cannot find attribute '%s" % name)
+
+    def __setattr__(self, name, value):
+        "Allow dot notation on writing"
+        self[name] = value
 
 if __name__ == '__main__':
     # test merging of dictionaries

@@ -1,0 +1,25 @@
+site_name: mkdocs-macros
+theme: 
+  name: material
+copyright: (C) SettleNext Laurent Franceschetti 2020
+
+nav:
+    - Home: index.md
+    - 'User Guide': 
+      - "How to use": pages.md
+      - "Python module": python.md
+      - "Advanced usage": advanced.md
+    - Faq:
+      - "Tips and Tricks": tips.md
+      - "Troubleshooting": troubleshooting.md
+    - About:
+      - "Why this project?": why.md
+      - License: license.md
+
+plugins:
+  # do not use the macros plugin, for 
+  # 1. a question of "boostrap" (avoid chicken and the egg issues)
+  # 2. avoid interpreting the jinja2 code examples as instructions.
+  - search
+
+

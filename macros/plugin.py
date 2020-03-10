@@ -18,7 +18,7 @@ from jinja2 import Environment, FileSystemLoader
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
 
-from .util import trace, update
+from .util import trace, update, SuperDict
 from .context import define_env
 
 # ------------------------------------------
@@ -287,7 +287,7 @@ class MacrosPlugin(BasePlugin):
         trace("Macros arguments:", self.config)
         # define the variables as a plain dictionary
         # (for update function to work):
-        self._variables = {}
+        self._variables = SuperDict()
 
         # load the extra variables
         extra = dict(config.get(YAML_VARIABLES))
