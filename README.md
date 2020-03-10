@@ -1,6 +1,9 @@
 # mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros
 
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+![PyPI](https://img.shields.io/pypi/v/mkdocs-macros-plugin)
+
 <!-- To update, run the following command:
 markdown-toc -i README.md 
 -->
@@ -68,10 +71,10 @@ that use **variables**, calls to **macros** and custom **filters**.
 Regular **variables** can be defined in four ways:
 
   1. global (for designers of the website): in the `mkdocs.yml` file,
-  under the `extra` heading
+    under the `extra` heading
   1. global(for contributors): in external yaml definition files
   1. global (for programmers): in a `main.py` file (Python),
-  by adding them to a dictionary
+    by adding them to a dictionary
   1. local (for contributors): in the markdown file, with a `{%set variable = value %}`
  statement
 
