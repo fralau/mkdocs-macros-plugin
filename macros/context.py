@@ -142,8 +142,10 @@ def get_git_info():
     try:
         r = {}
         for var, command in COMMANDS.items():
+            # NOTE: The 'text' argument is clearer, 
+            #       but for Python < 3.7, only `universal_newlines` is accepted
             r[var] = subprocess.check_output(command, 
-                                            text=True).strip()
+                                            universal_newlines=True).strip()
         # keep first part
         r['tag'] = r['tag'].split('-')[0]
         return r

@@ -1,6 +1,7 @@
 # Temporary files
 *~
 .py~
+.python-version
 
 #Byte-compiled led / optimized / DLL files
 __pycache__/
