@@ -149,9 +149,14 @@ def get_git_info():
         # keep first part
         r['tag'] = r['tag'].split('-')[0]
         return r
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as e:
         # no git repository
-        return {}
+        return {'diagnosis': 'No git repository',
+                'error': str(e)}
+    except FileNotFoundError as e:
+        # not git command
+        return {'diagnosis': 'Git command not found',
+                'error': str(e)}
 
 def python_version():
     "Get the python version"
