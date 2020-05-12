@@ -1,6 +1,16 @@
 Troubleshooting
 ===============
 
+Before anything else
+--------------------
+
+!!! Important
+    Make sure you you have the **last version** of mkdocs-macros.
+    Perhaps the issue is already fixed?
+
+    Also, check that your version of mkdocs is sufficiently up-to-date.
+
+
 Error Information in case of module error
 -----------------------------------------
 
@@ -44,3 +54,22 @@ When used on its own, `context()` gives the general list of variables in
 the plugin's environment:
 
     {{ context() | pretty }}
+
+Where Can I get Help?
+---------------------
+
+Check the [issues](https://github.com/fralau/mkdocs_macros_plugin/issues) 
+on the github repo.
+
+!!! Tip
+    Also check the **closed issues**. It could be that your issue
+    has already been solved and closed!
+
+    Also, you could check similar questions, to see if they could
+    point you to the right questions.
+
+
+Then, you want to add a new issue, or comment on an existing one,
+you are more than welcome!
+
+All issues are carefully reviewed and often get a quick answer.

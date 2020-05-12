@@ -9,14 +9,18 @@ nav:
     - Home: index.md
     - 'User Guide': 
       - "How to use": pages.md
+      - "Git information": git_info.md
       - "Python module": python.md
       - "Advanced usage": advanced.md
     - Faq:
-      - "Tips and Tricks": tips.md
       - "Troubleshooting": troubleshooting.md
+      - "Tips and Tricks": tips.md
     - About:
       - "Why this project?": why.md
       - License: license.md
+
+markdown_extensions:
+  - admonition
 
 plugins:
   # do not use the macros plugin, for 

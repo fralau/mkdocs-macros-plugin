@@ -5,3 +5,10 @@
 {% for page in navigation.pages %}
 1. {{ page.title }} ({{ page.update_date }})
 {% endfor %}
+
+
+## Mkdocs.yaml file (portion)
+
+```
+{{ include_file('mkdocs.yml', 0, 5)}}
+```

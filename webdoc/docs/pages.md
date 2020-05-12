@@ -98,9 +98,10 @@ Contrary to variables defined in the `extra` section of the `mkdocs.yml`
 file, they are accessible only within the specific page. They are not
 accessible from the python code.
 
-> If you need reference information on the page, there is a page object,
-> which you could use in the form e.g.: `{{ page.title }}`,
-> `{{ page.url }}`, `{{ page.is_homepage }}`, etc.
+!!! Tip
+    If you need reference information on the page, there is a `page` object 
+    e.g.: `{{ page.title }}`,
+    `{{ page.url }}`, `{{ page.is_homepage }}`, etc.
 
 ### Macros and other templating tools
 

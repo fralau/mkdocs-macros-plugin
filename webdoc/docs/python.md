@@ -7,9 +7,11 @@ Location of the module
 By default, the Python code must go into a `main.py` file in the main
 website's directory (beside the `mkdocs.yml` file).
 
-> Instead of a module file, it also be a *package* (i.e. a `main`
-> subdirectory), as long as the `declare_env` function is accessible
-> through the **init**.py file.
+
+!!! Tip
+    Instead of a module file, could also be a *package* (i.e. a `main`
+    subdirectory), as long as the `declare_env` function is accessible
+    through the `__init__.py` file.
 
 If you wish, you can change the name of that module by adding a
 `module_name` entry to the `mkdocs.yml` file (no need to add the `.py`
@@ -22,7 +24,8 @@ module_name: source_code
 The `define_env()` function
 ---------------------------
 
-> New as of version 0.3.0
+!!! Note
+    New as of version 0.3.0
 
 As a first step, you need declare a hook function called `define_env`,
 with one argument: `env` (object).
@@ -82,9 +85,6 @@ def define_env(env):
         return x.upper()[::-1]
 ```
 
-> For the pre 0.3.0 version (`define_variables()`), use `variables`
-> directly, without prefixing with `env`.
-
 Your **registration** of variables or macros for MkDocs should be done
 *within* that hook function.
 
@@ -92,16 +92,21 @@ No special imports are required (the `env` object does all the 'magic').
 On the other hand, nothing prevents you from making imports or
 declarations **outside** of the `declare_env` function.
 
-> **Note:** You can export a wide range of objects, and their attributes
-> will remain accessible to the jinja2 template via the standard Python
-> convention, e.g. `{{ foo.bar }}`. Jinja2 will even (see [more
-> information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
+!!! Tip
+    You can export a wide range of objects, and their attributes
+    will remain accessible to the jinja2 template via the standard Python
+    convention, e.g. `{{ foo.bar }}` (see [more
+    information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
 
-The `declare_variables()` function (old)
+The `declare_variables()` function (DEPRECATED)
 ----------------------------------------
 
-> This is the old paradigm, before 0.3.0 (still supported). Prefer the
-> `define_env` function.
+!!! Warning
+    `declare_variables()` is the old paradigm, before 0.3.0
+    and it is DEPRECATED. 
+    Support for this call will be discontinued in a future version.
+    
+    Use instead the `define_env()` function.
 
 As a first step, you need declare a hook function called
 `declare_variables`, with two arguments:
@@ -274,11 +279,12 @@ def define_env(env):
             raise KeyError("Branch '%s' is not in environment variables! ")
 ```
 
-> This is a place where you could check that you code will not conflict
-> with variables defined in the configuration files.
+!!! Tip
+    This is a place where you could check that you code will not conflict
+    with variables defined in the configuration files.
 
-> You may also verify other aspects of the configuration file
-> (`env.conf`). Note that the attributes of the `pluging->macro` branch
-> are automatically checked by mkdocs (type and default value).
+    You may also verify other aspects of the configuration file
+    (`env.conf`). Note that the attributes of the `pluging->macro` branch
+    are automatically checked by mkdocs (type and default value).
 
 

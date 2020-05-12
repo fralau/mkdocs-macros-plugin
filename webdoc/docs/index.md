@@ -12,6 +12,18 @@ that use **variables**, calls to **macros** and custom **filters**.
 data about the platform, the git repository (if any), etc. 
 Yet it so powerful that it could be called a "mini-framework".
 
+
+!!! Note
+
+    By using mkdocs-macros, you can **cut down the number of plugins required**
+    for your documentation project.
+
+    In a wide range of cases, **[writing your own macros](../python)**
+    (Python functions), 
+    could **save the effort of developing
+    _new_ plugins for mkdocs**.
+
+
 ### Variables
 Regular **variables** can be defined in four ways:
 
@@ -24,10 +36,7 @@ Regular **variables** can be defined in four ways:
  statement
 
 
-### Macros and Filters
-Similarly programmers can define **macros** and **filters**,
-as Python functions in the `main.py` file, which the users will then be able to
-use without much difficulty, as jinja2 directives in the markdown page.
+### Enrich markdown with templating
 
 You can leverage the power of Python in markdown thanks to jinja2
 by writing this :
@@ -46,13 +55,56 @@ Taking the standard discount into account,
 the sale price of 50 units is 450.00 EUR.
 ```
 
-> The result of a macro can be **HTML code**:
-this makes macros especially useful
-to make custom extensions to the syntax of markdown, such as buttons,
-calls to email, embedding YouTube videos, etc.
+
 
 It is possible to use the wide range of facilities provided by
 [Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
+
+### Create Your Own Macros and Filters
+
+Instead of creating countless new plugins, programmers can define 
+their **macros** and **filters**.
+
+!!! Note "Getting Started with Macros"
+    Need a function to display some repetitive markdown,
+    or environment information? 
+
+    If you are are Python programmer, go ahead and  **[create your own
+    macros and filters in Python!](../python)**
+
+    It's actually much, much easier than writing 
+    a VBA function for Excel...
+
+    Create a `module.py` file in the top directory of your mkdocs
+    project and add this call:
+
+        import ...
+
+        def define_env(env):
+          "Hook function"
+
+          @env.macro
+          def mymacro(...)
+              ...
+              return some_string
+    
+
+    You can insert a call in any markdown page of your project:
+
+        {{ mymacro(...) }}
+
+    Restart your mkdocs server.
+    
+    Et _voilà_ !
+
+
+!!! Tip "Producing HTML"
+    The result of a macro can also be **HTML code**:
+    this makes macros especially useful
+    to make custom extensions to the syntax of markdown, such as buttons,
+    calls to email, embedding YouTube videos, etc.
+
+
 
 
 ## Installation
@@ -75,7 +127,7 @@ To install the package, download it and run:
 python setup.py install
 ```
 
-### Declaration of plugin
+### Declaration of the macros plugin
 Declare the plugin in the the file `mkdocs.yml`:
 
 ```yaml
@@ -84,18 +136,24 @@ plugins:
     - macros
 ```
 
-> **Note:** If you have no `plugins` entry in your config file yet,
-you should also add the `search` plugin.
-If no `plugins` entry is set, MkDocs enables `search` by default; but
-if you use it, then you have to declare it explicitly.
+!!! Warning
+    If you are creating the `plugins` entry in your config file,
+    you should also insert a line for the `search` plugin.
+
+    In the absence of the `plugins` entry,
+    MkDocs enables `search` by default.
+    But when it is present, then you MUST declare it explicitly if you 
+    want to use it.
 
 ### Check that it works
-The recommended way to check that the plugin works properly is to add the 
-following command in one of the pages of your site (let's say `info.md`):
 
-```
-{{ macros_info() }}
-```
+!!! Tip
+    The recommended way to check that the plugin works properly is to add the 
+    following command in one of the pages of your site (let's say `info.md`):
+
+    ```
+    {{ macros_info() }}
+    ```
 
 In the terminal, restart the environment:
 
