@@ -1,26 +1,37 @@
-How to use the macros plugin
+How to Write "Enriched" Markdown Pages
 ============================
 
 Definitions
 -----------
 
--   A **variable** is a predefined value.
+### 1. Variable
+
+A **variable** is a predefined value.
     -   The primary source of variables is the `extra` namespace in the
         **config** file (by default: `mkdocs.yml`).
     -   You can add variables in the Python module.
-    -   Finally **local variables** can be added directly to each
+    -   Also **local variables** can be added directly to each
         markdown page, thanks to jinja2 directives, called `set` (those
         local variables are accessible by jinja2 directives, but not the
         Python code).
--   We call **macros**, Python functions (or callables) that will be
-    used in jinja2 snippets within the markdown pages. A macro should
-    return a *string* that can be plain, markdown or HTML.
--   A custom *filter* is a jinja2 concept. It is essentially a Python
-    function used with a different syntax,
-    e.g. `{{ 'my text ' | uppercase}}` (supposing there was a custom
-    function called `uppercase` and declared as a filter). Just as a
-    macro, a filter should return a *string* that can be plain, markdown
-    or HTML.
+
+### 2. Macro
+We call **macros**, Python functions (or callables) that will be
+used in jinja2 snippets within the markdown pages. A macro should
+return a *string* that can be plain, markdown or HTML.
+Each call to the macro in markdown page will be replaced by that result.
+
+!!! Note
+    For more information on the full concept of a macro, 
+    see [the detailed explanation](../why##use-case-overcoming-the-intrinsic-limitations-of-markdown-syntax).
+    
+### 3. Filter
+A custom **filter** is a jinja2 concept. It is essentially a Python
+function used with a different syntax,
+e.g. `{{ 'my text ' | uppercase}}` (supposing there was a custom
+function called `uppercase` and declared as a filter). Just as a
+macro, a filter should return a *string* that can be plain, markdown
+or HTML.
 
 "Batteries included": defaut variables
 --------------------------------------

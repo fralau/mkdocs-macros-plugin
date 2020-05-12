@@ -1,6 +1,6 @@
 import os
 
-SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 
 def define_env(env):
@@ -9,8 +9,6 @@ def define_env(env):
     """
 
     env.variables.cwd = os.getcwd()
-
-    env.variables.project_dir = env.project_dir
 
     # use dot notation for adding
     env.variables.baz = env.variables.fix_url('foo')
@@ -23,7 +21,7 @@ def define_env(env):
         The path is relative to the top directory of the documentation
         project.
         """
-        full_filename = os.path.join(SOURCE_DIR, filename)
+        full_filename = os.path.join(env.project_dir, filename)
         with open(full_filename, 'r') as f:
             lines = f.readlines()
         line_range = lines[start_line:end_line]

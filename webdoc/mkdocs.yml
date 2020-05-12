@@ -3,12 +3,11 @@ docs_dir: docs # indispensable or readthedocs will fail
 theme: 
   name: readthedocs
 repo_url: https://github.com/fralau/mkdocs_macros_plugin
-copyright: (C) SettleNext Laurent Franceschetti 2020
-
+copyright: © Laurent Franceschetti, 2020. This work is licensed under CC BY-SA 4.0.
 nav:
     - Home: index.md
     - 'User Guide': 
-      - "How to use": pages.md
+      - "Rich Markdown Pages": pages.md
       - "Git information": git_info.md
       - "Python module": python.md
       - "Advanced usage": advanced.md

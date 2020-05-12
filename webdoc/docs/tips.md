@@ -38,14 +38,13 @@ See the [page on git](../git_info).
 I would like to include a text file, from line a to line b
 ----------------------------------
 
-In the source directory of your documentation (where `mkdocs.yml` generally is),
+In the source directory of your MkDocs project
+(where `mkdocs.yml` generally is),
 create a file `module.py`:
 
 
 ```{.python}
 import os
-
-SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def define_env(env):
     """
@@ -64,7 +63,7 @@ def define_env(env):
         The path is relative to the top directory of the documentation
         project.
         """
-        full_filename = os.path.join(SOURCE_DIR, filename)
+        full_filename = os.path.join(env.project_dir, filename)
         with open(full_filename, 'r') as f:
             lines = f.readlines()
         line_range = lines[start_line:end_line]
@@ -72,17 +71,24 @@ def define_env(env):
 
 ```
 
+!!! Tip
+    Note how we used `env.project_dir` to identify the source directory
+    of the website's project.
+
 !!! Caution
-    This solution loads the whole file into memory, so it should not be used
-    for huge files.
+    To keep things simple, this solution reads the whole file into memory;
+    so it should not be used for huge files.
 
 In your markdown page, add the call:
 
     Here is the description:
 
-    {{ include_file('mkdocs.yml', 0, 5) }}
+    ```
+    {{ include_file('mkdocs.yml', 0, 4) }}
+    ```
 
 
-Restart the mkdocs server (or rebuild the website) and _voilà_ !
+Restart the mkdocs server (or rebuild the website) and _voilà_,
+you have the first five lines of your file!
 
 

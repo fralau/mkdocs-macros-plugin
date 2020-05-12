@@ -28,27 +28,68 @@ variables, *including callables*, typically functions, e.g.:
 Perhaps they did not think it was worth more than a few words in their
 documentation, but it was a diamond in plain sight.
 
-> **Oh yeah?** So let's call Python functions from the markdown pages of
-> MkDocs!
 
-### Macros in Wiki engines
+!!! Tip "Idea"
+    **Oh yeah?** So let's call Python functions from the markdown pages of
+    MkDocs!
 
-> **The idea of using 'macros' to speed up the process of writing web
-> pages is in fact rather old**.
+### MkDocs + git = Wiki Engine
 
-> Most wiki **engines**, which also rely on some
-> [markup](http://wiki.c2.com/?MarkupLanguage) language, had the same
-> issue of enriching the markup language of their pages, at the turn of
-> the year 2000.
+!!! Tip "Observation" 
+    **The idea of using 'macros' to speed up the process of writing web
+    pages is in fact rather old** and traces back to **wiki engines**.
 
-In response, they often implemented macros in one form or another (in
-mediawiki, they were confusingly called
-[templates](https://www.mediawiki.org/wiki/Help:Templates)). And in many
-cases, these wiki engines already relied on the double-curly-braces
-syntax.
 
-After all, a **static website generator** can be defined as a wiki whose
-online editing features have been removed, to make it "wiki-wikier"!
+[Wiki engines](https://wiki.c2.com/?WikiEngine) 
+were defined around 1995 by 
+[Ward Cunningham](https://wiki.c2.com/?WardCunningham) 
+as **software based on the
+[Wiki Principles](https://wiki.c2.com/?WikiPrinciples)**, among which:
+
+1. Easy text entry, _for which markdown is perfect_
+2. Automatic link generation
+3. Content editable by all, _whoever all means_
+4. Recent changes
+5. Search a page by title and/or contents
+6. Quick diff (see the changes made to a wiki page)
+7. Page list (list all pages in the wiki)
+8. Back Link (find all pages pointing to a page)
+
+Thee simple principles were a revolution in the management of
+online documentation.
+
+!!! Note "Conclusion"
+    The combination of **MkDocs + git easily answers all those criteria**
+    (with the possible exception of the last one), 
+    therefore **it is a wiki engine**. 
+    
+### Macros in a Wiki Engine
+
+!!! Note "Observation"
+    Most **wiki engines**, which also rely on some
+    [markup](http://wiki.c2.com/?MarkupLanguage) language, had the same
+    issue of enriching the markup language of their pages, at the turn of
+    the year 2000.
+
+    In response, they started implementing **macros** in one form or another 
+    (in mediawiki/Wikipedia, they are confusingly called
+    [templates](https://www.mediawiki.org/wiki/Help:Templates)). And in many
+    cases, these wiki engines already relied on the double-curly-braces
+    syntax.
+
+
+
+!!! Warning "The Weakness of Wiki Macros"
+
+    Wikis sometimes gave an impression that "self-developed macros"
+    where impractical, 
+    because they were sometimes extremely difficult develop.
+
+    **Atlassian Confluence** is a case in point, since 
+    [writing macros for it](https://developer.atlassian.com/server/confluence/macro-tutorials-for-confluence/) requires
+    Java development skills, as well as boilerplate code. 
+
+
 
 Use Case: Overcoming the Intrinsic Limitations of Markdown Syntax
 -----------------------------------------------------------------
@@ -59,11 +100,12 @@ simple by design.
 
 The power and appeal of markdown comes from its extreme simplicity.
 
-> The downside of markdown's powerful simplicity is that its
-> expressiveness necessarily limited.
+!!! Warning
+    The downside of markdown's powerful simplicity is that its
+    expressiveness necessarily limited.
 
-> What do you do if you want to enrich markdown pages with features like
-> buttons, fancy images, etc.?
+    What do you do if you want to enrich markdown pages with features like
+    buttons, fancy images, etc.?
 
 ### Solution 1: Markdown extensions
 
@@ -79,13 +121,24 @@ markdown_extensions:
     - footnotes
 ```
 
+!!! Tip "Advantage"
+    Some markdown extensions, such as
+    [admonition](https://squidfunk.github.io/mkdocs-material/extensions/admonition/) are particularly powerful:
+
+        !!! Note
+            This is a note
+
+    They are highly recommended.
+
 (If they are non-standard, you just have to install them first on your
 machine.)
 
-The problem is, however, that there will *always* be *something*
-specific you will want to do, for which there is no markdown extension
-available. Or the extension will be too complicated, or not quite what
-you wanted.
+
+!!! Warning "Problem"
+    The problem is, however, that there will *always* be *something*
+    specific you will want to do, for which there is no markdown extension
+    available. Or the extension will be too complicated, or not quite what
+    you wanted.
 
 Furthermore, the are limitations to the number of possible extensions,
 because extending the grammar of markdown is always a little tricky.
@@ -111,18 +164,30 @@ Here is my code:
 The combination of HTML and css works well and can solve a wide range of
 issues.
 
-But it will soon become tedious, if you have to type the same code again
-and again with some variations; and if you want to change something to
-the call (typically the css class), you will then have to manually
-change *all* instances of that code, with all the related risks. This
-solution doesn't scale.
+
+!!! Warning "Problem"
+    But it will soon become tedious, if you have to type the same code again
+    and again with some variations; and if you want to change something to
+    the call (typically the css class), you will then have to manually
+    change *all* instances of that code, with all the related risks. This
+    solution doesn't scale.
 
 ### Solution 3: Enter Macros
 
-What if you had a **macro** instead, that would allow you to write the
+!!! Tip "The Basic Idea"
+
+    A **static website generator** like **mkdocs** is nothing 
+    else than a **wiki engine**
+    whose online editing features have been removed, to make it "wiki-wikier"
+    (faster, leaner and meaner).
+
+
+
+What if mkdocs provided **macros** like a wiki engine,
+that would allow you to write the
 above HTML as:
 
-    {{button('Try this', 'http:your.website.com/page')}}
+    {{ button('Try this', 'http:your.website.com/page') }}
 
 ... that call was translated into the proper HTML?
 
@@ -133,9 +198,23 @@ or HTML!**
 And, what's more, you could *easily* (as a programmer) write your own
 new macro in Python, whenever you needed one?
 
-A **macro** is, simply stated, a *Python function* that takes a few
-arguments and returns a string. It could contain all the logic you want;
-it could be as simple as the example above, or as sophisticated as
-making a query from a database and formatting the results as markdown.
+
+!!! Note "Definition of a macro"
+    A **macro** is, simply stated, a *Python* **function** with
+    arguments that returns a string. 
+    
+    Macros are called from markdown pages. The result of each call
+    to a macro is 
+    then **embedded** into the page, before mkdocs **renders**
+    that page into a HTML page.
+
+    A macro may contain all the logic required;
+    it could be as simple as a button, or as sophisticated as
+    making a query from a database and formatting the results as markdown
+    or HTML.
+
+    **Macros** bring to **mkdocs** the power and flexibility of
+    macros from wiki engines, without their complexity.
+
 
 All of this becomes possible, thanks to **mkdocs-macros-plugin**!
