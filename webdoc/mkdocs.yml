@@ -9,7 +9,7 @@ nav:
     - 'User Guide': 
       - "Rich Markdown Pages": pages.md
       - "Git information": git_info.md
-      - "Python module": python.md
+      - "Writing macros and filters": python.md
       - "Advanced usage": advanced.md
     - Faq:
       - "Troubleshooting": troubleshooting.md

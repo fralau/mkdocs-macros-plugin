@@ -92,3 +92,34 @@ Restart the mkdocs server (or rebuild the website) and _voilà_,
 you have the first five lines of your file!
 
 
+How can I discover all attributes and methods of the `env` object?
+------------------------------------------------------------------
+
+To discover _all_ items available in the environment available, for writing
+custom macros,  you could declare the following macro:
+
+    def define_env(env):
+        """
+        This is the hook for the functions (new form)
+        """
+        @env.macro
+            def doc_env():
+                "Document the environment"
+                return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
+
+
+And call it in witin a mardkown page:
+
+    ```
+    {{ doc_env() | pprint }}
+    ```
+
+!!! Warning
+    It is probably **not** a good idea to expose the `env` object to web pages,
+    so you should think twice before using this macro
+    in a production environment.
+
+    While the consequences of exposing the `env` object (or worse, altering it)
+    have not been explored, there is likely a good potential for mischief. 
+    Whatever you do with this object, is at your
+    own peril.

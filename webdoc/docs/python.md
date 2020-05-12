@@ -1,11 +1,11 @@
-Defining variables, macros, and filters in Python code
+Defining Macros and Filters (as well as Variables) 
 ======================================================
 
 Location of the module
 ----------------------
 
 By default, the Python code must go into a `main.py` file in the main
-website's directory (beside the `mkdocs.yml` file).
+website's project directory (generally beside the `mkdocs.yml` file).
 
 
 !!! Tip
@@ -32,25 +32,16 @@ with one argument: `env` (object).
 
 This object contains the following attributes:
 
--   `variables`: the dictionary that contains the variables and macros
-    It is initialized with the values contained in the `extra` section
-    of the configuration file (and optionally, with external yaml
-    files). This object is also accessible with the dot notation;
-    e.g. `env.variables['foo']` is equivalent to `env.variables.foo`.
--   `macro`: a decorator function that you can use to declare a Python
-    function as a Jinja2 callable ('macro' for MkDocs).
--   `filters`: a list list of jinja2 filters (default None)
--   `filter`: a decorator for declaring a Python function as a jinja2
-    custom filter.
-
-> In case of conflict, jinja2 variables declared in Python will override
-> those created by users in yaml files. This is a safety feature, to
-> ensure that contributors will not accidentally break the setup defined
-> by programmers.
-
+### Registration of variables, macros and filters
 The example should be self-explanatory:
 
 ``` {.python}
+"""
+Basic example of a Mkdocs-macros module
+"""
+
+import math
+
 def define_env(env):
     """
     This is the hook for defining variables, macros and filters
@@ -59,9 +50,12 @@ def define_env(env):
     - macro: a decorator function, to declare a macro.
     """
 
+    # add to the dictionary of variables available to markdown pages:
     env.variables['baz'] = "John Doe"
-    # NOTE: you may also write:
-    #       env.variables.baz = "John Doe"
+
+    # NOTE: you may also treat env.variables as a namespace,
+    #       with the dot notation:
+    env.variables.baz = "John Doe"
 
     @env.macro
     def bar(x):
@@ -70,11 +64,9 @@ def define_env(env):
     # If you wish, you can  declare a macro with a different name:
     def f(x):
         return x * x
-
     env.macro(f, 'barbaz')
 
     # or to export some predefined function
-    import math
     env.macro(math.floor) # will be exported as 'floor'
 
 
@@ -84,19 +76,58 @@ def define_env(env):
         "Reverse a string (and uppercase)"
         return x.upper()[::-1]
 ```
+No special imports are required besides those you would need to write
+your functions (the `env` object does all the 'magic').
 
-Your **registration** of variables or macros for MkDocs should be done
-*within* that hook function.
+!!! Important 
 
-No special imports are required (the `env` object does all the 'magic').
-On the other hand, nothing prevents you from making imports or
-declarations **outside** of the `declare_env` function.
+    1. You register a **variable** for MkDocs-macros 
+       by adding a key/value pair
+       to the `env.variables` dictionary (or namespace).
+    2. You register a **macro** by **decorating** a function
+       with the expression `@env.macro`.
+    3. You register a **filter** by **decorating** a function
+       with the expression `@env.filter`.
+
+    This must be done *within* that `define_env()` function.
+    You may, however, place any imports or other declarations
+    outside of the function.
+
+
+
 
 !!! Tip
     You can export a wide range of objects, and their attributes
     will remain accessible to the jinja2 template via the standard Python
     convention, e.g. `{{ foo.bar }}` (see [more
     information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
+
+
+### Content of the env object
+
+The `env` object is used for _introspection_, i.e. is to get information
+on the project or page.
+
+Here is a list of commonly needed attributes (constants)
+or functions of that object:
+
+Item|Type|Description
+---|---|---
+`variables`|_attribute_|The namespace that contains the variables and macros that will be available in mardkown pages with `{{ ... }}` notation. This dictionary is initialized with the values contained in the `extra` section of the configuration file (and optionally, with external yaml files). This object is also accessible with the dot notation; e.g. `env.variables['foo']` is equivalent to `env.variables.foo`.
+`macro`|_function_|A decorator function that you can use to declare a Python function as a Jinja2 callable ('macro' for MkDocs).
+`filters`|_attribute_|A list list of jinja2 filters (default None)
+`filter`|_function_|A decorator for declaring a Python function as a jinja2 custom filter
+`project_dir`|_attribute_|The source directory of the MkDocs project (useful for finding or including other files)
+
+
+
+
+!!! Note
+    In case of conflict, **variables** declared in Python will override
+    those created by users in yaml files. This is a safety feature, to
+    ensure that contributors will not accidentally break the setup defined
+    by programmers.
+
 
 The `declare_variables()` function (DEPRECATED)
 ----------------------------------------
@@ -288,3 +319,20 @@ def define_env(env):
     are automatically checked by mkdocs (type and default value).
 
 
+A caution about security
+------------------------
+
+!!! Warning
+
+    It is true that you are generating static pages.
+
+    Nevertheless, think about potential side effects of macros
+    (in case of error or
+    abuse) or about the risks of exposing sensitive information,
+    **if the writers of markdown pages are different persons than
+    the maintainers of the webserver**.
+
+
+Depending on your use case, you may want to give **access to the shell**
+(e.g. for a development team). Or else, may you **want to "sandbox" your
+web pages** (for business applications). 

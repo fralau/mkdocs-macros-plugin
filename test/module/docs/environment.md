@@ -12,3 +12,9 @@
 ```
 {{ include_file('mkdocs.yml', 0, 5)}}
 ```
+
+## List env object
+
+```
+{{ doc_env() | pprint }}
+```

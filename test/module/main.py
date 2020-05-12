@@ -27,3 +27,8 @@ def define_env(env):
         line_range = lines[start_line:end_line]
         return '\n'.join(line_range)
     
+
+    @env.macro
+    def doc_env():
+        "Document the environment"
+        return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
