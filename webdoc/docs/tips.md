@@ -8,11 +8,6 @@ If you cannot find an answer in this readme, use `macros_info()` to
 display the information on all the variables, functions and filters
 available in a page.
 
-How can I create a button?
---------------------------
-
-See [Example](../python/#example-creating-a-button-macro)
-
 
 It would be great if XY function was available in mkdocs-macro...
 ----
@@ -34,6 +29,67 @@ How can I access git information?
 
 See the [page on git](../git_info).
 
+
+How can I create a button?
+--------------------------
+
+In the python module, add to the `define_env()` function:
+
+```python
+def define_env(env):
+
+    # import the predefined macro
+    fix_url = env.variables.fix_url # make relative urls point to root
+
+    @env.macro
+    def button(label, url):
+        "Add a button"
+        url = fix_url(url)
+        HTML = """<a class='button' href="%s">%s</a>"""
+        return HTML % (url, label)
+```
+
+In your markdown page:
+
+
+    {{ button('Try this', 'http:your.website.com/page') }}
+
+!!! Warning "Hyperlinks in HTML"
+
+    **The `fix_url()` function is there to fix _relative_ URLs
+    so that they seem to work as in markdown, i.e. relative paths are in
+    reference to the `docs` directory** (other URLs are left unchanged).
+    
+    **Here is the explanation:**
+    
+    Let's remember that html files are organized differently than their
+    markdown counterparts.
+    
+    If we consider the project's directory as the root directory:
+    
+    - a page in `/docs/foo.md` will be translated into `/site/foo/index.html`
+    - an attachment in `/docs/attachments/foo.pdf` will be copied under
+      `/site/attachments/foo.pdf`
+
+    The consequence is that a link to an attachment currently
+    in `/docs/attachment/foo.pdf`, e.g.:
+
+        <a href="attachments/foo.pdf">click here</a>
+
+    **will not work**.
+    
+    You would have to write instead:
+
+         <a href="../attachments/foo.pdf">click here</a>
+
+    which is unintuitive, and therefore error prone.
+
+    The purpose of `fix_url()` is to capture relative urls and lift them
+    up one level.
+
+    Supposing you had an `attachment` directory just under the `docs` directory,
+    **then a pdf could be accessed with `attachments/foo.pdf`, as you
+    would in markdown**.
 
 I would like to include a text file, from line a to line b
 ----------------------------------

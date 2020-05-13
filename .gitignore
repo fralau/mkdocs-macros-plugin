@@ -26,3 +26,6 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# MkDocs
+site/

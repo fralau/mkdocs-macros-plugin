@@ -315,7 +315,7 @@ def define_env(env):
     @env.macro
     def fix_url(url):
         """
-        If url is relative, fix so that it points to website's root.
+        If url is relative, fix it so that it points to the docs diretory.
         This is necessary because relative links in markdown must be adapted
         in html ('img/foo.png' => '../img/img.png').
         """

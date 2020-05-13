@@ -252,36 +252,7 @@ def site_info():
     return "%s/%s (theme: %s)" % info
 ```
 
-Example: Creating a Button Macro
---------------------------------
 
-In the python module, add to the `define_env()` function:
-
-```python
-def define_env(env):
-
-    # import the predefined macro
-    fix_url = env.variables.fix_url # make relative urls point to root
-
-    @env.macro
-    def button(label, url):
-        "Add a button"
-        url = fix_url(url)
-        HTML = """<a class='button' href="%s">%s</a>"""
-        return HTML % (url, label)
-```
-
-In your markdown page:
-
-
-    {{ button('Try this', 'http:your.website.com/page') }}
-
-> The `fix_url` function is optional. Its purpose is to capture relative urls
-and make them point to the root of the website,
-rather than to the `docs` directory.
-Supposing you had an `attachment` directory just under the root,
-then a pdf could be accessed e.g. with `attachment/foo.pdf`, rather
-than `../attachment/foo.pdf` (error prone).
 
 Validating environment variables in Python code
 -----------------------------------------------
