@@ -159,9 +159,9 @@ custom macros,  you could declare the following macro:
         This is the hook for the functions (new form)
         """
         @env.macro
-            def doc_env():
-                "Document the environment"
-                return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
+        def doc_env():
+            "Document the environment"
+            return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
 
 
 And call it in witin a mardkown page:

@@ -11,7 +11,7 @@ Laurent Franceschetti (c) 2020
 import os, sys, subprocess, platform
 import pkg_resources
 import datetime
-
+from dateutil.parser import parse as date_parse
 
 
 import mkdocs, jinja2
@@ -135,12 +135,15 @@ def get_git_info():
         'commit' : ['git', 'rev-parse', 'HEAD'],
         'author': ['git', 'log', '-1', "--pretty=format:%an"],
         'tag' : ['git', 'describe', '--tags'],
-        'date' : ['git', '--no-pager', 'log', '-1', '--format=%ai'],
+        'date_ISO' : ['git', '--no-pager', 'log', '-1', '--format=%ai'],
         'message' : ['git', 'log', '-1', "--pretty=%B"],
         'raw' : ['git', 'log', '-1'],
+        'root_dir': ['git', 'rev-parse', '--show-toplevel']
         }
+    
+    # always return a date, even in case of failure
+    r = { 'date': None }
     try:
-        r = {}
         for var, command in COMMANDS.items():
             # NOTE: The 'text' argument is clearer, 
             #       but for Python < 3.7, only `universal_newlines` is accepted
@@ -148,15 +151,19 @@ def get_git_info():
                                             universal_newlines=True).strip()
         # keep first part
         r['tag'] = r['tag'].split('-')[0]
+        r['date'] = date_parse(r['date_ISO'])
+        # convert 
         return r
     except subprocess.CalledProcessError as e:
         # no git repository
-        return {'diagnosis': 'No git repository',
-                'error': str(e)}
+        return r.update(
+                {'diagnosis': 'No git repository',
+                'error': str(e)})
     except FileNotFoundError as e:
         # not git command
-        return {'diagnosis': 'Git command not found',
-                'error': str(e)}
+        return r.update(
+                {'diagnosis': 'Git command not found',
+                'error': str(e)})
 
 def python_version():
     "Get the python version"

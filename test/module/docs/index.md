@@ -6,11 +6,20 @@ It costs {{ unit_price }}.
 Current working directory is '{{ cwd }}'.
 Project directory: {{ project_dir }}
 
-Git version: {{ git_version }}
+### Git version:
+{{ git.short_commit }} ({{ git.date }})
 
+{{ git.date.strftime("%b %d, %Y %H:%M:%S") }}
+
+
+({{ git.non_existent or now() }})
+
+### Page
 Page: {{ page }}
 
 Date: {{ now().year }} {{ now().month }}
+
+
 
 ## Included file
 

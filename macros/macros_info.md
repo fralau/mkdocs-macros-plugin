@@ -19,6 +19,14 @@ See also the [MkDocs documentation on the config object](https://www.MkDocs.org/
 
 {{ context(config)| pretty }}
 
+## Git Information
+Information available on the last commit and the git repository containing the
+documentation project:
+
+e.g. {{ "`{{ git.message }}`" }}
+
+{{ context(git)| pretty }}
+
 ## Page Attributes
 Provided by MkDocs. These attributes change for every page
 (the attributes shown are for this page).
