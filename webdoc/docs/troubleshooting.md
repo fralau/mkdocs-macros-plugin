@@ -55,6 +55,27 @@ the plugin's environment:
 
     {{ context() | pretty }}
 
+
+Help! mkdocs-macros is eating pieces of my documentation!
+------------------------------------------------
+
+The problem is that mkdocs-macros is believing that statements
+of the form `\{\{ .... }}` or `{% ... %}` 
+in your pages, which you want to appear in the HTML output,
+are intended for it.
+
+![dog eating ice-cream, credit: https://unsplash.com/photos/OYUzC-h1glg](../dog-eating.jpg)
+
+This result is usually **an empty string where you expected one**.
+
+For the solutions to that problem, see 
+[how to prevent interpretation of Jinja-like
+statements](../advanced/#how-to-prevent-interpretation-of-jinja-like-statements).
+
+
+
+
+
 Where Can I get Help?
 ---------------------
 
