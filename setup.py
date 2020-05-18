@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.4.8'
+VERSION_NUMBER = '0.4.9'
 
 
 def read_file(fname):
@@ -33,7 +33,8 @@ setup(
         'jinja2',
         'termcolor',
         'pyyaml',
-        'mkdocs-material'
+        'mkdocs-material',
+        'python-dateutil'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
