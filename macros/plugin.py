@@ -383,7 +383,7 @@ class MacrosPlugin(BasePlugin):
         # self.variables['files'] = files
         
         
-    def on_serve(self, server, config):
+    def on_serve(self, server, config, **kwargs):
         """
         Called when the serve command is used during development.
         This is to add files or directories to the list of "watched" 
