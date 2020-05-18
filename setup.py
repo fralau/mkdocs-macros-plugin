@@ -33,7 +33,8 @@ setup(
         'jinja2',
         'termcolor',
         'pyyaml',
-        'mkdocs-material'
+        'mkdocs-material',
+        'python-dateutil'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
