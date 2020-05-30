@@ -284,6 +284,7 @@ class MacrosPlugin(BasePlugin):
         From the configuration file, builds a Jinj2 environment
         with variables, functions and filters.
         """
+        # WARNING: this is not the config argument:
         trace("Macros arguments:", self.config)
         # define the variables as a plain dictionary
         # (for update function to work):

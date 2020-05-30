@@ -79,6 +79,15 @@ def define_env(env):
 No special imports are required besides those you would need to write
 your functions (the `env` object does all the 'magic').
 
+!!! Tip
+    You can export a wide range of objects, and their attributes
+    will remain accessible to the jinja2 template via the standard Python
+    convention, e.g. `{{ foo.bar }}` (see [more
+    information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
+
+
+### Definition of variables/macros/filters
+
 !!! Important 
 
     1. You register a **variable** for MkDocs-macros 
@@ -93,17 +102,21 @@ your functions (the `env` object does all the 'magic').
     You may, however, place any imports or other declarations
     outside of the function.
 
+### Priority of variables
+!!! Warning
+    In case of conflict, **variables** declared in the Python
+    module will override
+    those created by users in YAML files (`extra`). 
+    This is a safety feature, to ensure that the maintainers of that file 
+    will not accidentally break the setup defined
+    by programmers in the module.
+
+    Conversely, keep that fact in mind, 
+    if users start complaining that an `extra` 
+    value has a different value than the one which they expected!
 
 
-
-!!! Tip
-    You can export a wide range of objects, and their attributes
-    will remain accessible to the jinja2 template via the standard Python
-    convention, e.g. `{{ foo.bar }}` (see [more
-    information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
-
-
-### Content of the env object
+## Content of the env object
 
 The `env` object is used for _introspection_, i.e. is to get information
 on the project or page.
@@ -118,15 +131,89 @@ Item|Type|Description
 `filters`|_attribute_|A list list of jinja2 filters (default None)
 `filter`|_function_|A decorator for declaring a Python function as a jinja2 custom filter
 `project_dir`|_attribute_|The source directory of the MkDocs project (useful for finding or including other files)
+`conf`|_attribute_|This is a very useful object; it contains the [configuration information for mkdocs](https://mkdocs.readthedocs.io/en/stable/user-guide/configuration).
+
+
+!!!Tip
+    In order obtain the documents directory (`docs`), you can
+    use, within the Python module, the value: `env.conf['docs_dir']`.
+
+
+Accessing the whole config file
+-------------------------------
+
+Sometimes, you might need information from the whole config file,
+e.g. `site_description`, `theme`, `copyright`, etc.
+
+The property `conf` of the `env` object contains that information.
+
+For example you could define such a function:
+
+``` {.python}
+@env.macro
+def site_info():
+    "Return general info on the website (name, description and theme)"
+    info = (env.conf['site_name'], env.conf['site_description'],
+            env.conf['theme'].name)
+    return "%s/%s (theme: %s)" % info
+```
 
 
 
+Validating environment variables in Python code
+-----------------------------------------------
 
-!!! Note
-    In case of conflict, **variables** declared in Python will override
-    those created by users in yaml files. This is a safety feature, to
-    ensure that contributors will not accidentally break the setup defined
-    by programmers.
+By design, the call to define\_env() is the last stage of the build
+process, to create the jinja2 environment that will interpret the jinja2
+directives inserted in the markdown code.
+
+It means in particular, that you can test the variables dictionary to
+validate its key/values, and to take appropriate action.
+
+For example, to check that root branches are present in the variables
+tree:
+
+``` {.python}
+MINIMAL_BRANCHES = ('foo', 'bar', 'baz')
+def define_env(env):
+    """
+    This is the hook for defining variables, macros and filters
+    ...
+    """
+
+    # initial checks
+    for branch in MINIMAL_BRANCHES:
+        if branch not in env.variables:
+            raise KeyError("Branch '%s' is not in environment variables! ")
+```
+
+!!! Tip
+    This is a place where you could check that you code will not conflict
+    with variables defined in the configuration files.
+
+    You may also verify other aspects of the configuration file
+    (`env.conf`). Note that the attributes of the `pluging->macro` branch
+    are automatically checked by mkdocs (type and default value).
+
+
+A caution about security
+------------------------
+
+!!! Warning
+
+    It is true that you are generating static pages.
+
+    Nevertheless, think about potential side effects of macros
+    (in case of error or
+    abuse) or about the risks of exposing sensitive information,
+    **if the writers of markdown pages are different persons than
+    the maintainers of the webserver**.
+
+
+Depending on your use case, you may want to give **access to the shell**
+(e.g. for a development team). Or else, may you **want to "sandbox" your
+web pages** (for business applications). 
+
 
 
 The `declare_variables()` function (DEPRECATED)
@@ -232,78 +319,3 @@ urls (when applicable) so that they point to the root of the site:
 fix_url = env.variables.fix_url
 my_url = fix_url(url)
 ```
-
-Accessing the whole config file
--------------------------------
-
-Sometimes, you might need information from the whole config file,
-e.g. `site_description`, `theme`, `copyright`, etc.
-
-The property `conf` of the `env` object contains that information.
-
-For example you could define such a function:
-
-``` {.python}
-@env.macro
-def site_info():
-    "Return general info on the website (name, description and theme)"
-    info = (env.conf['site_name'], env.conf['site_description'],
-            env.conf['theme'].name)
-    return "%s/%s (theme: %s)" % info
-```
-
-
-
-Validating environment variables in Python code
------------------------------------------------
-
-By design, the call to define\_env() is the last stage of the build
-process, to create the jinja2 environment that will interpret the jinja2
-directives inserted in the markdown code.
-
-It means in particular, that you can test the variables dictionary to
-validate its key/values, and to take appropriate action.
-
-For example, to check that root branches are present in the variables
-tree:
-
-``` {.python}
-MINIMAL_BRANCHES = ('foo', 'bar', 'baz')
-def define_env(env):
-    """
-    This is the hook for defining variables, macros and filters
-    ...
-    """
-
-    # initial checks
-    for branch in MINIMAL_BRANCHES:
-        if branch not in env.variables:
-            raise KeyError("Branch '%s' is not in environment variables! ")
-```
-
-!!! Tip
-    This is a place where you could check that you code will not conflict
-    with variables defined in the configuration files.
-
-    You may also verify other aspects of the configuration file
-    (`env.conf`). Note that the attributes of the `pluging->macro` branch
-    are automatically checked by mkdocs (type and default value).
-
-
-A caution about security
-------------------------
-
-!!! Warning
-
-    It is true that you are generating static pages.
-
-    Nevertheless, think about potential side effects of macros
-    (in case of error or
-    abuse) or about the risks of exposing sensitive information,
-    **if the writers of markdown pages are different persons than
-    the maintainers of the webserver**.
-
-
-Depending on your use case, you may want to give **access to the shell**
-(e.g. for a development team). Or else, may you **want to "sandbox" your
-web pages** (for business applications). 

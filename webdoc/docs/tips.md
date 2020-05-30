@@ -1,6 +1,30 @@
 Tips and Tricks
 ===============
 
+How can I get the project's document directory?
+-------------------------------------
+
+From a markdown page:
+
+```markdown
+{{ config.docs_dir }}
+```
+
+From the macro module (`main.py`):
+
+```python
+env.conf['docs_dir']
+```
+
+!!! Note
+    1. `env.conf` is a pure dictionary (no dot notation in Python)
+    2. In Python, you could also access that information through 
+       `env.variables.config['docs_dir']`, but that is more 
+       complicated...
+
+
+
+
 Is there some function or variable for information XYZ?
 -------------------------------------------------------
 
@@ -169,6 +193,8 @@ And call it in witin a mardkown page:
     ```
     {{ doc_env() | pprint }}
     ```
+
+This gives the whole range of information available within a page.
 
 !!! Warning
     It is probably **not** a good idea to expose the `env` object to web pages,

@@ -32,3 +32,6 @@ def define_env(env):
     def doc_env():
         "Document the environment"
         return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
+
+    
+    env.variables.special_docs_dir = env.variables.config['docs_dir']

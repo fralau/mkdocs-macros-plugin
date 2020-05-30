@@ -4,7 +4,10 @@ It costs {{ unit_price }}.
 
 ## Info
 Current working directory is '{{ cwd }}'.
-Project directory: {{ project_dir }}
+
+**Project directory**: {{ special_docs_dir or "NOT FOUND" }}
+
+**Project directory**: {{ config.docs_dir }}
 
 ### Git version:
 {{ git.short_commit }} ({{ git.date }})
