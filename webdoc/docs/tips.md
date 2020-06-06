@@ -4,6 +4,9 @@ Tips and Tricks
 How can I get the project's document directory?
 -------------------------------------
 
+This would be the main directory where the project's 
+markdown pages are located.
+
 From a markdown page:
 
 ```markdown

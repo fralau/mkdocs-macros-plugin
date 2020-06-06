@@ -1,9 +1,13 @@
 mkdocs-macros
 =============
-** Unleash the power of Mkdocs, by using variables and macros **
+** A plugin for unleashing the power of Mkdocs, by using variables and macros **
+
+!!! Tip "Attention"
+    This is more than a plugin: it's a **mini-framework**!
 
 ## Overview
-**mkdocs-macros-plugin** is a plugin that makes it easy for contributors
+**mkdocs-macros-plugin** is a plugin/framework that
+makes it easy for contributors
 of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It transforms the markdown pages
 into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
