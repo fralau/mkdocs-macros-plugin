@@ -152,18 +152,19 @@ def get_git_info():
         # keep first part
         r['tag'] = r['tag'].split('-')[0]
         r['date'] = date_parse(r['date_ISO'])
-        # convert 
-        return r
+        # convert
     except subprocess.CalledProcessError as e:
         # no git repository
-        return r.update(
+        r.update(
                 {'diagnosis': 'No git repository',
                 'error': str(e)})
     except FileNotFoundError as e:
         # not git command
-        return r.update(
+        r.update(
                 {'diagnosis': 'Git command not found',
                 'error': str(e)})
+
+    return r
 
 def python_version():
     "Get the python version"
