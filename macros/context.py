@@ -147,8 +147,15 @@ def get_git_info():
         for var, command in COMMANDS.items():
             # NOTE: The 'text' argument is clearer, 
             #       but for Python < 3.7, only `universal_newlines` is accepted
-            r[var] = subprocess.check_output(command, 
-                                            universal_newlines=True).strip()
+            try:
+                r[var] = subprocess.check_output(command,
+                                                universal_newlines=True).strip()
+            except subprocess.CalledProcessError as e:
+                if var == 'tag' and e.returncode == 128:
+                    # this git repository has no tags
+                    r[var] = str()
+                else:
+                    raise
         # keep first part
         r['tag'] = r['tag'].split('-')[0]
         r['date'] = date_parse(r['date_ISO'])
