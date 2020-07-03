@@ -36,7 +36,7 @@ Regular **variables** can be defined in four ways:
   1. global(for contributors): in external yaml definition files
   1. global (for programmers): in a `main.py` file (Python),
     by adding them to a dictionary
-  1. local (for contributors): in the markdown file, with a `{%set variable = value %}`
+  1. local (for contributors): in the markdown file, with a `{%set variable = value %}` or `{{page.meta.*}}` variables.
  statement
 
 
