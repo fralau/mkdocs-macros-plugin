@@ -6,10 +6,9 @@
 # MIT License
 # --------------------------------------------
 
-import os, importlib, traceback
+import os, traceback
 from copy import copy
 
-import repackage
 import yaml
 from jinja2 import Environment, FileSystemLoader
 
@@ -18,7 +17,7 @@ from jinja2 import Environment, FileSystemLoader
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
 
-from .util import trace, update, SuperDict
+from .util import trace, update, SuperDict, import_module
 from .context import define_env
 
 # ------------------------------------------
@@ -215,15 +214,10 @@ class MacrosPlugin(BasePlugin):
                 ...
 
         """
-        config = self.conf
-
-        # determine the package name, from the filename:
-        python_module = self.config['module_name']
-
-        repackage.add(self.project_dir)
-        try:
-            module = importlib.import_module(python_module)
-            trace("Found external Python module '%s' in:" % python_module,
+        module_name = self.config['module_name']
+        module = import_module(self.project_dir, module_name)
+        if module:
+            trace("Found external Python module '%s' 2 in:" % module_name,
                     self.project_dir)
             # execute the hook, passing the template decorator function
             function_found = False
@@ -233,20 +227,21 @@ class MacrosPlugin(BasePlugin):
             if hasattr(module, 'declare_variables'):
                 module.declare_variables(self.variables, self.macro)
                 trace("You are using declare_variables() in the python "
-                      "module '%s'. Prefer the define_env() function "
-                      "(see documentation)!" % python_module)
+                        "module '%s'. Prefer the define_env() function "
+                        "(see documentation)!" % module_name)
                 function_found = True
             if not function_found:
                 raise NameError("No valid function found in module '%s'" %
-                                config_file)
-        except ImportError:
-            if python_module == DEFAULT_MODULE_NAME:
+                                module_name)
+        else:
+            if module_name == DEFAULT_MODULE_NAME:
                 # do not do anything if there is no main module
+                # trace("No module")
                 pass
             else:
                 raise ImportError("Macro plugin could not find custom '%s' "
                                 "module in '%s'." %
-                                (python_module, self.project_dir))
+                                (module_name, self.project_dir))
 
 
 

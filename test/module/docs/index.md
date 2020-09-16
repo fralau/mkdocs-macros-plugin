@@ -2,6 +2,12 @@
 
 It costs {{ unit_price }}.
 
+## Button
+
+This is a:
+
+{{ button ("Try this", 'https://squidfunk.github.io/mkdocs-material')}}
+
 ## Info
 Current working directory is '{{ cwd }}'.
 

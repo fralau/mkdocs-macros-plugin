@@ -6,6 +6,25 @@
 from termcolor import colored
 from copy import deepcopy
 
+import os, importlib.util
+
+def import_module(project_dir, module_name):
+    "Import a module from a pathname"
+    # get the full path
+    pathname = os.path.join(project_dir, module_name)
+    # if not a directory, then it must have a .py extension:
+    if not os.path.isdir(pathname):
+        pathname += '.py'
+    if not os.path.isfile(pathname):
+        return None
+    # import
+    spec = importlib.util.spec_from_file_location(module_name, 
+                                                  pathname)
+    module = importlib.util.module_from_spec(spec)
+    # execute the module
+    spec.loader.exec_module(module)
+    return module
+
 
 def trace(*args, **kwargs):
     "General purpose print function, with first item emphasized (color)"

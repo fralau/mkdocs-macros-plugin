@@ -292,6 +292,7 @@ def define_env(env):
         Test/debug function:
         list useful documentation on the mkdocs_macro environment.
         """
+        # NOTE: this is template
         return render_file('macros_info.md')
 
     @env.macro

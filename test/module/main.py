@@ -33,5 +33,16 @@ def define_env(env):
         "Document the environment"
         return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
 
+
+    # Optional: a special function for making relative urls point to root
+    fix_url = env.variables.fix_url
+
+    @env.macro
+    def button(label, url):
+        "Add a button"
+        url = fix_url(url)
+        HTML = """<a class='md-button' href="%s">%s</a>"""
+        return HTML % (url, label)
+
     
     env.variables.special_docs_dir = env.variables.config['docs_dir']
