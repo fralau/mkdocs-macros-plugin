@@ -26,7 +26,7 @@ Each call to the macro in markdown page will be replaced by that result.
     see [the detailed explanation](../why##use-case-overcoming-the-intrinsic-limitations-of-markdown-syntax).
     
 ### 3. Filter
-A custom **filter** is a jinja2 concept. It is essentially a Python
+A custom **filter** is a Jinja2 concept. It is essentially a Python
 function used with a different syntax,
 e.g. `{{ 'my text ' | uppercase}}` (supposing there was a custom
 function called `uppercase` and declared as a filter). Just as a
@@ -63,8 +63,8 @@ filter provided with the plugin, e.g.:
 
     {{ context(page) | pretty }}
 
-Defining variables in the configuration file
---------------------------------------------
+Configuration variables
+-----------------------
 
 To easily and quickly define custom variables, declare them in you
 `mkdocs.yml` file:
@@ -89,13 +89,39 @@ See <a href="{{ company.website }}">more information on the website</a>.
 ```
 
 
-Defining local variables and macros within the markdown page
-------------------------------------------------------------
+Local (page-level) variables and macros
+---------------------------------------
 
 If you really need a variable or macro that needs to remain **local** to
 the markdown page, you can use a standard Jinja2 declaration.
 
-### Local variables
+### In the YAML header of the page
+
+Variables defined in the YAML header of the page are accessible
+via the `page.meta` object.
+
+For example, if the the header is as follows:
+
+```yaml
+---
+title: My special title
+bottles:
+  whine: 500
+  beer: 123
+---
+```
+
+Then you can access the content using the dot notation, e.g. 
+`{ page.meta.title }}` and `{ page.meta.bottles.whine }}`.
+
+
+!!! Tip
+    `{{ page.meta }}` gives the content of the header.
+    If you wish to have it typed in a nice tabular form, you can use:
+    `{{ context(page.meta) | pretty }}`
+
+
+### Using the`Set` keyword
 
 Variables can be defined in the template with the `set` keyword, e.g.:
 
@@ -114,11 +140,7 @@ accessible from the python code.
     e.g.: `{{ page.title }}`,
     `{{ page.url }}`, `{{ page.is_homepage }}`, etc.
 
-### Macros and other templating tools
-
-> In fact, you can do [all the fancy footwork you want with
-> Jinja2](http://jinja.pocoo.org/docs/2.10/templates/), including
-> defining pure Jina2 macros, conditionals and 'for' loops!
+### Page-level macros
 
 Here is an example of macro, from the official Jinja2 documentation:
 
@@ -138,3 +160,35 @@ Which can be called (within the page) as:
 
 All definitions will remain **local** to the page.
 
+Conditionals, loops, etc.
+-------------------------
+
+With the macros plugin, you may use the [conditional](https://jinja.palletsprojects.com/en/2.11.x/templates/#if)
+statement of Jinja2, e.g.
+
+``` {.jinja2}
+### My title
+{% if  == 'bar' %}
+We will write this **first version**
+{% else %}
+_Second version_
+{% endif %}
+```
+
+You may produce Markdown or any mix of Markdown, HTML, css
+and even javascript that you wish.
+
+Similarly, you could use [for loops](https://jinja.palletsprojects.com/en/2.11.x/templates/#for):
+
+``` {.jinja2}
+### List of users
+{% set users = ['joe', 'jill', 'david', 'sam'] %}
+{% for user in users %}
+1. {{ user }}
+{% endfor %}
+```
+
+
+
+In fact, you can do [all the fancy footwork you want with
+Jinja2](http://jinja.pocoo.org/docs/2.11/templates/)!

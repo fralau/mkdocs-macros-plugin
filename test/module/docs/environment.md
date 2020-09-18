@@ -1,3 +1,10 @@
+---
+foo: "Hello world"
+bar: 
+    baz: 124
+    barbaz: "See bar + baz"
+---
+
 {{ macros_info() }}
 
 

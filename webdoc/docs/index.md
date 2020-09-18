@@ -9,12 +9,12 @@ mkdocs-macros
 **mkdocs-macros-plugin** is a plugin/framework that
 makes it easy for contributors
 of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It transforms the markdown pages
-into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
+into [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
 
 **mkdocs-macros-plugin** is very easy to use out of the box: it provides
 data about the platform, the git repository (if any), etc. 
-Yet it so powerful that it could be called a "mini-framework".
+It so powerful that it could be called a **"mini-framework"**.
 
 
 !!! Note
@@ -29,14 +29,17 @@ Yet it so powerful that it could be called a "mini-framework".
 
 
 ### Variables
-Regular **variables** can be defined in four ways:
+Regular **variables** can be defined in five different ways:
 
-  1. global (for designers of the website): in the `mkdocs.yml` file,
-    under the `extra` heading
-  1. global(for contributors): in external yaml definition files
-  1. global (for programmers): in a `main.py` file (Python),
+  1. **Global**, i.e. for the whole documentation project:
+    1. (for designers of the website): in the `mkdocs.yml` file,
+       under the `extra` heading
+    1. (for contributors): in external yaml definition files
+    1. (for programmers): in a `main.py` file (Python),
     by adding them to a dictionary
-  1. local (for contributors): in the markdown file, with a `{%set variable = value %}`
+  1. **Local**, i.e. in each Markdown page (for contributors): 
+    1. in the YAML header
+    2. in the text, with a `{%set variable = value %}`
  statement
 
 

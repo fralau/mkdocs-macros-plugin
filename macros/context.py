@@ -8,7 +8,7 @@ It contains in particular documentation functions.
 
 Laurent Franceschetti (c) 2020
 """
-import os, sys, subprocess, platform
+import os, sys, subprocess, platform, traceback
 import pkg_resources
 import datetime
 from dateutil.parser import parse as date_parse
@@ -275,16 +275,27 @@ def define_env(env):
 
     @env.filter
     def pretty(var_list):
-        """ *Default mkdocs_macro* Prettify a dictionary or object 
-        (used for environment documentation, or debugging)"""
+        """
+        *Default mkdocs_macro* Prettify a dictionary or object 
+        (used for environment documentation, or debugging).
+
+        Note: it will work only on the product of the `context()` macro
+
+        To prettify any object `obj`, thus use: `context(obj) | pretty`
+        """
         if not var_list:
             return ''
         else:
-            rows = [("<b>%s</b>" % var, "<i>%s</i>" % var_type, 
-                    content.replace('\n', '<br/>'))
-                    for var, var_type, content in var_list]
-            header = ['Variable','Type', 'Content']
-            return make_html(rows, header)
+            try:
+                rows = [("<b>%s</b>" % var, "<i>%s</i>" % var_type, 
+                        content.replace('\n', '<br/>'))
+                        for var, var_type, content in var_list]
+                header = ['Variable','Type', 'Content']
+                return make_html(rows, header)
+            except Exception as e:
+                # dont make the whole page fail:
+                return "#%s: %s\n%s" % (type(e).__name__, e,
+                                       traceback.format_exc())
 
     @env.macro
     def macros_info():
