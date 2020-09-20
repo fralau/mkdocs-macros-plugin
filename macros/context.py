@@ -142,27 +142,41 @@ def get_git_info():
         }
     
     # always return a date, even in case of failure
-    r = { 'date': None }
+    r = {'status': False, 'date': None}
     try:
         for var, command in COMMANDS.items():
             # NOTE: The 'text' argument is clearer, 
-            #       but for Python < 3.7, only `universal_newlines` is accepted
-            r[var] = subprocess.check_output(command, 
-                                            universal_newlines=True).strip()
-        # keep first part
-        r['tag'] = r['tag'].split('-')[0]
-        r['date'] = date_parse(r['date_ISO'])
+            #       but for Python < 3.7, only `universal_newlines` 
+            #       is accepted
+            try:
+                r[var] = subprocess.check_output(command, 
+                                        universal_newlines=True,
+                                        stderr=subprocess.DEVNULL).strip()
+                # keep first part
+                if var == 'tag':
+                    r[var] = r[var].split('-')[0]
+                elif var == 'date_ISO':
+                    r['date'] = date_parse(r[var])
+                r['status'] = True
+            except subprocess.CalledProcessError as e:
+                if e.returncode == 128:
+                    # generally means "unexpected error"
+                    # git status (no repo), 
+                    # git tag (no tag)
+                    r[var] = ''
+                else:
+                    # should be 1, type whatever that is
+                    r[var] = "# Cannot execute '%s': %s" % (command, e)
+            except Exception as e:
+                    # any other error, it's probably meaningless at this point
+                    r[var] = "# Unexpected error '%s': %s" % (command, e)
         # convert 
         return r
-    except subprocess.CalledProcessError as e:
-        # no git repository
-        return r.update(
-                {'diagnosis': 'No git repository',
-                'error': str(e)})
     except FileNotFoundError as e:
         # not git command
         return r.update(
-                {'diagnosis': 'Git command not found',
+                {'status': False,
+                'diagnosis': 'Git command not found',
                 'error': str(e)})
 
 def python_version():

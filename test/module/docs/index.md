@@ -1,31 +1,47 @@
 ---
+# This YAML header contains variables used inside the page.
+announcement: Hello world
 bottles:
-  whine: 500
-  beer: 123
-  whisky: 10
+  orange_juice: 500
+  coca_cola: 123
+  lemonade: 10
+  ginger_ale: 3
 ---
 
-# This is a title
+# Test Page (Modules)
 
-It costs {{ unit_price }}.
+The total costs is {{ unit_price }} euros.
+
+> The figure 50 should appear (`unit_price`), defined in config file).
 
 
 
+## Variables
+### Predefined
 
-## Info
-Current working directory is `{{ cwd }}`.
+- **Project directory**: `{{ config.docs_dir }}`
+- **Project directory**: `{{ special_docs_dir or "NOT FOUND" }}`
 
-**Project directory**: `{{ special_docs_dir or "NOT FOUND" }}`
 
-**Project directory**: `{{ config.docs_dir }}`
+### From the module
+
+> This was defined as variable `cwd` in `main.py`
+
+**Current working directory**: `{{ cwd }}`.
+
 
 ### Git version:
+
+{% if git.status %}
+
 {{ git.short_commit }} ({{ git.date }})
 
 {{ git.date.strftime("%b %d, %Y %H:%M:%S") }}
 
 
 ({{ git.non_existent or now() }})
+
+{% endif %}
 
 ### Page
 Page: {{ page }}
@@ -42,7 +58,9 @@ Enumerate:
 {% endfor %}
 
 
-## Button
+## Macro (defined in module)
+
+From the `button()` macro.
 
 This is a:
 
@@ -50,24 +68,39 @@ This is a:
 
 ## Included file
 
+With Jinja2 `include` directive (file `foo.md`)
+
+---
 {% include 'foo.md' %}
 
+---
 
-## Access meta information in the page
+## Accessing meta variables in the Markdown page
 
-Here is the content of the meta vars:
+> Those are variables in the YAML header at the top of the markdown page.
+Here is my announcement:
+
+** {{ page.meta.announcement }} **
+
+
+Here is the content of the `meta` vars:
 
 {{ context(page.meta) | pretty }}
 
+> Using the `context()` macro and the `pretty` filter.
+
 ### Dot notation 
-We have **{{ page.meta.bottles.whine }}** bottles of whine and
-**{{ page.meta.bottles.beer }}** bottles of beer
+We have **{{ page.meta.bottles.orange_juice }}** bottles of orange juice and
+**{{ page.meta.bottles.lemonade }}** bottles of lemonade
 {% raw %} 
-(respectively: `{{ page.meta.bottles.whine }}` 
-and `{ page.meta.bottles.whine }}`).
+(respectively: `{{ page.meta.bottles.orange_juice }}` 
+and `{ page.meta.bottles.lemonade }}`).
 {% endraw %}
 
-### List of bottles
+### Use of a for loop
+> Here is an example of a for loop, using Jinja2 directives.
+
 {% for bottle, quantity in page.meta.bottles.items() %}
-1. {{ bottle }}: {{ bottle }}
+1. {{ bottle }}: {{ quantity }}
 {% endfor %}
+

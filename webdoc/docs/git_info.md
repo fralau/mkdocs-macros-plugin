@@ -21,11 +21,31 @@ To have the full string (corresponding to `git log -1` on the command line):
 
     {{ git.raw }}
 
-
-
 To have, e.g. the short hash of the last commit, the date and the author:
 
     {{ git.short_commit}} ({{ git.date}}) by {{ git.author}}
+
+
+For the date, you may use the standard Python methods, e.g.
+[`strftime()`](https://docs.python.org/3.7/library/datetime.html#datetime.date.strftime):
+
+    {{ git.date.strftime("%b %d, %Y %H:%M:%S") }}
+
+
+!!! Tip "Testing for the presence of git repo"
+    If the plugin cannot find the git executable, 
+    or if the page is not in a
+    git repository, then `git.status` is set to False.
+
+    If you want to print git information only if applicable:
+
+        {% if git.status %}
+        Git: {{ git.short_commit }}
+        {% endif %}
+
+    If the page is indeed in a git repo, but `git.status`
+    is still False, try displaying `{{ git.error }}`
+
 
 ## Catalogue
 Here is a list of attributes of the git object:
@@ -42,10 +62,13 @@ Attribute | Description
 `author` | author of the commit
 `tag` | last active tage of the repo
 `date` | full date of the commit (as a date object)
- date_ISO` | full date of the commit (as an ISO string)
+`date_ISO` | full date of the commit (as an ISO string)
 `message` | full message of the last commit
 `raw` | string description of the last commit
 `root_dir` | root dir of the git repository
+`status`| is git present?
+
+
 
 
 ## Date of the last commit
