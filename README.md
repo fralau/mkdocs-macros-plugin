@@ -65,13 +65,13 @@ as conditions (`{% if ... %}`) and loops (`{% for ... %}`).
 
 Regular **variables** can be defined in five ways:
 
-No | Validity | For whom | Description
---- | --- | --- | ----
-1. | global | designer of the website | in the `mkdocs.yml` file, under the `extra` heading
-2. | global | contributor | in external yaml definition files
-3. | global | programmer | in a `main.py` file (Python), by adding them to a dictionary
-4. | local (page) | writer | in the YAML header of each Markdown page
-5. | local (page) | writer | with a `{%set variable = value %}`  statement
+| No | Validity | For whom | Description |
+| --- | --- | --- | ---- |
+| 1. | global | designer of the website | in the `mkdocs.yml` file, under the `extra` heading |
+| 2. | global | contributor | in external yaml definition files |
+| 3. | global | programmer | in a `main.py` file (Python), by adding them to a dictionary |
+| 4. | local (page) | writer | in the YAML header of each Markdown page |
+| 5. | local (page) | writer | with a `{%set variable = value %}`  statement |
 
 In addition, predefined objects are provided (local and global), typically
 for the environment, project, page, git information, etc. 
