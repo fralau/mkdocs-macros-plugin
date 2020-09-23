@@ -3,6 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 ![PyPI](https://img.shields.io/pypi/v/mkdocs-macros-plugin)
+![macros](https://img.shields.io/pypi/dm/mkdocs-macros-plugin)
 
 * **View the [MkDocs macro documentation](https://mkdocs-macros-plugin.readthedocs.io/)**
 * View the [general Mkdocs documentation](https://www.mkdocs.org/)
