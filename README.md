@@ -14,6 +14,9 @@ markdown-toc -i README.md
 <!-- toc -->
 
 - [Overview](#overview)
+  * [Using variables](#using-variables)
+  * [Defining variables](#defining-variables)
+  * [Macros and filters](#macros-and-filters)
 - [Installation](#installation)
   * [Prerequisites](#prerequisites)
   * [Standard installation](#standard-installation)
@@ -29,21 +32,8 @@ of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beaut
 into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
 
-Regular **variables** can be defined in four ways:
 
-  1. global (for designers of the website): in the `mkdocs.yml` file,
-    under the `extra` heading
-  1. global(for contributors): in external yaml definition files
-  1. global (for programmers): in a `main.py` file (Python),
-    by adding them to a dictionary
-  1. local (for contributors): in the markdown file, with a `{%set variable = value %}`
- statement
-
-
-Similarly programmers can define **macros** and **filters**,
-as Python functions in the `main.py` file, which the users will then be able to
-use without much difficulty, as jinja2 directives in the markdown page.
-
+### Using variables
 You can leverage the power of Python in markdown thanks to jinja2
 by writing this :
 
@@ -67,7 +57,30 @@ to make custom extensions to the syntax of markdown, such as buttons,
 calls to email, embedding YouTube videos, etc.
 
 It is possible to use the wide range of facilities provided by
-[Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
+[Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/) such
+as conditions (`{% if ... %}`) and loops (`{% for ... %}`).
+
+### Defining variables
+
+Regular **variables** can be defined in five ways:
+
+No | Validity | For whom | Description
+--- | --- | --- | ----
+1. | global | designer of the website | in the `mkdocs.yml` file, under the `extra` heading
+2. | global | contributor | in external yaml definition files
+3. | global | programmer | in a `main.py` file (Python), by adding them to a dictionary
+4. | local (page) | writer | in the YAML header of each Markdown page
+5. | local (page) | writer | with a `{%set variable = value %}`  statement
+
+In addition, predefined objects are provided (local and global), typically
+for the environment, project, page, git information, etc. 
+
+
+### Macros and filters
+Similarly programmers can define their own **macros** and **filters**,
+as Python functions in the `main.py` file, 
+which the users will then be able to
+use without much difficulty, as jinja2 directives in the markdown page.
 
 
 
