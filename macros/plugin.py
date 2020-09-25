@@ -215,6 +215,7 @@ class MacrosPlugin(BasePlugin):
 
         """
         module_name = self.config['module_name']
+        trace("Project dir '%s'" %  self.project_dir)
         module = import_module(self.project_dir, module_name)
         if module:
             trace("Found external Python module '%s' 2 in:" % module_name,

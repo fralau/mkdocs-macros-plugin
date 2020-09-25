@@ -1,0 +1,16 @@
+site_name: Main test site (module dir)
+theme: material
+copyright: (C) SettleNext Laurent Franceschetti 2020
+
+nav:
+    - Home: index.md
+    - Environment: environment.md
+
+plugins:
+  - search
+  - macros:
+      module_name: mymodule
+      include_dir: include
+
+extra:
+  unit_price: 50
