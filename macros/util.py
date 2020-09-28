@@ -13,20 +13,22 @@ def import_module(project_dir, module_name):
     # get the full path
     if not os.path.isdir(project_dir):
         raise FileNotFoundError("Project dir does not exist: %s" % project_dir) 
-    pathname = os.path.join(project_dir, module_name)
-    if os.path.isfile(pathname):
-        # if a file then it must have a .py extension:
-        pathname += '.py'
+    # there are 2 possibilities: dir or file
+    pathname_dir = os.path.join(project_dir, module_name)
+    pathname_file = pathname_dir + '.py'
+    if os.path.isfile(pathname_file):
         spec = importlib.util.spec_from_file_location(module_name, 
-                                                pathname)
+                                                pathname_file)
         module = importlib.util.module_from_spec(spec)
         # execute the module
         spec.loader.exec_module(module)
         return module
-    else:
+    elif os.path.isdir(pathname_dir):
         # directory
         sys.path.insert(0, project_dir)
         return importlib.import_module(module_name)
+    else:
+        return None
 
 
 

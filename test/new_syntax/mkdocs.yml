@@ -1,5 +1,5 @@
 # The purpose of this config is to test change of variable/block syntax
-site_name: My own
+site_name: Altered syntax
 theme: mkdocs
 
 nav:

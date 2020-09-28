@@ -218,7 +218,7 @@ class MacrosPlugin(BasePlugin):
         trace("Project dir '%s'" %  self.project_dir)
         module = import_module(self.project_dir, module_name)
         if module:
-            trace("Found external Python module '%s' 2 in:" % module_name,
+            trace("Found external Python module '%s' in:" % module_name,
                     self.project_dir)
             # execute the hook, passing the template decorator function
             function_found = False
@@ -315,7 +315,7 @@ class MacrosPlugin(BasePlugin):
         self._load_module()
         # Provide information:
         trace("Variables:", list(self.variables.keys()))
-        trace("extra variables:", extra)
+        trace("Extra variables (config file):", extra)
         trace("Filters:", self.filters)
         
 

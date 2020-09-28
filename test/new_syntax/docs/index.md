@@ -1,4 +1,6 @@
-# This is a title
+# With altered syntax
+
+> **Square brackets instead of curly brackets**.
 
 It costs [[ unit_price ]].
 
