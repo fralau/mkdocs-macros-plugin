@@ -259,7 +259,8 @@ def define_env(env):
                     (type(e).__name__, str(e)))
     env.variables['environment'] = system
 
-
+    # configuration of the plugin, in the yaml file:
+    env.variables['plugin'] = env.config 
 
     # git information:
     env.variables['git'] = get_git_info()

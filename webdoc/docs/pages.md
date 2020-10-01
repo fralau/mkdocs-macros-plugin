@@ -33,23 +33,20 @@ function called `uppercase` and declared as a filter). Just as a
 macro, a filter should return a *string* that can be plain, markdown
 or HTML.
 
-"Batteries included": defaut variables
+"Batteries included": defaut objects
 --------------------------------------
 
-The following variables are, in particular, available by default:
+The following objects are, in particular, available by default,
+with their set of attributes:
 
--   **config**: the standard
-    [config](https://www.mkdocs.org/user-guide/configuration/#project-information)
-    information on MkDocs' environment.
--   **page**: Info on the current page.
-    ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py))
--   **navigation**: list of all pages/sections of the website; sections
-    are themselves list of pages;
-    ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py))
--   **environment**: data on the system on which MkDocs is currently
-    running.
--   **git**: information on the git version of the website (if part of a
-    git repository)
+| Object | Description
+| -- | --
+| `config` | The standard [config](https://www.mkdocs.org/user-guide/configuration/#project-information) information on MkDocs' environment.
+| `page` | Info on the current page ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py))
+| `navigation` | List of all pages/sections of the website; sections are themselves list of pages; ([source](https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py))
+| `environment` | Data on the system on which MkDocs is currently running.
+| `plugin` | Arguments of the macro plugin, in the config file
+| `git` | Information on the git version of the website (if part of a git repository)
 
 For example, 
 
@@ -57,6 +54,7 @@ For example,
 website
 - `{{ environment.system }}` returns the name of the OS.
 - `{{ navigation.pages }}` returns a flattened list of all pages
+- `{{ plugin.module }}` name of the Python module
 
 To discover what each of these objects contain, you can use the `pretty`
 filter provided with the plugin, e.g.:
