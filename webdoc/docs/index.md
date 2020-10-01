@@ -186,14 +186,14 @@ of what you can do out of the box with the macros plugin.
 
 The other parts give you more detailed information.
 
-# Configuration of the plugin
+### Configuration of the plugin
 
 Here are all the possible arguments in the `plugin` section
 of the MkDocs' config file:
 
 | Argument | Default | Description
 | -- | -- | --
-| `module_name` | `main` | [Name of the Python module](python/#location-of-the-module) (file or directory)
+| `module_name` | `main` | [Name of the Python module](python/#location-of-the-module): file or directory, without extension; you may specify a path (e.g. `include/module`)
 | `include_dir` | | [Directory for including external files](advanced/#changing-the-directory-of-the-includes) 
 | `include_yaml`| `[]` | [List of yaml files to be included](advanced/#including-external-yaml-files)
 | `j2_block_start_string` | | [Non-standard Jinja2 marker for start of block](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
@@ -202,3 +202,13 @@ of the MkDocs' config file:
 | `j2_variable_end_string` || [Non-standard Jinja2 marker for end of variable](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 
 
+
+For example:
+
+```yaml
+plugins:
+  - search
+  - macros:
+      module_name: mymodule
+      include_dir: include
+```
