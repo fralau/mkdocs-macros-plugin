@@ -20,8 +20,8 @@ The total costs is {{ unit_price }} euros.
 ### Predefined
 
 - **Project directory**: `{{ config.docs_dir }}`
-- **Project directory**: `{{ special_docs_dir or "NOT FOUND" }}`
-
+- **Documentation dir**: `{{ special_docs_dir or "NOT FOUND" }}`
+- **Include dir**: `{{ plugin.include_dir }}`
 
 ### From the module
 
