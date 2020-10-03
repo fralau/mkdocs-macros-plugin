@@ -11,7 +11,8 @@ function warn {
 }
 
 setup="python3 setup.py"
-
+package_name=$($setup --name)
+package_version=v$($setup --version) # add a 'v' in front (git convention) 
 
 warn "UPDATE PACKAGE $package_name ($package_version) ON PYPI:"
 warn "Cleaning up..."
@@ -19,12 +20,13 @@ rm -rf dist
 rm -rf build
 warn "Recreating wheels..."
 $setup sdist bdist_wheel  1>/dev/null
-package_name=$($setup --name)
+# update version (just in case):
 package_version=v$($setup --version) # add a 'v' in front (git convention) 
 warn "---"
 warn "Upload to Pypi..."
 if twine upload --repository-url https://upload.pypi.org/legacy/ dist/* ; then
-    git tag $page_version
+    warn "... create tag $package_version, and push to remote git repo..."
+    git tag $package_version
     git push --tags
     warn "Done ($package_version)!"
 else
