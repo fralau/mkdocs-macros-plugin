@@ -8,6 +8,7 @@
 
 import os, traceback
 from copy import copy
+import importlib
 
 import yaml
 from jinja2 import Environment, FileSystemLoader
@@ -17,7 +18,7 @@ from jinja2 import Environment, FileSystemLoader
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
 
-from .util import trace, update, SuperDict, import_module
+from .util import trace, update, SuperDict, import_local_module
 from .context import define_env
 
 # ------------------------------------------
@@ -50,6 +51,8 @@ class MacrosPlugin(BasePlugin):
         # main python module:
         ('module_name',  PluginType(str, 
                                     default=DEFAULT_MODULE_NAME)),
+        ('modules', PluginType(list, 
+                                    default=[])),
         # include directory for templates ({% include ....%}):
         ('include_dir',  J2_STRING),
         # list of additional yaml files:
@@ -214,11 +217,30 @@ class MacrosPlugin(BasePlugin):
                 ...
 
         """
-        module_name = self.config['module_name']
+        # installed modules (as in pip list)
+        modules = self.config['modules']
+        if modules:
+            trace("Preinstalled modules: %s" % ','.join(modules))
+        for module_name in modules:
+            try:
+                module = importlib.import_module(module_name)
+                if hasattr(module, 'define_env'):
+                    module.define_env(self)
+                else:
+                    raise NameError("No valid function found "
+                                    "in installed module '%s'" %
+                                    module_name)
+            except ModuleNotFoundError:
+                raise ModuleNotFoundError("Could not import installed "
+                                          "module '%s' (missing?)" % 
+                                          module_name,
+                                          name=module_name)
+        # local module (file or dir)
+        local_module_name = self.config['module_name']
         trace("Project dir '%s'" %  self.project_dir)
-        module = import_module(self.project_dir, module_name)
+        module = import_local_module(self.project_dir, local_module_name)
         if module:
-            trace("Found external Python module '%s' in:" % module_name,
+            trace("Found external Python module '%s' in:" % local_module_name,
                     self.project_dir)
             # execute the hook, passing the template decorator function
             function_found = False
@@ -229,20 +251,20 @@ class MacrosPlugin(BasePlugin):
                 module.declare_variables(self.variables, self.macro)
                 trace("You are using declare_variables() in the python "
                         "module '%s'. Prefer the define_env() function "
-                        "(see documentation)!" % module_name)
+                        "(see documentation)!" % local_module_name)
                 function_found = True
             if not function_found:
                 raise NameError("No valid function found in module '%s'" %
-                                module_name)
+                                local_module_name)
         else:
-            if module_name == DEFAULT_MODULE_NAME:
+            if local_module_name == DEFAULT_MODULE_NAME:
                 # do not do anything if there is no main module
                 # trace("No module")
                 pass
             else:
                 raise ImportError("Macro plugin could not find custom '%s' "
                                 "module in '%s'." %
-                                (module_name, self.project_dir))
+                                (local_module_name, self.project_dir))
 
 
 

@@ -8,7 +8,7 @@ from copy import deepcopy
 
 import os, sys, importlib.util
 
-def import_module(project_dir, module_name):
+def import_local_module(project_dir, module_name):
     "Import a module from a pathname"
     # get the full path
     if not os.path.isdir(project_dir):

@@ -1,6 +1,7 @@
 ---
 # This YAML header contains variables used inside the page.
 announcement: Hello world
+user: Joe
 bottles:
   orange_juice: 500
   coca_cola: 123
@@ -23,11 +24,19 @@ The total costs is {{ unit_price }} euros.
 - **Documentation dir**: `{{ special_docs_dir or "NOT FOUND" }}`
 - **Include dir**: `{{ plugin.include_dir }}`
 
-### From the module
+### From the modules
+
+#### Local (main.py)
 
 > This was defined as variable `cwd` in `main.py`
 
 **Current working directory**: `{{ cwd }}`.
+
+#### Installed (`mkdocs_macros_test`)
+
+> `say_hello()` macro:
+
+{{ say_hello(page.meta.user) }}
 
 
 ### Git version:

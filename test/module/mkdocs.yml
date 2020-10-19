@@ -12,6 +12,7 @@ plugins:
   - search
   - macros:
       include_dir: include
+      modules: [mkdocs_macros_test]
 
 extra:
   unit_price: 50

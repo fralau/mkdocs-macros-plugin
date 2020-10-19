@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.4.18'
+VERSION_NUMBER = '0.4.19r'
 
 
 def read_file(fname):
@@ -33,7 +33,8 @@ setup(
         'termcolor',
         'pyyaml',
         'mkdocs-material',
-        'python-dateutil'
+        'python-dateutil',
+        'mkdocs-macros-test'
     ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
