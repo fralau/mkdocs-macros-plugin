@@ -7,13 +7,14 @@ Definitions
 ### 1. Variable
 
 A **variable** is a predefined value.
-    -   The primary source of variables is the `extra` namespace in the
-        **config** file (by default: `mkdocs.yml`).
-    -   You can add variables in the Python module.
-    -   Also **local variables** can be added directly to each
-        markdown page, thanks to jinja2 directives, called `set` (those
-        local variables are accessible by jinja2 directives, but not the
-        Python code).
+
+-   The primary source of variables is the `extra` namespace in the
+    **config** file (by default: `mkdocs.yml`).
+-   You can add variables in the Python module.
+-   Also **local variables** can be added directly to each
+    markdown page, thanks to jinja2 directives, called `set` (those
+    local variables are accessible by jinja2 directives, but not the
+    Python code).
 
 ### 2. Macro
 We call **macros**, Python functions (or callables) that will be

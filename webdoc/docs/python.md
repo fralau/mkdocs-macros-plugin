@@ -1,16 +1,31 @@
 Defining Macros and Filters (as well as Variables) 
 ======================================================
 
-Location of the module
-----------------------
+Introduction
+------------
 
-By default, the Python code must go into a `main.py` file in the main
+Modules are libraries of macros, filters and variables, which
+can be used by your MkDocs project.
+
+Every module MUST contain a
+[`define_env()` function](#the-define_env-function), 
+which contains the declarations.
+
+Location of the modules
+-----------------------
+
+### Local module
+
+By default, the Python code must go into **one** `main.py` file in the main
 website's project directory (generally beside the `mkdocs.yml` file).
+
+
+**If no `main` module is available, this is ignored.**
 
 
 !!! Tip
     Instead of a module file, could also be a *package* (i.e. a `main`
-    subdirectory), as long as the `declare_env` function is accessible
+    subdirectory), as long as the `define_env()` function is accessible
     through the `__init__.py` file.
 
 If you wish, you can change the name of that module by adding a
@@ -18,19 +33,71 @@ If you wish, you can change the name of that module by adding a
 suffix):
 
 ``` {.yaml}
-module_name: source_code
+plugins:
+  ...
+  - macros:
+        module_name: source_code
 ```
+
+** If you specify a module name, it must be available, or this will 
+raise an error.**
+
+### Adding pre-installed modules
+
+!!! Note
+    New, as of version 0.4.20.
+
+You may use pre-installed modules (which would appear with `pip list`).
+
+In that case, you must use a different argument (`modules`).  
+It is a list, so that you can declare one or more:
+
+e.g. :
+
+``` {.yaml}
+plugins:
+  ...
+  - macros:
+      modules: [mkdocs_macros_test]
+```
+
+or: 
+
+``` {.yaml}
+plugins:
+  ...
+  - macros:
+      modules: [mkdocs_macros_foo, mkdocs_macros_bar]
+```
+
+** Every module specified must be available, or this will 
+raise an error.**
+
+!!! Tip
+
+    ** It means that you can develop modules for mkdocs-macros-plugin
+    and publish them on [github](https://github.com/) and 
+    [pypi](https://pypi.org/)**.
+
+    The names of modules are not constrained. 
+    
+    As a **naming convention**, we recommend names starting with
+    `mkdocs_macros_`.
 
 The `define_env()` function
 ---------------------------
 
 !!! Note
-    New as of version 0.3.0
+    New, as of version 0.3.0
 
 As a first step, you need declare a hook function called `define_env`,
 with one argument: `env` (object).
+This object contains the environment (variables, filters, etc.) of the
+templating tool (Jinja2). 
 
-This object contains the following attributes:
+This is the information that will be used to generate the 
+pure Markdown pages, which will then be translated into HTML 
+(and displayed in a browser).
 
 ### Registration of variables, macros and filters
 The example should be self-explanatory:
@@ -94,9 +161,11 @@ your functions (the `env` object does all the 'magic').
        by adding a key/value pair
        to the `env.variables` dictionary (or namespace).
     2. You register a **macro** by **decorating** a function
-       with the expression `@env.macro`.
+       with the expression `@env.macro` 
+       (or by adding it to the `env.variables` dictionary).
     3. You register a **filter** by **decorating** a function
-       with the expression `@env.filter`.
+       with the expression `@env.filter`
+       (or by adding it to the `env.filters` dictionary).
 
     This must be done *within* that `define_env()` function.
     You may, however, place any imports or other declarations

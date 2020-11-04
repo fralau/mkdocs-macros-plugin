@@ -35,7 +35,7 @@ Regular **variables** can be defined in five different ways:
     1. (for designers of the website): in the `mkdocs.yml` file,
        under the `extra` heading
     1. (for contributors): in external yaml definition files
-    1. (for programmers): in a `main.py` file (Python),
+    1. (for programmers): in a module (Python),
     by adding them to a dictionary
   1. **Local**, i.e. in each Markdown page (for contributors): 
     1. in the YAML header
@@ -193,7 +193,8 @@ of the MkDocs' config file:
 
 | Argument | Default | Description
 | -- | -- | --
-| `module_name` | `main` | [Name of the Python module](python/#location-of-the-module): file or directory, without extension; you may specify a path (e.g. `include/module`)
+| `module_name` | `main` | [Name of the Python module](python/#local-module) containing macros, filters and variables. Indicate the file or directory, without extension; you may specify a path (e.g. `include/module`). If no `main` module is available, it is ignored.
+| `modules` | `[]`| [List of preinstalled Python modules](python/#adding-pre-installed-modules), i.e. listed by `pip list`.
 | `include_dir` | | [Directory for including external files](advanced/#changing-the-directory-of-the-includes) 
 | `include_yaml`| `[]` | [List of yaml files to be included](advanced/#including-external-yaml-files)
 | `j2_block_start_string` | | [Non-standard Jinja2 marker for start of block](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
@@ -202,7 +203,7 @@ of the MkDocs' config file:
 | `j2_variable_end_string` || [Non-standard Jinja2 marker for end of variable](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 
 
-
+___
 For example:
 
 ```yaml
