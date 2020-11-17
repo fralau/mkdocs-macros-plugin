@@ -280,8 +280,8 @@ class MacrosPlugin(BasePlugin):
         page_variables = copy(self.variables)
         meta_variables = self.variables['page'].meta
         if meta_variables:
-            trace("Metavariables for '%s':" % self.variables['page'].title, 
-                            meta_variables)
+            # trace("Metavariables for '%s':" % self.variables['page'].title, 
+            #                 meta_variables)
             page_variables.update(meta_variables)
         # expand the template
         try:
