@@ -38,6 +38,8 @@ The total costs is {{ unit_price }} euros.
 
 {{ say_hello(page.meta.user) }}
 
+This is user: {{ user }}
+
 
 ### Git version:
 

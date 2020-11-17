@@ -3,6 +3,7 @@ foo: "Hello world"
 bar: 
     baz: 124
     barbaz: "See bar + baz"
+bingo: Hello
 ---
 
 {{ macros_info() }}

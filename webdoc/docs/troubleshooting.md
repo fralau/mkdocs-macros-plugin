@@ -25,7 +25,7 @@ Adding following line in a page:
 
     {{ macros_info() }}
 
-and restarting the server in the temrinal with `mkdocs serve` will
+and restarting the server in the terminal with `mkdocs serve` will
 usually give you a wealth of information within the browser:
 
 -   If the information page appears (as e.g. phpinfo() for php), then

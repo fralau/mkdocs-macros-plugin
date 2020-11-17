@@ -94,10 +94,14 @@ Local (page-level) variables and macros
 If you really need a variable or macro that needs to remain **local** to
 the markdown page, you can use a standard Jinja2 declaration.
 
+!!! Warning
+    Note that the `context()` macro (for listing variables)
+    will **not** display variables defined at page level. 
+
 ### In the YAML header of the page
 
-Variables defined in the YAML header of the page are accessible
-via the `page.meta` object.
+Variables defined in the YAML header of the page are accessible as themselves
+and via the `page.meta` object.
 
 For example, if the the header is as follows:
 
@@ -110,8 +114,12 @@ bottles:
 ---
 ```
 
-Then you can access the content using the dot notation, e.g. 
+Then you can access the content of the YAML header in two ways:
+
+1. By name e.g. `{ title }}` and `{ bottles.whine }}`
+1. Explicitly, i.e. using the dot notation, e.g. 
 `{ page.meta.title }}` and `{ page.meta.bottles.whine }}`.
+
 
 
 !!! Tip
@@ -119,6 +127,10 @@ Then you can access the content using the dot notation, e.g.
     If you wish to have it typed in a nice tabular form, you can use:
     `{{ context(page.meta) | pretty }}`
 
+!!! Warning "Caution"
+    If variables in the metadata have the same name as variables
+    already defined (suche as `extra`, `config`, etc.) those will
+    be overwritten, but for this page only.
 
 ### Using the`Set` keyword
 

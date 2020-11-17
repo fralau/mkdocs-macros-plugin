@@ -275,10 +275,19 @@ class MacrosPlugin(BasePlugin):
 
         Returns a pure markdown/HTML page.
         """
+        # copy the page variables and update with the meta data
+        # in the YAML header:
+        page_variables = copy(self.variables)
+        meta_variables = self.variables['page'].meta
+        if meta_variables:
+            trace("Metavariables for '%s':" % self.variables['page'].title, 
+                            meta_variables)
+            page_variables.update(meta_variables)
+        # expand the template
         try:
             md_template = self.env.from_string(markdown)
             # Execute the jinja2 template and return
-            return md_template.render(**self.variables)
+            return md_template.render(**page_variables)
         except Exception as e:
             output = ["# _Macro Rendering Error_",
                         "",
@@ -436,7 +445,7 @@ class MacrosPlugin(BasePlugin):
         if not self.variables:
             return markdown
         else:
-            # Update the page info in the document
+            # Update the page info in the document (YAML)
             # page is an object with a number of properties (title, url, ...)
             # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
             self.variables["page"] = page

@@ -241,9 +241,9 @@ def define_env(env):
     This is the hook for declaring variables, macros and filters
     """
 
-    # Get data:
+    # Get data on the environment (versions)
     try:
-        system = {
+        environment = {
             'system': system_name(),
             'system_version': system_version(),
             'python_version': python_version(),
@@ -255,9 +255,9 @@ def define_env(env):
         }
     except Exception as e:
         # Avoid breaking the system if error in reading the system info:
-        system = ("<i><b>Cannot read system info!</b> %s: %s</i>" % 
+        environment = ("<i><b>Cannot read system info!</b> %s: %s</i>" % 
                     (type(e).__name__, str(e)))
-    env.variables['environment'] = system
+    env.variables['environment'] = environment
 
     # configuration of the plugin, in the yaml file:
     env.variables['plugin'] = env.config 
