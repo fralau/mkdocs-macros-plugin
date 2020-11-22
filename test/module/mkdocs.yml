@@ -13,6 +13,7 @@ plugins:
   - macros:
       include_dir: include
       modules: [mkdocs_macros_test]
+      verbose: true # toggle to true if you want to macro debug
 
 extra:
   unit_price: 50

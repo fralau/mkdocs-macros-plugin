@@ -12,7 +12,7 @@ import os, sys, subprocess, platform, traceback
 import pkg_resources
 import datetime
 from dateutil.parser import parse as date_parse
-
+from functools import partial
 
 import mkdocs, jinja2
 from jinja2 import Template
@@ -230,7 +230,35 @@ class Files(object):
         return []
 
 
+# ---------------------------------
+# Urls
+# ---------------------------------
 
+from urllib.parse import urlparse
+def is_relative(url):
+    """
+    Check whether a url is relative
+
+
+    >>> urlparse("http://www.google.com")
+    ParseResult(scheme='http', netloc='www.google.com', path='', params='', query='', fragment='')
+    >>> urlparse("../foo")
+    ParseResult(scheme='', netloc='', path='../foo', params='', query='', fragment='')
+    """
+    p = urlparse(url)
+    return (not p.scheme) and p.path
+
+def fix_url(url):
+    """
+    If url is relative, fix it so that it points to the docs diretory.
+    This is necessary because relative links in markdown must be adapted
+    in html ('img/foo.png' => '../img/img.png').
+    """
+    if is_relative(url):
+        r = "../" + url
+    else:
+        r = url
+    return r
 
 # ---------------------------------
 # Exports to the environment
@@ -332,29 +360,6 @@ def define_env(env):
         return datetime.datetime.now()
 
 
-    from urllib.parse import urlparse
-    def is_relative(url):
-        """
-        Check whether a url is relative
+    # add fix url function as macro
+    env.macro(fix_url)
 
-
-        >>> urlparse("http://www.google.com")
-        ParseResult(scheme='http', netloc='www.google.com', path='', params='', query='', fragment='')
-        >>> urlparse("../foo")
-        ParseResult(scheme='', netloc='', path='../foo', params='', query='', fragment='')
-        """
-        p = urlparse(url)
-        return (not p.scheme) and p.path
-
-    @env.macro
-    def fix_url(url):
-        """
-        If url is relative, fix it so that it points to the docs diretory.
-        This is necessary because relative links in markdown must be adapted
-        in html ('img/foo.png' => '../img/img.png').
-        """
-        if is_relative(url):
-            r = "../" + url
-        else:
-            r = url
-        return r

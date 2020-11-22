@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.4.21'
+VERSION_NUMBER = '0.5.0'
 
 
 def read_file(fname):
@@ -49,7 +49,7 @@ setup(
     packages=find_packages(exclude=['*.tests']),
     entry_points={
         'mkdocs.plugins': [
-            'macros = macros.plugin:MacrosPlugin'
+            'macros = mkdocs_macros.plugin:MacrosPlugin'
         ]
     }
 )

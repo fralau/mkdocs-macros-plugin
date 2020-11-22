@@ -1,13 +1,86 @@
 #!/usr/bin/env python3
+
+"""
+Utilities for mkdocs-macros
+"""
+
+from copy import deepcopy
+import os, sys, importlib.util
+
+from termcolor import colored
+
+# ------------------------------------------
+# Trace and debug
+# ------------------------------------------
+TRACE_COLOR = 'green'
+TRACE_PREFIX = 'macros' 
+
+import logging
+from mkdocs.utils import warning_filter
+LOG = logging.getLogger("mkdocs.plugins." + __name__)
+LOG.addFilter(warning_filter)
+
+
+def format_trace(*args):
+    """
+    General purpose print function, as trace,
+    for the mkdocs-macros framework;
+    it will appear if --verbose option is activated
+    """
+    # full_prefix = colored(TRACE_PREFIX, TRACE_COLOR)
+    # args = [full_prefix] + [str(arg) for arg in args]
+    # msg = ' '.join(args)
+    first = args[0]
+    rest = [str(el) for el in args[1:]]
+    text = "[%s] - %s" % (TRACE_PREFIX, first)
+    emphasized = colored(text, TRACE_COLOR)
+    return ' '.join([emphasized] + rest)
+
+# def trace(*args, prefix=TRACE_PREFIX, **kwargs):
+#     """
+#     General purpose print function, with first item emphasized (color)
+#     This is NOT debug: it will always be printed
+#     """
+#     first = args[0]
+#     rest = args[1:]
+#     text = "[%s] %s" % (prefix, first)
+#     emphasized = colored(text, TRACE_COLOR)
+#     print(emphasized, *rest, **kwargs)
+def trace(*args):
+    """
+    General purpose print function, as trace,
+    for the mkdocs-macros framework;
+    it will appear unless --quiet option is activated
+    """
+    msg = format_trace(*args)
+    LOG.info(msg)
+
+
+
+def debug(*args):
+    """
+    General purpose print function, as trace,
+    for the mkdocs-macros framework;
+    it will appear if --verbose option is activated
+    """
+    msg = format_trace(*args)
+    LOG.debug(msg)
+
+
+def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
+    """
+    Format information for env.chatter() in macros.
+    (This is specific for macros)
+    """
+    full_prefix = colored('[%s - %s] -' % (TRACE_PREFIX, prefix), 
+                            color)
+    args = [full_prefix] + [str(arg) for arg in args]
+    msg = ' '.join(args)
+    return msg
+
 # ------------------------------------------
 # Utilities
 # ------------------------------------------
-
-from termcolor import colored
-from copy import deepcopy
-
-import os, sys, importlib.util
-
 def import_local_module(project_dir, module_name):
     "Import a module from a pathname"
     # get the full path
@@ -29,17 +102,8 @@ def import_local_module(project_dir, module_name):
         return importlib.import_module(module_name)
     else:
         return None
+  
 
-
-
-
-def trace(*args, **kwargs):
-    "General purpose print function, with first item emphasized (color)"
-    COLOR = 'green'
-    first = args[0]
-    rest = args[1:]
-    emphasized = colored("[macros] " + first, COLOR)
-    print(emphasized, *rest, **kwargs)
 
 
 def update(d1, d2):

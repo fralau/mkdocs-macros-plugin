@@ -57,6 +57,105 @@ How can I access git information?
 See the [page on git](../git_info).
 
 
+How do I deal with relative links to documents/images?
+---------------------------------------------------
+
+### Issues
+A general problem with MkDocs is that you may encounter problems
+when referring to other pages.
+
+Suppose you want to refer to another page `foo.md` in the same
+directory (undermarkdown).
+
+
+!!! Bug "This will NOT work with hyperlinks"
+
+    Intuitively one would write:
+
+
+        See this [other page](foo)
+
+        ![This is an image](image.jpg)
+
+
+    Unfortunately, this is **NOT** going to work !
+
+!!! Tip "Correct way with hyperlinks"
+
+    The correct way is:
+
+
+        See this [other page](../foo)
+
+        ![This is an image](../image.jpg)
+
+
+
+### Explanation
+
+
+Let's remember that html files are organized differently than their
+markdown counterparts.
+
+If we consider the project's directory as the root directory:
+
+- a page in `/docs/foo.md` will be translated into `/site/foo/index.html`
+- an attachment in `/docs/attachments/foo.pdf` will be copied under
+    `/site/attachments/foo.pdf`
+
+The consequence is that a link to an attachment currently
+in `/docs/attachment/foo.pdf`, e.g.:
+
+    <a href="attachments/foo.pdf">click here</a>
+
+**will not work**.
+
+You would have to write instead:
+
+        <a href="../attachments/foo.pdf">click here</a>
+
+which is unintuitive, and therefore error prone.
+
+### The `fix_url()` function
+
+The purpose of `fix_url()` is to capture relative urls and lift them
+up one level.
+
+
+Supposing you had an `attachment` directory just under the `docs` directory,
+**then a pdf could be accessed with `attachments/foo.pdf`, as you
+would in markdown**. You could write, e.g. a macro:
+
+```python
+# note the spelling of mkdocs_macros in Python programs (underscore):
+from mkdocs_macros import fix_url 
+
+
+def define_env(env):
+    "Define macros..."
+
+    @macro
+    def image(url:str, alt:str='')
+        url = fix_url(url)
+        return '<img src="%s", alt="%s">
+```
+
+If you called, as you would expect:
+
+```python 
+{{ image('foo.jpg', alt='A foo image')}}
+```
+
+Then this would be translated as:
+```html
+<img src="../foo.jpg", alt="A foo image">
+```
+
+!!! Tip
+    The `fix_url()` function will only fix relative links,
+    and live other ones (e.g. `https://...` unchanged).
+
+
 How can I create a button?
 --------------------------
 
@@ -85,38 +184,12 @@ In your markdown page:
 
     **The `fix_url()` function is there to fix _relative_ URLs
     so that they seem to work as in markdown, i.e. relative paths are in
-    reference to the `docs` directory** (other URLs are left unchanged).
+    reference to the `docs` directory**
+    (other types of URLs are left unchanged).
+
+    See [more information on the subject of relative links](#how-do-i-deal-with-relative-links-to-documentsimages). 
     
-    **Here is the explanation:**
-    
-    Let's remember that html files are organized differently than their
-    markdown counterparts.
-    
-    If we consider the project's directory as the root directory:
-    
-    - a page in `/docs/foo.md` will be translated into `/site/foo/index.html`
-    - an attachment in `/docs/attachments/foo.pdf` will be copied under
-      `/site/attachments/foo.pdf`
 
-    The consequence is that a link to an attachment currently
-    in `/docs/attachment/foo.pdf`, e.g.:
-
-        <a href="attachments/foo.pdf">click here</a>
-
-    **will not work**.
-    
-    You would have to write instead:
-
-         <a href="../attachments/foo.pdf">click here</a>
-
-    which is unintuitive, and therefore error prone.
-
-    The purpose of `fix_url()` is to capture relative urls and lift them
-    up one level.
-
-    Supposing you had an `attachment` directory just under the `docs` directory,
-    **then a pdf could be accessed with `attachments/foo.pdf`, as you
-    would in markdown**.
 
 I would like to include a text file, from line a to line b
 ----------------------------------
@@ -208,3 +281,7 @@ This gives the whole range of information available within a page.
     have not been explored, there is likely a good potential for mischief. 
     Whatever you do with this object, is at your
     own peril.
+
+
+
+    

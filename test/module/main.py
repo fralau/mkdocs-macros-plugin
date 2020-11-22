@@ -7,6 +7,8 @@ def define_env(env):
     """
     This is the hook for the functions (new form)
     """
+    # activate trace
+    chatter = env.start_chatting("Simple module")
 
     env.variables.cwd = os.getcwd()
 
@@ -21,6 +23,7 @@ def define_env(env):
         The path is relative to the top directory of the documentation
         project.
         """
+        chatter("Including:", filename)
         full_filename = os.path.join(env.project_dir, filename)
         with open(full_filename, 'r') as f:
             lines = f.readlines()
@@ -40,6 +43,7 @@ def define_env(env):
     @env.macro
     def button(label, url):
         "Add a button"
+        chatter("Display a button:", label, url)
         url = fix_url(url)
         HTML = """<a class='md-button' href="%s">%s</a>"""
         return HTML % (url, label)

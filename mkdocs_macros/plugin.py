@@ -10,15 +10,13 @@ import os, traceback
 from copy import copy
 import importlib
 
+
 import yaml
 from jinja2 import Environment, FileSystemLoader
-
-
-
 from mkdocs.plugins import BasePlugin
 from mkdocs.config.config_options import Type as PluginType
 
-from .util import trace, update, SuperDict, import_local_module
+from .util import trace, debug, update, SuperDict, import_local_module, format_chatter, LOG
 from .context import define_env
 
 # ------------------------------------------
@@ -61,7 +59,8 @@ class MacrosPlugin(BasePlugin):
         ('j2_block_start_string',    J2_STRING),
         ('j2_block_end_string',      J2_STRING),
         ('j2_variable_start_string', J2_STRING),
-        ('j2_variable_end_string',   J2_STRING)
+        ('j2_variable_end_string',   J2_STRING),
+        ('verbose', PluginType(bool, default=False))
     )
 
 
@@ -220,7 +219,7 @@ class MacrosPlugin(BasePlugin):
         # installed modules (as in pip list)
         modules = self.config['modules']
         if modules:
-            trace("Preinstalled modules: %s" % ','.join(modules))
+            trace("Preinstalled modules: ", ','.join(modules))
         for module_name in modules:
             try:
                 module = importlib.import_module(module_name)
@@ -237,7 +236,7 @@ class MacrosPlugin(BasePlugin):
                                           name=module_name)
         # local module (file or dir)
         local_module_name = self.config['module_name']
-        trace("Project dir '%s'" %  self.project_dir)
+        debug("Project dir '%s'" %  self.project_dir)
         module = import_local_module(self.project_dir, local_module_name)
         if module:
             trace("Found external Python module '%s' in:" % local_module_name,
@@ -345,16 +344,19 @@ class MacrosPlugin(BasePlugin):
         # full control on what happened in the configuration files
         self._load_module()
         # Provide information:
-        trace("Variables:", list(self.variables.keys()))
-        trace("Extra variables (config file):", extra)
-        trace("Filters:", self.filters)
+        debug("Variables:", list(self.variables.keys()))
+        if len(extra):
+            trace("Extra variables (config file):", list(extra.keys()))
+            debug("Content of extra variables (config file):", extra)
+        if self.filters:
+            trace("Extra filters (module):", list (self.filters.keys()))
         
 
         # -------------------
         # Create the jinja2 environment:
         # -------------------
         DOCS_DIR = config.get('docs_dir')
-        trace("Docs directory:", DOCS_DIR)
+        debug("Docs directory:", DOCS_DIR)
         # define the include directory:
         # NOTE: using DOCS_DIR as default is not ideal,
         # because those files get rendered as well, which is incorrect
@@ -364,7 +366,10 @@ class MacrosPlugin(BasePlugin):
             raise FileNotFoundError("MACROS ERROR: Include directory '%s' "
                                     "does not exist!" %
                                         include_dir)
-        trace("Includes directory:", include_dir)
+        if self.config['include_dir']:
+            trace("Includes directory:", include_dir)
+        else:
+            debug("Includes directory:", include_dir)
         # will contain all parameters:
         env_config = {
             'loader': FileSystemLoader(include_dir)
@@ -421,7 +426,8 @@ class MacrosPlugin(BasePlugin):
         additional = [self.config['include_dir'] # markdown includes
                      ]
         additional = [el for el in additional if el]
-        trace("We will also watch: %s" % additional)
+        if additional:
+            trace("We will also watch:", additional)
         # necessary because of a bug in mkdocs:
         # more information in:
         # https://github.com/mkdocs/mkdocs/issues/1952))
@@ -450,3 +456,31 @@ class MacrosPlugin(BasePlugin):
             # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
             self.variables["page"] = page
             return self.render(markdown)
+
+    def start_chatting(self, prefix:str, color:str='yellow'):
+        "Generate a chatter function"
+        def chatter(*args):
+            """
+            Defines a tracer for the Verbose mode, to be used in macros.
+            If `verbose: true` in the YAML config file (under macros plugin), 
+            it will start "chattering"  
+            (talking a lot and in a friendly way, about mostly unimportant things).
+            Otherwise, it will remain silent.
+
+            If you change the `verbose` while the local server is activated,
+            (`mkdocs server`) this should be instantly reflected.
+
+            Usage:
+            -----
+            chatter = env.make_chatter('MY_MODULE_NAME')
+            chatter("This is a dull debug message.")
+
+            Will result in:
+
+            INFO    -  [macros - Simple module] - This is a dull info message.
+            """ 
+            if self.config['verbose']:         
+                LOG.info(format_chatter(*args, prefix=prefix, color=color))
+
+        return chatter
+        
