@@ -50,3 +50,11 @@ def define_env(env):
 
     
     env.variables.special_docs_dir = env.variables.config['docs_dir']
+
+
+
+def on_post_build(env):
+    "Post build action"
+    # activate trace
+    chatter = env.start_chatting("Simple module (post-build)")
+    chatter("This means `on_post_build(env)` works")

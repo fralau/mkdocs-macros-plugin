@@ -305,3 +305,94 @@ You may, of course, chose the combination that best suits your needs.
     of trouble, please do not expect help from the maintainers of this
     plugin.
 
+## Adding post-build files to the HTML website
+
+_From version 0.5_
+
+### Use case
+
+Sometimes, you want your Python code to add some files to the HTML website that
+MkDocs is producing.
+
+These could be:
+
+- an extra HTML page
+- an additional or updated image
+- a RSS feed
+- a form processor (written for example in the php language)
+- ....
+
+!!! Tip
+    The logical idea is to add files to the site (HTML) directory,
+    which is given by `env.conf['site_dir']`.
+
+!!! Note "Beware the of the 'disappeared file' trap"
+
+    One problem will occur if you attempt to add files to the site directory
+    from within the `define_env()` function in your macro module.
+
+    **The file will be created, but nevertheless it is going to "disappear".**
+
+    The reason is that the code of `define_env()` is executed during the 
+    `on_config` event of MkDocs; **and you can expect the site directory
+    to be wiped out later, during the build phase (which produces
+    the HTML files)**. So, of course, the files you
+    just created will be deleted.
+
+
+### Solution: Post-Build Actions
+
+
+
+The solution to do that, is to perform those additions
+as **post-build** actions (i.e. executed with `on_post_build` event).
+
+Here is an example. Suppose you want to add a special file (e.g. HTML).
+
+```Python
+import os
+MY_FILENAME = 'foo.html'
+my_HTML = None
+
+def define_env(env):
+    "Definition of the module"
+
+    # put here your HTML content
+    my_HTML = ......
+
+
+def on_post_build(env):
+    "Post-build actions"
+
+    site_dir = env.conf['site_dir']
+    file_path = os.path.join(site_dir, MY_FILENAME)
+    with open(file_path, 'w') as f:
+        f.write(my_HTML)
+```
+
+The mkdocs-macros plugin will pick up that function and execute it during
+as on `on_post_build()` action.
+
+!!! Warning "Argument of `on_post_build()`"
+    In this case, the argument is `env` (as for `define_env()`);
+    it is **not**
+    `config` as in the `on_post_build()` method in an MkDocs plugin.
+
+    If you want to get the plugin's arguments, you can find them in the
+    `env.conf` dictionary.
+
+!!! Note "Global variables"
+    To facilitate the communication between `define_env()` and 
+    `on_post_build` you may want to define **global variables** within
+    your module (in this example: `MY_FILENAME` and `my_HTML`).
+
+!!! Warning
+    Do not forget that any variable assigned for the first time
+    within a function is _by default_
+    a **local** variable: its content will be lost once the function
+    is fully executed.
+
+    In the example above, `my_HTML` **must** appear in the global definitions;
+    which is why it was assigned an empty value.
+
+    

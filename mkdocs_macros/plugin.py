@@ -14,7 +14,9 @@ import importlib
 import yaml
 from jinja2 import Environment, FileSystemLoader
 from mkdocs.plugins import BasePlugin
+from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
+
 
 from .util import trace, debug, update, SuperDict, import_local_module, format_chatter, LOG
 from .context import define_env
@@ -63,6 +65,35 @@ class MacrosPlugin(BasePlugin):
         ('verbose', PluginType(bool, default=False))
     )
 
+
+    def start_chatting(self, prefix:str, color:str='yellow'):
+        "Generate a chatter function (trace for macros)"
+        def chatter(*args):
+            """
+            Defines a tracer for the Verbose mode, to be used in macros.
+            If `verbose: true` in the YAML config file (under macros plugin), 
+            it will start "chattering"  
+            (talking a lot and in a friendly way,
+            about mostly unimportant things).
+            Otherwise, it will remain silent.
+
+            If you change the `verbose` while the local server is activated,
+            (`mkdocs server`) this should be instantly reflected.
+
+            Usage:
+            -----
+            chatter = env.make_chatter('MY_MODULE_NAME')
+            chatter("This is a dull debug message.")
+
+            Will result in:
+
+            INFO    -  [macros - Simple module] - This is a dull info message.
+            """ 
+            if self.config['verbose']:         
+                LOG.info(format_chatter(*args, prefix=prefix, color=color))
+
+        return chatter
+        
 
     # ------------------------------------------------
     # These properties are available in the env object
@@ -168,6 +199,19 @@ class MacrosPlugin(BasePlugin):
         return v
 
 
+    @property
+    def post_build_functions(self):
+        """
+        List of post build functions contained in modules.
+        These are deferred to the on_post_build() event.
+        """
+        try:
+            return self._post_build_functions
+        except AttributeError:
+            raise AttributeError("You have called post_build_functions property "
+                                 "too early. Does not exist yet !")
+
+
     # ----------------------------------
     # load elements
     # ----------------------------------
@@ -216,6 +260,8 @@ class MacrosPlugin(BasePlugin):
                 ...
 
         """
+        self._post_build_functions = []
+
         # installed modules (as in pip list)
         modules = self.config['modules']
         if modules:
@@ -252,6 +298,12 @@ class MacrosPlugin(BasePlugin):
                         "module '%s'. Prefer the define_env() function "
                         "(see documentation)!" % local_module_name)
                 function_found = True
+            if hasattr(module, 'on_post_build'):
+                # append the module to the list of functions
+                # `on_post_build_functions`
+                # NOTE: each of these functions requires 
+                # self (the environment).
+                self._post_build_functions.append(module.on_post_build)
             if not function_found:
                 raise NameError("No valid function found in module '%s'" %
                                 local_module_name)
@@ -457,30 +509,10 @@ class MacrosPlugin(BasePlugin):
             self.variables["page"] = page
             return self.render(markdown)
 
-    def start_chatting(self, prefix:str, color:str='yellow'):
-        "Generate a chatter function"
-        def chatter(*args):
-            """
-            Defines a tracer for the Verbose mode, to be used in macros.
-            If `verbose: true` in the YAML config file (under macros plugin), 
-            it will start "chattering"  
-            (talking a lot and in a friendly way, about mostly unimportant things).
-            Otherwise, it will remain silent.
-
-            If you change the `verbose` while the local server is activated,
-            (`mkdocs server`) this should be instantly reflected.
-
-            Usage:
-            -----
-            chatter = env.make_chatter('MY_MODULE_NAME')
-            chatter("This is a dull debug message.")
-
-            Will result in:
-
-            INFO    -  [macros - Simple module] - This is a dull info message.
-            """ 
-            if self.config['verbose']:         
-                LOG.info(format_chatter(*args, prefix=prefix, color=color))
-
-        return chatter
-        
+    def on_post_build(self, config: config_options.Config):
+        """
+        Hook for post build actions, typically adding
+        raw files to the setup.
+        """
+        for func in self.post_build_functions:
+            func(self)
