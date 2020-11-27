@@ -101,8 +101,17 @@ pip install mkdocs-macros-plugin
 ### "Manual installation"
 To install the package, download it and run:
 
-```python
+```
+pip install .
+# or...
 python setup.py install
+```
+
+### Development/test installation
+To install the extra dependencies required for testing the package, run:
+
+```
+pip install "mkdocs-macros-plugin[test]"
 ```
 
 ### Declaration of plugin
