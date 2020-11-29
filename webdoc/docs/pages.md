@@ -116,9 +116,9 @@ bottles:
 
 Then you can access the content of the YAML header in two ways:
 
-1. By name e.g. `{ title }}` and `{ bottles.whine }}`
+1. By name e.g. `{{ title }}` and `{{ bottles.whine }}`
 1. Explicitly, i.e. using the dot notation, e.g. 
-`{ page.meta.title }}` and `{ page.meta.bottles.whine }}`.
+`{{ page.meta.title }}` and `{{ page.meta.bottles.whine }}`.
 
 
 
