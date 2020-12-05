@@ -200,6 +200,58 @@ class MacrosPlugin(BasePlugin):
 
 
     @property
+    def page(self):
+        """
+        The page information
+        """
+        try:
+            return self._page
+        except AttributeError:
+            raise AttributeError("Too early: page information is not available"
+                                 "at this stage!")
+
+
+    @property
+    def raw_markdown(self):
+        """
+        The page information
+        """
+        try:
+            return self._raw_markdown
+        except AttributeError:
+            raise AttributeError("Too early: raw markdown is not available"
+                                 "at this stage!")
+
+    # ----------------------------------
+    # Function lists, for later events
+    # ----------------------------------
+
+    @property
+    def pre_macro_functions(self):
+        """
+        List of pre-macro functions contained in modules.
+        These are deferred to the on_page_markdown() event.
+        """
+        try:
+            return self._pre_macro_functions
+        except AttributeError:
+            raise AttributeError("You called the pre_macro_functions property "
+                                 "too early. Does not exist yet !")
+
+
+    @property
+    def post_macro_functions(self):
+        """
+        List of post-macro functions contained in modules.
+        These are deferred to the on_page_markdown() event.
+        """
+        try:
+            return self._post_macro_functions
+        except AttributeError:
+            raise AttributeError("You called the post_macro_functions property "
+                                 "too early. Does not exist yet !")
+
+    @property
     def post_build_functions(self):
         """
         List of post build functions contained in modules.
@@ -208,8 +260,10 @@ class MacrosPlugin(BasePlugin):
         try:
             return self._post_build_functions
         except AttributeError:
-            raise AttributeError("You have called post_build_functions property "
+            raise AttributeError("You called post_build_functions property "
                                  "too early. Does not exist yet !")
+
+
 
 
     # ----------------------------------
@@ -260,6 +314,8 @@ class MacrosPlugin(BasePlugin):
                 ...
 
         """
+        self._pre_macro_functions = [] 
+        self._post_macro_functions = [] 
         self._post_build_functions = []
 
         # installed modules (as in pip list)
@@ -287,26 +343,32 @@ class MacrosPlugin(BasePlugin):
         if module:
             trace("Found external Python module '%s' in:" % local_module_name,
                     self.project_dir)
-            # execute the hook, passing the template decorator function
+            # execute the hook for the macros
             function_found = False
             if hasattr(module, 'define_env'):
                 module.define_env(self)
                 function_found = True
             if hasattr(module, 'declare_variables'):
+                # this is for compatibility (DEPRECATED)
                 module.declare_variables(self.variables, self.macro)
                 trace("You are using declare_variables() in the python "
                         "module '%s'. Prefer the define_env() function "
                         "(see documentation)!" % local_module_name)
                 function_found = True
-            if hasattr(module, 'on_post_build'):
-                # append the module to the list of functions
-                # `on_post_build_functions`
-                # NOTE: each of these functions requires 
-                # self (the environment).
-                self._post_build_functions.append(module.on_post_build)
             if not function_found:
                 raise NameError("No valid function found in module '%s'" %
                                 local_module_name)
+            # DECLARE additional event functions
+            # NOTE: each of these functions requires self (the environment).
+            def add_function(funcname:str, funclist:list):
+                "Add an optional function to the module"
+                if hasattr(module, funcname):
+                    func = getattr(module, funcname)
+                    funclist.append(func)
+            add_function('on_pre_page_macros', self.pre_macro_functions)
+            add_function('on_post_page_macros', self.post_macro_functions)
+            add_function('on_post_build', self.post_build_functions)
+
         else:
             if local_module_name == DEFAULT_MODULE_NAME:
                 # do not do anything if there is no main module
@@ -500,19 +562,30 @@ class MacrosPlugin(BasePlugin):
         # the site_navigation argument has been made optional
         # (deleted in post-1.0 mkdocs, but maintained here
         # for backward compatibility)
+        # We REALLY want the same object
+        self._page = page
         if not self.variables:
             return markdown
         else:
-            # Update the page info in the document (YAML)
+            # Update the page info in the document
             # page is an object with a number of properties (title, url, ...)
             # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
-            self.variables["page"] = page
-            return self.render(markdown)
+            self.variables["page"] = copy(page)
+            # execute the pre-macro functions in the various modules
+            for func in self.pre_macro_functions:
+                func(self)
+            # render the macros
+            self._raw_markdown = self.render(markdown)
+            # execute the post-macro functions in the various modules
+            for func in self.post_macro_functions:
+                func(self)
+            return self.raw_markdown
 
     def on_post_build(self, config: config_options.Config):
         """
         Hook for post build actions, typically adding
         raw files to the setup.
         """
+        # exeute the functions in the various modules
         for func in self.post_build_functions:
             func(self)

@@ -141,6 +141,252 @@ of conflict, the plugin will attempt to privilege the latest branch.
     algorithm might not work as you expect.
 
 
+
+
+## What you can and can't do with `define_env()`
+
+The fact is that you **cannot** actually access page information
+in the `define_env()` function, since
+it operates at the configuration stage of the page building process 
+(during the [`on_config()` event of MkDocs](https://www.mkdocs.org/user-guide/plugins/#on_config)). 
+At that point, **you don't have access to specific pages**
+
+
+!!! Warning "Vital Note on mkdocs-macros" 
+    Of course, you **can** declare **macros**, which **appear** to act on pages. 
+    But realize that these are only **declarations** and that their
+    execution is **deferred**. 
+    The macros will actually be run ** later** 
+    (by MkDocs' [`on_page_markdown()` event](https://www.mkdocs.org/user-guide/plugins/#on_page_markdown)),
+    just before the markdown is rendered. The framework is so organized
+    that, in macros, you are actually "talking" about objects that don't exist yet.
+
+    So you **cannot** influence the rendering process other than by
+    adding macros, variables and filters to `mkdocs_macros`.
+
+
+
+
+
+!!! Danger "Do not modify system entities in `env.variables`"
+
+    Also, the system information in `env.variables`
+    is for **reading** purposes.
+    You could modify it in your Python code, of course (at your own peril).
+    But **by design**, it may have no effect on the mechanics
+    of `mkdocs` (these are shallow copies). 
+
+    Whatever you do in that way, is likely to be branded **black magic**.
+
+
+
+## Directly influencing the markdown generated
+
+_From version 0.5.2_
+
+There are specific cases where you want your code to be able to modify
+the markdown code of a **page**, **before or after**
+the macros have been processed.
+
+### Use Case
+Typically, you may want to programmatically add some meta values to a page,
+to be forwarded to the HTML template.
+
+For example you'd want to be able to always have a value for this:
+
+```HTML
+<meta name="description" content="{{ page.meta.description }}" />
+```
+!!! Warning
+    Note that in the snippet above, Jinja2 is used by
+    MkDocs to produce HTML pages.
+    This is **completely distinct** from MkDocs-macros' use of Jinja2
+    on Markdown pages (it occurs at a later stage).
+
+
+
+Normally [metadata would be defined in the YAML header of the markdown page](https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data):
+
+```YAML
+---
+title: my title
+description: This is a description
+---
+```
+
+!!! Note "Issue"
+    **But supposing this was not the case ?** Or supposing you want
+    to check or alter that information?
+
+
+
+### Solution
+To act on such cases that vary with each markdown page (and depend on
+each page, not on the general configuration), 
+you may use the two functions, before the markdown is actually rendered:
+
+1. `on_pre_page_macros(env)` : ** before ** the macros are interpreted
+   (macros are still present).
+1. `on_post_page_macros(env)` : ** after ** the macros are rendered
+   (macros have been interpreted). At that point you have an
+   `env.raw_markdown` property available.
+
+
+
+For example:
+
+```python
+def on_post_page_macros(env):
+    """
+    Actions to be done after macro interpretation,
+    just before the markdown is generated
+    """
+    env.page.meta['description'] = ...
+```
+This information will get carried into the HTML template.
+
+
+
+### Additional Notes for `on_pre_page_macros()` and `on_post_page_macros()`
+
+#### Time of execution
+
+They are executed by the [`on_page_markdown()` event of MkDocs](https://www.mkdocs.org/user-guide/plugins/#on_page_markdown):
+
+- ** before** the rendering the page
+- ** before or after** interpretation of the macros, respectively
+
+
+They operates on a single page.
+
+
+
+#### Content and availability of `env.page`
+The `page` attribute of `env`, which contains much information specific to the
+page (title, filename, metadata, etc.), is available only from the point
+of `on_pre_page_macros()` on. 
+
+It is **not** available for the `define_env(env)` function.
+
+It contains notably the following information:
+
+Attribute | Value
+--- | -----
+`title` | title of the page
+`abs_url` | the absolute url of the page from the top of the hierarchy
+`canonical_url`| the complete url of the page (typically with `https://...`)
+`markdown` | the whole markdown code (**before** interpretation; for the **interpreted markdown**, use instead `env.raw_markdown`, see below).
+`meta` | the meta data dictionary, as updated (typically) from the YAML header.
+
+---
+
+#### Accessing the raw markdown
+
+For the `on_post_page_macros()` event,
+the `env` object contains a `raw_markdown` attribute,
+which contains the markdown with the macros already interpreted.
+
+!!! Tip "In case of need"
+    If the code of the macro modifies `env.raw_markdown`,
+    the modifications **will** be reflected in the final HTML page.
+
+#### Use of Global variables
+To facilitate the communication between `define_env()` and 
+`on_page_markdown()` you may want to define **global variables** within
+your module. For a refresher on this, 
+[see the summary on W3 Schools](https://www.w3schools.com/python/gloss_python_global_variables.asp). 
+
+## Adding post-build files to the HTML website
+
+_From version 0.5_
+
+### Use case
+
+Sometimes, you want your Python code to add some files to the HTML website that
+MkDocs is producing.
+
+These could be:
+
+- an extra HTML page
+- an additional or updated image
+- a RSS feed
+- a form processor (written for example in the php language)
+- ....
+
+!!! Tip
+    The logical idea is to add files to the site (HTML) directory,
+    which is given by `env.conf['site_dir']`.
+
+!!! Note "Beware the of the 'disappeared file' trap"
+
+    One problem will occur if you attempt to add files to the site directory
+    from within the `define_env()` function in your macro module.
+
+    **The file will be created, but nevertheless it is going to "disappear".**
+
+    The reason is that the code of `define_env()` is executed during the 
+    `on_config` event of MkDocs; **and you can expect the site directory
+    to be wiped out later, during the build phase (which produces
+    the HTML files)**. So, of course, the files you
+    just created will be deleted.
+
+
+### Solution: Post-Build Actions
+
+
+
+The solution to do that, is to perform those additions
+as **post-build** actions (i.e. executed with `on_post_build` event).
+
+Here is an example. Suppose you want to add a special file (e.g. HTML).
+
+```Python
+import os
+MY_FILENAME = 'foo.html'
+my_HTML = None
+
+def define_env(env):
+    "Definition of the module"
+
+    # put here your HTML content
+    my_HTML = ......
+
+
+def on_post_build(env):
+    "Post-build actions"
+
+    site_dir = env.conf['site_dir']
+    file_path = os.path.join(site_dir, MY_FILENAME)
+    with open(file_path, 'w') as f:
+        f.write(my_HTML)
+```
+
+The mkdocs-macros plugin will pick up that function and execute it during
+as on `on_post_build()` action.
+
+!!! Warning "Argument of `on_post_build()`"
+    In this case, the argument is `env` (as for `define_env()`);
+    it is **not**
+    `config` as in the `on_post_build()` method in an MkDocs plugin.
+
+    If you want to get the plugin's arguments, you can find them in the
+    `env.conf` dictionary.
+
+!!! Note "Global variables"
+    To facilitate the communication between `define_env()` and 
+    `on_post_build` you may want to define **global variables** within
+    your module (in this example: `MY_FILENAME` and `my_HTML`).
+
+!!! Warning
+    Do not forget that any variable assigned for the first time
+    within a function is _by default_
+    a **local** variable: its content will be lost once the function
+    is fully executed.
+
+    In the example above, `my_HTML` **must** appear in the global definitions;
+    which is why it was assigned an empty value.
+
+    
 How to prevent interpretation of Jinja-like statements
 ------------------------
 
@@ -304,95 +550,3 @@ You may, of course, chose the combination that best suits your needs.
     consequences. **Use with discretion, and at your own risk**. In case
     of trouble, please do not expect help from the maintainers of this
     plugin.
-
-## Adding post-build files to the HTML website
-
-_From version 0.5_
-
-### Use case
-
-Sometimes, you want your Python code to add some files to the HTML website that
-MkDocs is producing.
-
-These could be:
-
-- an extra HTML page
-- an additional or updated image
-- a RSS feed
-- a form processor (written for example in the php language)
-- ....
-
-!!! Tip
-    The logical idea is to add files to the site (HTML) directory,
-    which is given by `env.conf['site_dir']`.
-
-!!! Note "Beware the of the 'disappeared file' trap"
-
-    One problem will occur if you attempt to add files to the site directory
-    from within the `define_env()` function in your macro module.
-
-    **The file will be created, but nevertheless it is going to "disappear".**
-
-    The reason is that the code of `define_env()` is executed during the 
-    `on_config` event of MkDocs; **and you can expect the site directory
-    to be wiped out later, during the build phase (which produces
-    the HTML files)**. So, of course, the files you
-    just created will be deleted.
-
-
-### Solution: Post-Build Actions
-
-
-
-The solution to do that, is to perform those additions
-as **post-build** actions (i.e. executed with `on_post_build` event).
-
-Here is an example. Suppose you want to add a special file (e.g. HTML).
-
-```Python
-import os
-MY_FILENAME = 'foo.html'
-my_HTML = None
-
-def define_env(env):
-    "Definition of the module"
-
-    # put here your HTML content
-    my_HTML = ......
-
-
-def on_post_build(env):
-    "Post-build actions"
-
-    site_dir = env.conf['site_dir']
-    file_path = os.path.join(site_dir, MY_FILENAME)
-    with open(file_path, 'w') as f:
-        f.write(my_HTML)
-```
-
-The mkdocs-macros plugin will pick up that function and execute it during
-as on `on_post_build()` action.
-
-!!! Warning "Argument of `on_post_build()`"
-    In this case, the argument is `env` (as for `define_env()`);
-    it is **not**
-    `config` as in the `on_post_build()` method in an MkDocs plugin.
-
-    If you want to get the plugin's arguments, you can find them in the
-    `env.conf` dictionary.
-
-!!! Note "Global variables"
-    To facilitate the communication between `define_env()` and 
-    `on_post_build` you may want to define **global variables** within
-    your module (in this example: `MY_FILENAME` and `my_HTML`).
-
-!!! Warning
-    Do not forget that any variable assigned for the first time
-    within a function is _by default_
-    a **local** variable: its content will be lost once the function
-    is fully executed.
-
-    In the example above, `my_HTML` **must** appear in the global definitions;
-    which is why it was assigned an empty value.
-
-    
