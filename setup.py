@@ -32,10 +32,11 @@ setup(
         'jinja2',
         'termcolor',
         'pyyaml',
-        'mkdocs-material',
         'python-dateutil',
-        'mkdocs-macros-test'
     ],
+    extras_require={
+        'test': ['mkdocs-macros-test', 'mkdocs-material'],
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
