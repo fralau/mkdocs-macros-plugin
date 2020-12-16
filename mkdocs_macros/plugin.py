@@ -144,11 +144,6 @@ class MacrosPlugin(BasePlugin):
         CONFIG_FILE = self.conf['config_file_path']
         return os.path.dirname(os.path.abspath(CONFIG_FILE))
 
-    @property
-    def module_name(self):
-        "The module filename/directory name (empty if none actually exists)"
-        return self._module_name
-
 
     def macro(self, v, name=''):
         """
@@ -226,9 +221,6 @@ class MacrosPlugin(BasePlugin):
         except AttributeError:
             raise AttributeError("Too early: raw markdown is not available"
                                  "at this stage!")
-
-
-
 
     # ----------------------------------
     # Function lists, for later events
@@ -345,7 +337,7 @@ class MacrosPlugin(BasePlugin):
                                           module_name,
                                           name=module_name)
         # local module (file or dir)
-        self._module_name = local_module_name = self.config['module_name']
+        local_module_name = self.config['module_name']
         debug("Project dir '%s'" %  self.project_dir)
         module = import_local_module(self.project_dir, local_module_name)
         if module:
@@ -381,7 +373,7 @@ class MacrosPlugin(BasePlugin):
             if local_module_name == DEFAULT_MODULE_NAME:
                 # do not do anything if there is no main module
                 # trace("No module")
-                self._module_name == ''
+                pass
             else:
                 raise ImportError("Macro plugin could not find custom '%s' "
                                 "module in '%s'." %
@@ -548,19 +540,13 @@ class MacrosPlugin(BasePlugin):
         additional = [self.config['include_dir'] # markdown includes
                      ]
         additional = [el for el in additional if el]
-        if self.module_name:
-            # add the local module or directory
-            additional.append(self.module_name)
         if additional:
             trace("We will also watch:", additional)
         # necessary because of a bug in mkdocs:
         # more information in:
         # https://github.com/mkdocs/mkdocs/issues/1952))
-        # This has been fixed (https://github.com/mkdocs/mkdocs/pull/2071) 
-        # but we keep it there for retro-compatibility
         builder = list(server.watcher._tasks.values())[0]["func"]
         # go ahead and watch
-        # https://www.mkdocs.org/user-guide/plugins/#on_serve
         for el in additional:
             if el:
                 server.watch(el, builder)        
