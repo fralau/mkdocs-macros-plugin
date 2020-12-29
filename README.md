@@ -5,7 +5,7 @@
 ![PyPI](https://img.shields.io/pypi/v/mkdocs-macros-plugin)
 ![macros](https://img.shields.io/pypi/dm/mkdocs-macros-plugin)
 
-* **View the [MkDocs macro documentation](https://mkdocs-macros-plugin.readthedocs.io/)**
+* **View the [MkDocs macro documentation](https://mkdocs-macros-plugin.readthedocs.io/) on Read the Docs**
 * View the [general Mkdocs documentation](https://www.mkdocs.org/)
 
 <!-- To update, run the following command:
@@ -14,16 +14,18 @@ markdown-toc -i README.md
 
 <!-- toc -->
 
-- [Overview](#overview)
-  * [Using variables](#using-variables)
-  * [Defining variables](#defining-variables)
-  * [Macros and filters](#macros-and-filters)
-- [Installation](#installation)
-  * [Prerequisites](#prerequisites)
-  * [Standard installation](#standard-installation)
-  * ["Manual installation"](#manual-installation)
-  * [Declaration of plugin](#declaration-of-plugin)
-  * [Check that it works](#check-that-it-works)
+- [mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros](#mkdocs-macros-plugin-unleash-the-power-of-mkdocs-with-variables-and-macros)
+  - [Overview](#overview)
+    - [Using variables](#using-variables)
+    - [Defining variables](#defining-variables)
+    - [Macros and filters](#macros-and-filters)
+  - [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Standard installation](#standard-installation)
+    - ["Manual installation"](#manual-installation)
+    - [Development/test installation](#developmenttest-installation)
+    - [Declaration of plugin](#declaration-of-plugin)
+    - [Check that it works](#check-that-it-works)
 
 <!-- tocstop -->
 
@@ -32,6 +34,9 @@ markdown-toc -i README.md
 of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It transforms the markdown pages
 into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
+
+> **You can also partially replace MkDocs plugins with mkdocs-macros modules,
+> and [pluglets](https://mkdocs-macros-plugin.readthedocs.io/en/latest/pluglets/) > (pre-installed modules).**
 
 
 ### Using variables

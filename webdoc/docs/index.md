@@ -135,7 +135,8 @@ pip install mkdocs-macros-plugin
 ```
 
 ### "Manual installation"
-To install the package, download it and run:
+To install the package, download the code from its
+[github page](https://github.com/fralau/mkdocs_macros_plugin/) and run:
 
 ```python
 python setup.py install
