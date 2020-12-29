@@ -27,3 +27,8 @@ def define_env(env):
 
     
     env.variables.special_docs_dir = env.variables.config['docs_dir']
+
+    @env.macro
+    def show_nav():
+        "Show the navigation"
+        return env.conf['nav']

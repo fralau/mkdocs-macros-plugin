@@ -1,10 +1,10 @@
-Defining Macros and Filters (as well as Variables) 
-======================================================
+Writing modules
+===============
 
 Introduction
 ------------
 
-Modules are libraries of macros, filters and variables, which
+**Modules** are libraries of macros, filters and variables, which
 can be used by your MkDocs project.
 
 Every module MUST contain a
@@ -42,47 +42,11 @@ plugins:
 ** If you specify a module name, it must be available, or this will 
 raise an error.**
 
-### Adding pre-installed modules
+### Preinstalled modules (pluglets)
 
-!!! Note
-    New, as of version 0.4.20.
+If you wish to re-use modules across several documentation projects,
+you may want to pre-install them, turning them into [**pluglets**](../pluglets).
 
-You may use pre-installed modules (which would appear with `pip list`).
-
-In that case, you must use a different argument (`modules`).  
-It is a list, so that you can declare one or more:
-
-e.g. :
-
-``` {.yaml}
-plugins:
-  ...
-  - macros:
-      modules: [mkdocs_macros_test]
-```
-
-or: 
-
-``` {.yaml}
-plugins:
-  ...
-  - macros:
-      modules: [mkdocs_macros_foo, mkdocs_macros_bar]
-```
-
-** Every module specified must be available, or this will 
-raise an error.**
-
-!!! Tip
-
-    ** It means that you can develop modules for mkdocs-macros-plugin
-    and publish them on [github](https://github.com/) and 
-    [pypi](https://pypi.org/)**.
-
-    The names of modules are not constrained. 
-    
-    As a **naming convention**, we recommend names starting with
-    `mkdocs_macros_`.
 
 The `define_env()` function
 ---------------------------
@@ -187,6 +151,8 @@ your functions (the `env` object does all the 'magic').
 
 ## Content of the env object
 
+### Description
+
 The `env` object is used for _introspection_, i.e. is to get information
 on the project or page.
 
@@ -200,21 +166,20 @@ Item|Type|Description
 `filters`|_attribute_|A list list of jinja2 filters (default None)
 `filter`|_function_|A decorator for declaring a Python function as a jinja2 custom filter
 `project_dir`|_attribute_|The source directory of the MkDocs project (useful for finding or including other files)
-`conf`|_attribute_|This is a very useful object; it contains the [configuration information for mkdocs](https://mkdocs.readthedocs.io/en/stable/user-guide/configuration).
+`config`|_attribute_|The content of the [config file]((https://mkdocs.readthedocs.io/en/stable/user-guide/configuration)) (`mkdocs.yaml`).
+`conf`|_attribute_|This is a very useful object; it contains the [configuration information for mkdocs].
 
 
-!!!Tip
-    In order obtain the documents directory (`docs`), you can
-    use, within the Python module, the value: `env.conf['docs_dir']`.
 
 
-Accessing the whole config file
--------------------------------
 
-Sometimes, you might need information from the whole config file,
-e.g. `site_description`, `theme`, `copyright`, etc.
+### Accessing the whole config file (`mkdocs.yaml`)
 
-The property `conf` of the `env` object contains that information.
+
+Sometimes, you might need information from the [whole config file 
+(`mkdocs.yaml`)]((https://mkdocs.readthedocs.io/en/stable/user-guide/configuration)), e.g. `site_description`, `theme`, `copyright`, etc.
+
+The property `config` of the `env` object contains that information.
 
 For example you could define such a function:
 
@@ -227,12 +192,31 @@ def site_info():
     return "%s/%s (theme: %s)" % info
 ```
 
+!!!Tip
+    In order obtain the documents directory (`docs`), you can
+    use, within the Python module, the value: `env.conf['docs_dir']`.
 
 
-Validating environment variables in Python code
------------------------------------------------
+### Manipulating the MkDocs configuration information
 
-By design, the call to define\_env() is the last stage of the build
+`env.conf` is the object containing the [configuration information for mkdocs],
+i.e. the data structures that are being manipulated to create the final
+HTML web site.
+
+
+You would have to explore it, but it contains essentially
+It contains the navigation (`env.conf['nav']`), as well
+all objects that could be manipulated.
+
+!!! Note
+    You will also find the same objects under `env.variables.config`.
+
+
+
+
+### Validating environment variables in Python code
+
+By design, the call to `define_env()` is the last stage of the config
 process, to create the jinja2 environment that will interpret the jinja2
 directives inserted in the markdown code.
 
@@ -265,8 +249,23 @@ def define_env(env):
     are automatically checked by mkdocs (type and default value).
 
 
-A caution about security
-------------------------
+## List of hook functions within a module
+
+`define_env()` is not the only possible hook within a module.
+
+There are other functions available. Each is triggered by a [MkDocs event](https://www.mkdocs.org/user-guide/plugins/#events).
+
+Function | Description | Typical Use | Triggered by MkDoc's event 
+---  | ------ | ---- | ---
+`define_env(env)` | Main function | [Create macros, filters, etc.](#the-define_env-function) | on_config 
+`on_pre_page_macros(env)`| Executed just before the Jinja2 directives (markdown page) have been rendered | [Directly modify a markdown page](../advanced/#adding-post-build-files-to-the-html-website) | on_page 
+`on_post_page_macros(env)`| Executed just after the Jinja2 code (markdown page) have been rendered | [Directly modify a markdown page](../advanced/#adding-post-build-files-to-the-html-website) | on_page
+`on_post_build(env)` | Executed after the html pages have been produced | [Add files to the website](../advanced/#adding-post-build-files-to-the-html-website) | on_post_build
+`declare_variables(variables, macro)`| _Main function_ | [_Deprecated (< version 0.3.0)_](#the-declare_variables-function-deprecated) | *on_config*
+
+
+## A caution about security
+
 
 !!! Warning
 

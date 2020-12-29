@@ -180,15 +180,38 @@ At that point, **you don't have access to specific pages**
 
 
 
-## Directly influencing the markdown generated
+## Directly influencing the markdown pages generated
 
 _From version 0.5.2_
 
-There are specific cases where you want your code to be able to modify
-the markdown code of a **page**, **before or after**
-the macros have been processed.
+
+There are specific cases where you want your module code to be able to modify
+the markdown code of a **page, without using macros**.
+
+The proper time to do that, would be 
+**before or after** the macros (Jinja2 directives) have been processed.
+
+!!! Note "Technical note: a limitation of the macros mechanism"
+    The `define_env()` function operates at the time when MkDocs prepares the
+    configuration of website (the `on_config()` event). This is a 
+    [global event](https://www.mkdocs.org/user-guide/plugins/#global-events), i.e. any change made at this point will affect the whole
+    website. 
+
+    The limitation is that the `define_env()` function is
+    "aware" of the general configuration, not of the content of single pages.
+    
+    **True**,
+    it allows you to declare **macros** which will be interpreted later,
+    for each page (on the `on_page()` event). **But** it won't
+    allow you to modify pages outside of that mechanism.
+
+
 
 ### Use Case
+
+There are cases where you want to make modifications to a specific 
+markdown page, based on the content of that page.
+
 Typically, you may want to programmatically add some meta values to a page,
 to be forwarded to the HTML template.
 
@@ -302,8 +325,9 @@ _From version 0.5_
 
 ### Use case
 
-Sometimes, you want your Python code to add some files to the HTML website that
-MkDocs is producing.
+Sometimes, you want your Python code to add
+some files to the HTML website that
+MkDocs is producing, completely aside of MkDoc's usual production workflow.
 
 These could be:
 

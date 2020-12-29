@@ -436,7 +436,7 @@ class MacrosPlugin(BasePlugin):
         self.variables['extra'] = extra 
         # actual variables (top level will be loaded later)
 
-        # export the whole data, in case of need:
+        # export the whole data passed as argument, in case of need:
         self._conf = config
         # add a copy to the template variables
         # that copy may be manipulated

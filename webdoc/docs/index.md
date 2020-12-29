@@ -8,13 +8,20 @@ mkdocs-macros
 ## Overview
 **mkdocs-macros-plugin** is a plugin/framework that
 makes it easy for contributors
-of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It transforms the markdown pages
+of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It can do two things:
+
+1. Transforming the markdown pages
 into [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
+1. **Replacing MkDocs plugins** for a wide range of tasks: e.g. manipulating the navigation, adding files after the html pages have already been generated etc.
 
 **mkdocs-macros-plugin** is very easy to use out of the box: it provides
 data about the platform, the git repository (if any), etc. 
-It so powerful that it could be called a **"mini-framework"**.
+
+On the other hand, you can go all the way as to pre-package modules
+into [**pluglets**](../pluglets) that can be installed as Python packages.
+
+**mkdocs-macros-plugin** so powerful that it can be called a **"mini-framework"**.
 
 
 !!! Note

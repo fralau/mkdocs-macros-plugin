@@ -9,7 +9,8 @@ nav:
     - 'User Guide': 
       - "Rich Markdown Pages": pages.md
       - "Git information": git_info.md
-      - "Writing macros and filters": macros.md
+      - "Writing modules": macros.md
+      - Writing pluglets: pluglets.md
       - "Advanced usage": advanced.md
     - Faq:
       - "Troubleshooting": troubleshooting.md
