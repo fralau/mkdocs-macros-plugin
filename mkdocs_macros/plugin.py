@@ -296,7 +296,7 @@ class MacrosPlugin(BasePlugin):
 
         The python module must contain the following hook:
 
-        declare_env(env):
+        define_env(env):
             "Declare environment for jinja2 templates for markdown"
 
             env.variables['a'] = 5
