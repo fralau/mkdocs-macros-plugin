@@ -21,6 +21,7 @@ nav:
 
 markdown_extensions:
   - admonition
+  - footnotes
 
 plugins:
   # do not use the macros plugin, for 

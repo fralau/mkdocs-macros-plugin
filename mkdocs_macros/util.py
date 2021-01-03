@@ -82,7 +82,9 @@ def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
 # Utilities
 # ------------------------------------------
 def import_local_module(project_dir, module_name):
-    "Import a module from a pathname"
+    """
+    Import a module from a pathname.
+    """
     # get the full path
     if not os.path.isdir(project_dir):
         raise FileNotFoundError("Project dir does not exist: %s" % project_dir) 
@@ -99,7 +101,17 @@ def import_local_module(project_dir, module_name):
     elif os.path.isdir(pathname_dir):
         # directory
         sys.path.insert(0, project_dir)
-        return importlib.import_module(module_name)
+        # If the import is relative, then the package name must be given,
+        # so that Python always knows how to call it.
+        try:
+            return importlib.import_module(module_name, package='main')
+        except ImportError as e:
+            # BUT Python will NOT allow an import past the root of the project;
+            # this will fail when the module will actually be loaded.
+            # the only way, is to insert the directory into the path
+            sys.path.insert(0, module_name)
+            module_name = os.path.basename(module_name)
+            return importlib.import_module(module_name, package='main')
     else:
         return None
   

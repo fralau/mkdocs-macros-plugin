@@ -21,7 +21,7 @@ data about the platform, the git repository (if any), etc.
 On the other hand, you can go all the way as to pre-package modules
 into [**pluglets**](../pluglets) that can be installed as Python packages.
 
-**mkdocs-macros-plugin** so powerful that it can be called a **"mini-framework"**.
+**mkdocs-macros-plugin** is so powerful that it can be called a **"mini-framework"**.
 
 
 !!! Note
@@ -29,8 +29,8 @@ into [**pluglets**](../pluglets) that can be installed as Python packages.
     By using mkdocs-macros, you can **cut down the number of plugins required**
     for your documentation project.
 
-    In a wide range of cases, **[writing your own macros](../python)**
-    (Python functions), 
+    In a wide range of cases, **[writing your own module with macros](../python)**
+    (Python functions for a single website), 
     could **save the effort of developing
     _new_ plugins for mkdocs**.
 

@@ -111,11 +111,11 @@ No special imports are required besides those you would need to write
 your functions (the `env` object does all the 'magic').
 
 !!! Tip
-    You can export a wide range of objects, and their attributes
+    You can export (as variables, macros or filters)
+    a wide range of objects, and their attributes
     will remain accessible to the jinja2 template via the standard Python
     convention, e.g. `{{ foo.bar }}` (see [more
     information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
-
 
 ### Definition of variables/macros/filters
 
@@ -154,7 +154,9 @@ your functions (the `env` object does all the 'magic').
 ### Description
 
 The `env` object is used for _introspection_, i.e. is to get information
-on the project or page.
+on the project or page. 
+
+
 
 Here is a list of commonly needed attributes (constants)
 or functions of that object:
@@ -166,10 +168,18 @@ Item|Type|Description
 `filters`|_attribute_|A list list of jinja2 filters (default None)
 `filter`|_function_|A decorator for declaring a Python function as a jinja2 custom filter
 `project_dir`|_attribute_|The source directory of the MkDocs project (useful for finding or including other files)
-`config`|_attribute_|The content of the [config file]((https://mkdocs.readthedocs.io/en/stable/user-guide/configuration)) (`mkdocs.yaml`).
-`conf`|_attribute_|This is a very useful object; it contains the [configuration information for mkdocs].
+`conf`|_attribute_|The content of the [config file](https://www.mkdocs.org/user-guide/custom-themes/#config) (`mkdocs.yaml`).
+`config`|_attribute_|This can be a useful object; it contains the global context for MkDocs][^1].
+`page`|_attribute_|The information on the page being served (such as the title, etc.). For more information on its content, see [MkDoc's description of the page object](https://www.mkdocs.org/user-guide/custom-themes/#page).
 
 
+[^1]: `env.config` versus `env.conf`: it is unhappy that `env.config` represents MkDocs whole context, whereas `env.conf` represents only the `config` (YAML) file (a subset). This ambiguity was born from the fact that MkDoc itself used `config` to represent the context, as a property of the `BasePlugin` object.
+
+!!! Note "Technical Note"
+    `env` is essentially an instance of a subclass of the 
+    MkDocs' [`BasePlugin` class](https://www.mkdocs.org/user-guide/plugins/#baseplugin), with some additional properties.
+    Whatever you find in the `BasePlugin` class, you will find in the
+    the `env` object.
 
 
 
@@ -179,7 +189,7 @@ Item|Type|Description
 Sometimes, you might need information from the [whole config file 
 (`mkdocs.yaml`)]((https://mkdocs.readthedocs.io/en/stable/user-guide/configuration)), e.g. `site_description`, `theme`, `copyright`, etc.
 
-The property `config` of the `env` object contains that information.
+The property `conf` of the `env` object contains that information.
 
 For example you could define such a function:
 
@@ -192,26 +202,44 @@ def site_info():
     return "%s/%s (theme: %s)" % info
 ```
 
+!!! Warning "Beware the change of name"
+    Beware that the what is usually called `config` is alled `env.conf`
+    in the module. That is is because there is already `env.config`
+    property as part of the `BasePlugin` class.
+
+    Indeed, you will also find the same object under `env.variables.config`;
+    in other words, it will be thus be accessible as `{{ config }}` 
+    within the markdown pages.
+
+
 !!!Tip
     In order obtain the documents directory (`docs`), you can
     use, within the Python module, the value: `env.conf['docs_dir']`.
 
 
+
+
+
 ### Manipulating the MkDocs configuration information
 
-`env.conf` is the object containing the [configuration information for mkdocs],
+`env.config` is the object containing the **global context** for mkdocs,
 i.e. the data structures that are being manipulated to create the final
 HTML web site.
 
 
-You would have to explore it, but it contains essentially
+You would have to explore it
+(using the [MkDocs documentation on the global context](https://www.mkdocs.org/user-guide/custom-themes/#global-context)),
+but it contains essentially
 It contains the navigation (`env.conf['nav']`), as well
 all objects that could be manipulated.
 
 !!! Note
-    You will also find the same objects under `env.variables.config`.
+    `env.config` is thus a superset of the `env.conf` object
+    (which is `env.config['config']`).
 
-
+!!! Caution
+    This is object is **not** accessible as a variable from the markdown pages.
+    Exposing it might encourage black magic.
 
 
 ### Validating environment variables in Python code

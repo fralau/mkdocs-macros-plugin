@@ -1,4 +1,4 @@
-# Writing "pluglets"
+# Writing pluglets
 
 !!! Note
     New, as of version 0.4.20.
@@ -39,7 +39,7 @@ def define_env(env):
     over the mkdocs-macros plugin and uses the framework provided by it.
 
     There is no need to implement a subclass of the `BasePlugin` class,
-    only to declare a `define_env(env)` class.
+    only to declare a `define_env(env)` function.
    
 !!! Question "Could a pluglet do everything a plugin can do?"
 

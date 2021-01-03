@@ -36,7 +36,8 @@ into [jinja2](https://jinja.palletsprojects.com/en/2.10.x/) templates
 that use **variables**, calls to **macros** and custom **filters**.
 
 > **You can also partially replace MkDocs plugins with mkdocs-macros modules,
-> and [pluglets](https://mkdocs-macros-plugin.readthedocs.io/en/latest/pluglets/) > (pre-installed modules).**
+> and [pluglets](https://mkdocs-macros-plugin.readthedocs.io/en/latest/pluglets/) 
+> (pre-installed modules).**
 
 
 ### Using variables
