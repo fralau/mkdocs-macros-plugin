@@ -50,38 +50,7 @@ It's quick and easy.
     you can turn it into a **macro**.
 
 
-## Can I use my code editor's auto-discovery function in a module? 
 
-Yes. If your code editor is smart enough to provide auto-completion,
-then you can make your life much easier, by giving a type hint
-to your `declare_env()` function:
-
-```
-from mkdocs_macros import MacrosPlugin
-
-def define_env(env:MacrosPlugin):
-    "Definition of the module"
-    ...
-```
-In this way, you will benefit from "auto-discovery" each time you invoke
-the `env` object. 
-
-
-Indeed, `env` belongs to the `MacrosPlugin` class,
-which is itself
-a subclass of [MkDocs' `BasePlugin` class](https://www.mkdocs.org/user-guide/plugins/#baseplugin).
-
-
-
-!!! Caution
-    Note that you cannot  `help()` function from the Python interpreter console
-    as this raises an error:
-    ```
-    >>> from mkdocs_macros import MacrosPlugin
-    >>> help(MacrosPlugin)
-    ```
-
-    This is a behavior inherited from the the MkDocs `BasePlugin` class.
 
 
 How can I access git information?
@@ -315,6 +284,37 @@ This gives the whole range of information available within a page.
     Whatever you do with this object, is at your
     own peril.
 
+## Can I use my code editor's auto-discovery function in a module? 
 
+Yes. If your code editor is smart enough to provide auto-completion,
+then you can make your life much easier, by giving a type hint
+to your `declare_env()` function:
+
+```
+from mkdocs_macros import MacrosPlugin
+
+def define_env(env:MacrosPlugin):
+    "Definition of the module"
+    ...
+```
+In this way, you will benefit from "auto-discovery" each time you invoke
+the `env` object. 
+
+
+Indeed, `env` belongs to the `MacrosPlugin` class,
+which is itself
+a subclass of [MkDocs' `BasePlugin` class](https://www.mkdocs.org/user-guide/plugins/#baseplugin).
+
+
+
+!!! Caution
+    Note that you cannot use the `help()` function from the Python interpreter console
+    as this raises an error:
+    
+        >>> from mkdocs_macros import MacrosPlugin
+        >>> help(MacrosPlugin)
+    
+
+    This is a behavior inherited from the the MkDocs `BasePlugin` class.
 
     
