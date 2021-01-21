@@ -229,7 +229,7 @@ I would like to include a text file, from line a to line b
 
 In the source directory of your MkDocs project
 (where `mkdocs.yml` generally is),
-create a file `module.py`:
+create a file `main.py`:
 
 
 ```{.python}
@@ -256,7 +256,7 @@ def define_env(env):
         with open(full_filename, 'r') as f:
             lines = f.readlines()
         line_range = lines[start_line:end_line]
-        return '\n'.join(line_range)
+        return ''.join(line_range)
 
 ```
 
