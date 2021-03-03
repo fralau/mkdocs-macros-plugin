@@ -7,7 +7,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION_NUMBER = '0.5.4'
+VERSION_NUMBER = '0.5.5'
 
 
 def read_file(fname):
@@ -29,6 +29,7 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         'mkdocs>=0.17',
+        'mkdocs-material>=6.2',
         'jinja2',
         'termcolor',
         'pyyaml',

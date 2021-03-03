@@ -286,8 +286,11 @@ class MacrosPlugin(BasePlugin):
                 trace("WARNING: YAML configuration file was not found!",
                     filename)
 
-    def _load_module(self):
+
+    def _load_module(self, module, module_name):
         """
+        Load a single module
+        
         Add variables and functions to the config dictionary,
         via the python module
         (located in the same directory as the Yaml config file).
@@ -313,7 +316,42 @@ class MacrosPlugin(BasePlugin):
             def foobar(x):
                 ...
 
-        """
+        """      
+        if not module:
+            return
+        trace("Found external Python module '%s' in:" % module_name,
+                self.project_dir)
+        # execute the hook for the macros
+        function_found = False
+        if hasattr(module, 'define_env'):
+            module.define_env(self)
+            function_found = True
+        if hasattr(module, 'declare_variables'):
+            # this is for compatibility (DEPRECATED)
+            module.declare_variables(self.variables, self.macro)
+            trace("You are using declare_variables() in the python "
+                    "module '%s'. Prefer the define_env() function "
+                    "(see documentation)!" % module_name)
+            function_found = True
+        if not function_found:
+            raise NameError("No valid function found in module '%s'" %
+                            module_name)
+        # DECLARE additional event functions
+        # NOTE: each of these functions requires self (the environment).
+        def add_function(funcname:str, funclist:list):
+            "Add an optional function to the module"
+            if hasattr(module, funcname):
+                func = getattr(module, funcname)
+                funclist.append(func)
+        add_function('on_pre_page_macros',  self.pre_macro_functions)
+        add_function('on_post_page_macros', self.post_macro_functions)
+        add_function('on_post_build',       self.post_build_functions)
+
+
+
+
+    def _load_modules(self):
+        "Load all modules"
         self._pre_macro_functions = [] 
         self._post_macro_functions = [] 
         self._post_build_functions = []
@@ -325,12 +363,13 @@ class MacrosPlugin(BasePlugin):
         for module_name in modules:
             try:
                 module = importlib.import_module(module_name)
-                if hasattr(module, 'define_env'):
-                    module.define_env(self)
-                else:
-                    raise NameError("No valid function found "
-                                    "in installed module '%s'" %
-                                    module_name)
+                self._load_module(module, module_name)
+                # if hasattr(module, 'define_env'):
+                #     module.define_env(self)
+                # else:
+                #     raise NameError("No valid function found "
+                #                     "in installed module '%s'" %
+                                    # module_name)
             except ModuleNotFoundError:
                 raise ModuleNotFoundError("Could not import installed "
                                           "module '%s' (missing?)" % 
@@ -341,33 +380,34 @@ class MacrosPlugin(BasePlugin):
         debug("Project dir '%s'" %  self.project_dir)
         module = import_local_module(self.project_dir, local_module_name)
         if module:
-            trace("Found external Python module '%s' in:" % local_module_name,
-                    self.project_dir)
-            # execute the hook for the macros
-            function_found = False
-            if hasattr(module, 'define_env'):
-                module.define_env(self)
-                function_found = True
-            if hasattr(module, 'declare_variables'):
-                # this is for compatibility (DEPRECATED)
-                module.declare_variables(self.variables, self.macro)
-                trace("You are using declare_variables() in the python "
-                        "module '%s'. Prefer the define_env() function "
-                        "(see documentation)!" % local_module_name)
-                function_found = True
-            if not function_found:
-                raise NameError("No valid function found in module '%s'" %
-                                local_module_name)
-            # DECLARE additional event functions
-            # NOTE: each of these functions requires self (the environment).
-            def add_function(funcname:str, funclist:list):
-                "Add an optional function to the module"
-                if hasattr(module, funcname):
-                    func = getattr(module, funcname)
-                    funclist.append(func)
-            add_function('on_pre_page_macros', self.pre_macro_functions)
-            add_function('on_post_page_macros', self.post_macro_functions)
-            add_function('on_post_build', self.post_build_functions)
+            trace("Found local Python module '%s' in:" % local_module_name,
+                     self.project_dir)
+            self._load_module(module, local_module_name)
+            # # execute the hook for the macros
+            # function_found = False
+            # if hasattr(module, 'define_env'):
+            #     module.define_env(self)
+            #     function_found = True
+            # if hasattr(module, 'declare_variables'):
+            #     # this is for compatibility (DEPRECATED)
+            #     module.declare_variables(self.variables, self.macro)
+            #     trace("You are using declare_variables() in the python "
+            #             "module '%s'. Prefer the define_env() function "
+            #             "(see documentation)!" % local_module_name)
+            #     function_found = True
+            # if not function_found:
+            #     raise NameError("No valid function found in module '%s'" %
+            #                     local_module_name)
+            # # DECLARE additional event functions
+            # # NOTE: each of these functions requires self (the environment).
+            # def add_function(funcname:str, funclist:list):
+            #     "Add an optional function to the module"
+            #     if hasattr(module, funcname):
+            #         func = getattr(module, funcname)
+            #         funclist.append(func)
+            # add_function('on_pre_page_macros', self.pre_macro_functions)
+            # add_function('on_post_page_macros', self.post_macro_functions)
+            # add_function('on_post_build', self.post_build_functions)
 
         else:
             if local_module_name == DEFAULT_MODULE_NAME:
@@ -456,7 +496,7 @@ class MacrosPlugin(BasePlugin):
         # add variables, functions and filters from the Python module:
         # by design, this MUST be the last step, so that programmers have
         # full control on what happened in the configuration files
-        self._load_module()
+        self._load_modules()
         # Provide information:
         debug("Variables:", list(self.variables.keys()))
         if len(extra):
@@ -586,6 +626,6 @@ class MacrosPlugin(BasePlugin):
         Hook for post build actions, typically adding
         raw files to the setup.
         """
-        # exeute the functions in the various modules
+        # execute the functions in the various modules
         for func in self.post_build_functions:
             func(self)
