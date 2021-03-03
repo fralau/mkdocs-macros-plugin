@@ -89,7 +89,7 @@ their **macros** and **filters**.
     It's actually much, much easier than writing 
     a VBA function for Excel...
 
-    Create a `module.py` file in the top directory of your mkdocs
+    Create a `main.py` file in the top directory of your mkdocs
     project and add this call:
 
         import ...
