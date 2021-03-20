@@ -29,14 +29,13 @@ setup(
     python_requires='>=3.5',
     install_requires=[
         'mkdocs>=0.17',
-        'mkdocs-material>=6.2',
         'jinja2',
         'termcolor',
         'pyyaml',
         'python-dateutil',
     ],
     extras_require={
-        'test': ['mkdocs-macros-test', 'mkdocs-material'],
+        'test': ['mkdocs-macros-test', 'mkdocs-material>=6.2'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
