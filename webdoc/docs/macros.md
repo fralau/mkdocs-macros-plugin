@@ -229,9 +229,8 @@ HTML web site.
 
 You would have to explore it
 (using the [MkDocs documentation on the global context](https://www.mkdocs.org/user-guide/custom-themes/#global-context)),
-but it contains essentially
-It contains the navigation (`env.conf['nav']`), as well
-all objects that could be manipulated.
+but it contains the navigation (`env.conf['nav']`), as well
+as all objects that could be manipulated.
 
 !!! Note
     `env.config` is thus a superset of the `env.conf` object
