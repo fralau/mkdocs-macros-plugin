@@ -83,7 +83,7 @@ their **macros** and **filters**.
     Need a function to display some repetitive markdown,
     or environment information? 
 
-    If you are are Python programmer, go ahead and  **[create your own
+    If you are Python programmer, go ahead and  **[create your own
     macros and filters in Python!](../python)**
 
     It's actually much, much easier than writing 
