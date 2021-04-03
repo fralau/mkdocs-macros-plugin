@@ -19,7 +19,7 @@ that use **variables**, calls to **macros** and custom **filters**.
 data about the platform, the git repository (if any), etc. 
 
 On the other hand, you can go all the way as to pre-package modules
-into [**pluglets**](../pluglets) that can be installed as Python packages.
+into [**pluglets**](pluglets) that can be installed as Python packages.
 
 **mkdocs-macros-plugin** is so powerful that it can be called a **"mini-framework"**.
 
