@@ -16,7 +16,7 @@ that use **variables**, calls to **macros** and custom **filters**.
 1. **Replacing MkDocs plugins** for a wide range of tasks: e.g. manipulating the navigation, adding files after the html pages have already been generated etc.
 
 **mkdocs-macros-plugin** is very easy to use out of the box: it provides
-data about the platform, the git repository (if any), etc. 
+data about the platform, the git repository (if any), etc.
 
 On the other hand, you can go all the way as to pre-package modules
 into [**pluglets**](../pluglets) that can be installed as Python packages.
@@ -29,8 +29,8 @@ into [**pluglets**](../pluglets) that can be installed as Python packages.
     By using mkdocs-macros, you can **cut down the number of plugins required**
     for your documentation project.
 
-    In a wide range of cases, **[writing your own module with macros](../python)**
-    (Python functions for a single website), 
+    In a wide range of cases, **[writing your own module with macros](python)**
+    (Python functions for a single website),
     could **save the effort of developing
     _new_ plugins for mkdocs**.
 
@@ -44,7 +44,7 @@ Regular **variables** can be defined in five different ways:
     1. (for contributors): in external yaml definition files
     1. (for programmers): in a module (Python),
     by adding them to a dictionary
-  1. **Local**, i.e. in each Markdown page (for contributors): 
+  1. **Local**, i.e. in each Markdown page (for contributors):
     1. in the YAML header
     2. in the text, with a `{%set variable = value %}`
  statement
@@ -76,17 +76,17 @@ It is possible to use the wide range of facilities provided by
 
 ### Create Your Own Macros and Filters
 
-Instead of creating countless new plugins, programmers can define 
+Instead of creating countless new plugins, programmers can define
 their **macros** and **filters**.
 
 !!! Note "Getting Started with Macros"
     Need a function to display some repetitive markdown,
-    or environment information? 
+    or environment information?
 
     If you are are Python programmer, go ahead and  **[create your own
-    macros and filters in Python!](../python)**
+    macros and filters in Python!](python)**
 
-    It's actually much, much easier than writing 
+    It's actually much, much easier than writing
     a VBA function for Excel...
 
     Create a `main.py` file in the top directory of your mkdocs
@@ -101,14 +101,14 @@ their **macros** and **filters**.
           def mymacro(...)
               ...
               return some_string
-    
+
 
     You can insert a call in any markdown page of your project:
 
         {{ mymacro(...) }}
 
     Restart your mkdocs server.
-    
+
     Et _voilà_ !
 
 
@@ -157,13 +157,13 @@ plugins:
 
     In the absence of the `plugins` entry,
     MkDocs enables `search` by default.
-    But when it is present, then you MUST declare it explicitly if you 
+    But when it is present, then you MUST declare it explicitly if you
     want to use it.
 
 ### Check that it works
 
 !!! Tip
-    The recommended way to check that the plugin works properly is to add the 
+    The recommended way to check that the plugin works properly is to add the
     following command in one of the pages of your site (let's say `info.md`):
 
     ```
@@ -183,7 +183,7 @@ INFO    -  Building documentation...
 ```
 
 Within the browser (e.g. http://127.0.0.1:8000/info), you should
-see a description of the plugins environment: 
+see a description of the plugins environment:
 
 ![macros_info()](macros_info.png)
 
@@ -203,11 +203,11 @@ of the MkDocs' config file:
 | -- | -- | --
 | `module_name` | `main` | [Name of the Python module](python/#local-module) containing macros, filters and variables. Indicate the file or directory, without extension; you may specify a path (e.g. `include/module`). If no `main` module is available, it is ignored.
 | `modules` | `[]`| [List of preinstalled Python modules](python/#adding-pre-installed-modules), i.e. listed by `pip list`.
-| `include_dir` | | [Directory for including external files](advanced/#changing-the-directory-of-the-includes) 
+| `include_dir` | | [Directory for including external files](advanced/#changing-the-directory-of-the-includes)
 | `include_yaml`| `[]` | [List of yaml files to be included](advanced/#including-external-yaml-files)
 | `j2_block_start_string` | | [Non-standard Jinja2 marker for start of block](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 | `j2_block_end_string` || [Non-standard Jinja2 marker for end of block](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
-| `j2_variable_start_string` || [Non-standard Jinja2 marker for start of variable](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros) 
+| `j2_variable_start_string` || [Non-standard Jinja2 marker for start of variable](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 | `j2_variable_end_string` || [Non-standard Jinja2 marker for end of variable](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 
 
