@@ -48,6 +48,9 @@ with their set of attributes:
 | `environment` | Data on the system on which MkDocs is currently running.
 | `plugin` | Arguments of the macro plugin, in the config file
 | `git` | Information on the git version of the website (if part of a git repository)
+| `files`| The file structure (for advanced users who know how to manipulate the `mkdocs.structure.files.Files` object, as well as `mkdocs.structure.files.File` objects)
+
+<br/>
 
 For example, 
 
