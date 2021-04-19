@@ -566,8 +566,8 @@ class MacrosPlugin(BasePlugin):
         self.variables['navigation'] = nav
         # files has collection of files discovered in docs_dir
         # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/files.py
-        # NOTE: this is not implemented, because it is unclear how to exploit that information
-        # self.variables['files'] = files
+        # NOTE: useful for writing macros that check for the existence of files; e.g., a macro to mark a link as disabled, if its target doesn't exist
+        self.variables['files'] = files
         
         
     def on_serve(self, server, config, **kwargs):
