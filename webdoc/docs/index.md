@@ -29,7 +29,7 @@ into [**pluglets**](pluglets) that can be installed as Python packages.
     By using mkdocs-macros, you can **cut down the number of plugins required**
     for your documentation project.
 
-    In a wide range of cases, **[writing your own module with macros](../python)**
+    In a wide range of cases, **[writing your own module with macros](python)**
     (Python functions for a single website), 
     could **save the effort of developing
     _new_ plugins for mkdocs**.
@@ -83,8 +83,8 @@ their **macros** and **filters**.
     Need a function to display some repetitive markdown,
     or environment information? 
 
-    If you are are Python programmer, go ahead and  **[create your own
-    macros and filters in Python!](../python)**
+    If you are a Python programmer, go ahead and  **[create your own
+    macros and filters in Python!](python)**
 
     It's actually much, much easier than writing 
     a VBA function for Excel...

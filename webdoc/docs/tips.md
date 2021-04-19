@@ -155,7 +155,7 @@ Then this would be translated as:
 
 !!! Tip
     The `fix_url()` function will only fix relative links,
-    and live other ones (e.g. `https://...` unchanged).
+    and leave other ones (e.g. `https://...` unchanged).
 
 
 How can I create a button?
