@@ -12,7 +12,7 @@ import importlib
 
 
 import yaml
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
 from mkdocs.plugins import BasePlugin
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
@@ -364,12 +364,6 @@ class MacrosPlugin(BasePlugin):
             try:
                 module = importlib.import_module(module_name)
                 self._load_module(module, module_name)
-                # if hasattr(module, 'define_env'):
-                #     module.define_env(self)
-                # else:
-                #     raise NameError("No valid function found "
-                #                     "in installed module '%s'" %
-                                    # module_name)
             except ModuleNotFoundError:
                 raise ModuleNotFoundError("Could not import installed "
                                           "module '%s' (missing?)" % 
@@ -383,31 +377,6 @@ class MacrosPlugin(BasePlugin):
             trace("Found local Python module '%s' in:" % local_module_name,
                      self.project_dir)
             self._load_module(module, local_module_name)
-            # # execute the hook for the macros
-            # function_found = False
-            # if hasattr(module, 'define_env'):
-            #     module.define_env(self)
-            #     function_found = True
-            # if hasattr(module, 'declare_variables'):
-            #     # this is for compatibility (DEPRECATED)
-            #     module.declare_variables(self.variables, self.macro)
-            #     trace("You are using declare_variables() in the python "
-            #             "module '%s'. Prefer the define_env() function "
-            #             "(see documentation)!" % local_module_name)
-            #     function_found = True
-            # if not function_found:
-            #     raise NameError("No valid function found in module '%s'" %
-            #                     local_module_name)
-            # # DECLARE additional event functions
-            # # NOTE: each of these functions requires self (the environment).
-            # def add_function(funcname:str, funclist:list):
-            #     "Add an optional function to the module"
-            #     if hasattr(module, funcname):
-            #         func = getattr(module, funcname)
-            #         funclist.append(func)
-            # add_function('on_pre_page_macros', self.pre_macro_functions)
-            # add_function('on_post_page_macros', self.post_macro_functions)
-            # add_function('on_post_build', self.post_build_functions)
 
         else:
             if local_module_name == DEFAULT_MODULE_NAME:
@@ -424,18 +393,31 @@ class MacrosPlugin(BasePlugin):
     def render(self, markdown):
         """
         Render a page through jinja2: it executes the macros
-        Must be run after on_config()
 
-        Returns a pure markdown/HTML page.
+        Returns
+        -------
+        A pure markdown/HTML page.
+
+        Notes
+        -----
+        - Must called by '_on_page_markdown()'
+        - If the YAML header of the page contains `ignore_macros: true`
+          then NO rendering will be done, and the markdown will be returned
+          as is.
         """
         # copy the page variables and update with the meta data
         # in the YAML header:
         page_variables = copy(self.variables)
         meta_variables = self.variables['page'].meta
+        # it must be possible to completely
         if meta_variables:
+            # a trick to force of a page NOT to be interpreted,
+            if meta_variables.get('ignore_macros') == True:
+                return markdown
             # trace("Metavariables for '%s':" % self.variables['page'].title, 
             #                 meta_variables)
             page_variables.update(meta_variables)
+
         # expand the template
         try:
             md_template = self.env.from_string(markdown)

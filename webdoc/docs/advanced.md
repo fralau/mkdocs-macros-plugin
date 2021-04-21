@@ -491,7 +491,32 @@ This may also happen for pages that documents
     **by mkdocs-macros**,
     so that **they actually appear in the HTML output**?
 
-### Solution 1: Snippets as jinja2 strings (one-liners)
+### Solution 1: Exclude a page from the rendering process
+
+!!! Tip
+    This solution is a quick fix, if you are "migrating"
+    a pre-existing mkdocs project under mkdocs-macros, and
+    some markdown pages fail, or do not display correctly.
+
+    This will leave more time to implement the next solutions.
+
+
+In the header of the markdown page, indicate that the markdown should
+be used "as-is" (no rendering of mkdocs-macros),
+by setting the `ignore_macros` meta-data key to the `true`value.
+
+```yaml
+---
+# YAML header
+ignore_macros: true
+---
+```
+
+Any other value than `true` (or an absence of this key), will be interpreted
+as a `false` value.
+
+
+### Solution 2: Snippets as jinja2 strings (one-liners)
 
 This hack works for simple one-line snippets.
 Suppose you want to prevent the
@@ -509,7 +534,7 @@ but in this case you must bracket them with simple quotes:
     Triple quotes (`"""`) around strings are not allowed in Jinja2, so this
     hack cannot be used for multiline statements.
 
-### Solution 2: Explicitly marking the snippets as 'raw'
+### Solution 3: Explicitly marking the snippets as 'raw'
 
 The standard solution is to isolate each snippet of code that should not
 be interpreted, using the standard jinja2 `raw` directive,
@@ -523,7 +548,7 @@ which exists for that purpose:
         recurse: true
     {% endraw %}
 
-### Solution 3: Altering the syntax of jinja2 for mkdocs-macros
+### Solution 4: Altering the syntax of jinja2 for mkdocs-macros
 
 Sometimes the introduction of mkdocs-macros comes late in the chain, and the
 existing pages already contain a lot of Jinja2 statements that are
