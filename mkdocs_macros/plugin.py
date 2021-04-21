@@ -423,6 +423,17 @@ class MacrosPlugin(BasePlugin):
             md_template = self.env.from_string(markdown)
             # Execute the jinja2 template and return
             return md_template.render(**page_variables)
+        except TemplateSyntaxError as e:
+            line = markdown.splitlines()[e.lineno-1]
+            output = ["# _Macro Syntax Error_",
+                        "_Line %s in Markdown file:_ **%s** " %
+                            (e.lineno, e.message),
+                        "```python",
+                        line,
+                        "```"]
+            error = "\n".join(output) 
+            trace("ERROR", error)
+            return error
         except Exception as e:
             output = ["# _Macro Rendering Error_",
                         "",
