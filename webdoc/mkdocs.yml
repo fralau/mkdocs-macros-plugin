@@ -1,7 +1,16 @@
 site_name: mkdocs-macros
+site_description: A framework for macros and automation for mkdocs
 docs_dir: docs # indispensable or readthedocs will fail
 theme: 
-  name: readthedocs
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.tabs
+  palette:
+    scheme: slate
+    primary: teal
+    accent: teal
 repo_url: https://github.com/fralau/mkdocs_macros_plugin
 copyright: © Laurent Franceschetti, 2020. This work is licensed under CC BY-SA 4.0.
 nav:
@@ -15,6 +24,7 @@ nav:
     - Faq:
       - "Troubleshooting": troubleshooting.md
       - "Tips and Tricks": tips.md
+    - Changelog: changelog.md
     - About:
       - "Why this project?": why.md
       - License: license.md
@@ -28,5 +38,6 @@ plugins:
   # 1. a question of "boostrap" (avoid chicken and the egg issues)
   # 2. avoid interpreting the jinja2 code examples as instructions.
   - search
+  - include-markdown
 
 

@@ -7,7 +7,21 @@
 import os
 from setuptools import setup, find_packages
 
+
+# --------------------
+# Initialization
+# --------------------
+
 VERSION_NUMBER = '0.5.10'
+
+# required if you want to run document/test
+# pip install 'mkdocs-macros-plugin[test]'
+TEST_REQUIRE = ['mkdocs-macros-test', 'mkdocs-material>=6.2',
+                'mkdocs-include-markdown-plugin']
+
+# --------------------
+# Setup
+# --------------------
 
 
 def read_file(fname):
@@ -35,7 +49,7 @@ setup(
         'python-dateutil',
     ],
     extras_require={
-        'test': ['mkdocs-macros-test', 'mkdocs-material>=6.2'],
+        'test': TEST_REQUIRE,
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',

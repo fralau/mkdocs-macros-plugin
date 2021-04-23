@@ -165,6 +165,12 @@ into [**pluglets**](pluglets) that can be installed as Python packages.
 pip install mkdocs-macros-plugin
 ```
 
+If you wish to also run the tests or rebuild the project's documentation:
+
+```
+pip install 'mkdocs-macros-plugin[test]'
+```
+
 ### "Manual installation"
 To install the package, download the code from its
 [github page](https://github.com/fralau/mkdocs_macros_plugin/) and run:

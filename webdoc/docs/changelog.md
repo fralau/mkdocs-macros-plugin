@@ -1,0 +1,4 @@
+
+{% 
+    include-markdown "../../CHANGELOG.md" 
+%}

@@ -194,18 +194,30 @@ INFO    - [macros - Simple module] - This is a dull statement.
 Where Can I get Help?
 ---------------------
 
+### Issues
+
 Check the [issues](https://github.com/fralau/mkdocs_macros_plugin/issues) 
 on the github repo.
 
-!!! Tip
-    Also check the **closed issues**. It could be that your issue
-    has already been solved and closed!
 
-    Also, you could check similar questions, to see if they could
-    point you to the right questions.
+!!! Tip "Tips"
+
+    - Some issues have the marker **Useful Tip**.
+    - Also check the **closed issues**. It could be that your issue
+      has already been solved and closed!
+    - Also, you could check similar questions, to see if they could
+      point you to the right questions.
 
 
-Then, you want to add a new issue, or comment on an existing one,
+If you want to add a new issue (for a bug or an enhancement request), 
+or comment on an existing one,
 you are more than welcome!
 
 All issues are carefully reviewed and often get a quick answer.
+
+### If all else fails...
+
+If you still have questions:
+
+- Check the Q&As 🙏 in the [project's Discussions space, on github](https://github.com/fralau/mkdocs_macros_plugin/discussions).
+- Post a Q&A 🙏 item!
