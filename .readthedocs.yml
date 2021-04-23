@@ -9,6 +9,13 @@ version: 2
 # sphinx:
 #   configuration: docs/conf.py
 
+# Python environment
+python:
+  install:
+    - extra_requirements:
+      - mkdocs-include-markdown-plugin
+      - mkdocs-material>=6.2
+
 # Build documentation with MkDocs
 mkdocs:
   configuration: webdoc/mkdocs.yml
