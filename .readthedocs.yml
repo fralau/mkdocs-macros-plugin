@@ -12,9 +12,8 @@ version: 2
 # Python environment
 python:
   install:
-    - extra_requirements:
-      - mkdocs-include-markdown-plugin
-      - mkdocs-material>=6.2
+    # these are needed, because they are not part of standard setup
+    - requirements: webdoc/extra_requirements.txt
 
 # Build documentation with MkDocs
 mkdocs:

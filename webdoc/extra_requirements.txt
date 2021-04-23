@@ -1,0 +1,2 @@
+mkdocs-include-markdown-plugin
+mkdocs-material>=6.2
