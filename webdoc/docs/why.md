@@ -20,7 +20,7 @@ for this plugin was a few lines of code.
 ### jinja2: variables can also be Python callables
 
 I then discovered that the creators of jinja2, in their great wisdom
-(thanks also to them!), had decided to support *any* kind of Python
+(thanks to them!), had decided to support *any* kind of Python
 variables, *including callables*, typically functions, e.g.:
 
     The price of the item is {{ calculate(2, 7.4) }}.

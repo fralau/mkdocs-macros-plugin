@@ -128,6 +128,15 @@ class MacrosPlugin(BasePlugin):
 
 
     @property
+    def macros(self):
+        "The cumulative list of macros, initialized by on_config()"
+        try:
+            return self._macros
+        except AttributeError:
+            raise AttributeError("Property called before on_config()")
+
+
+    @property
     def filters(self):
         "The list of filters defined in the module, initialized by on_config()"
         try:
@@ -168,7 +177,7 @@ class MacrosPlugin(BasePlugin):
         """
 
         name = name or v.__name__
-        self.variables[name] = v
+        self.macros[name] = v
         return v
 
 
@@ -459,9 +468,10 @@ class MacrosPlugin(BasePlugin):
         """
         # WARNING: this is not the config argument:
         trace("Macros arguments:", self.config)
-        # define the variables as a plain dictionary
+        # define the variables and macros as dictionaries
         # (for update function to work):
         self._variables = SuperDict()
+        self._macros = SuperDict()
 
         # load the extra variables
         extra = dict(config.get(YAML_VARIABLES))
@@ -535,6 +545,15 @@ class MacrosPlugin(BasePlugin):
         
         # finally build the environment:
         self.env = Environment(**env_config)
+
+        # -------------------
+        # Process macros
+        # -------------------
+        # reference all macros
+        self.variables['macros'] = copy(self.macros)
+        # add the macros to the environment's global (not to the template!)
+        self.env.globals.update(self.macros)
+
 
         # -------------------
         # Process filters

@@ -79,6 +79,8 @@ def define_env(env):
 
     - variables: the dictionary that contains the environment variables
     - macro: a decorator function, to declare a macro.
+    - filter: a function with one of more arguments,
+        used to perform a transformation
     """
 
     # add to the dictionary of variables available to markdown pages:
@@ -115,25 +117,29 @@ your functions (the `env` object does all the 'magic').
     a wide range of objects, and their attributes
     will remain accessible to the jinja2 template via the standard Python
     convention, e.g. `{{ foo.bar }}` (see [more
-    information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
+    information](https://jinja.palletsprojects.com/en/2.11.x/templates/#variables))
 
 ### Definition of variables/macros/filters
 
-!!! Important 
+1. You register a **variable** for MkDocs-macros 
+   by adding a key/value pair
+   to the `env.variables` dictionary (or namespace).
+   Variables are loaded with each page being rendered.
+2. You register a **macro** by **decorating** a function
+   with the expression `@env.macro` 
+   (or by adding it to the `env.macros` dictionary).  
+   Macros are loaded in the [global namespace](https://jinja.palletsprojects.com/en/2.11.x/api/#global-namespace)
+of the Jinja2 environment.[^2].
+3. You register a **filter** by **decorating** a function
+   with the expression `@env.filter`
+   (or by adding it to the `env.filters` dictionary).
 
-    1. You register a **variable** for MkDocs-macros 
-       by adding a key/value pair
-       to the `env.variables` dictionary (or namespace).
-    2. You register a **macro** by **decorating** a function
-       with the expression `@env.macro` 
-       (or by adding it to the `env.variables` dictionary).
-    3. You register a **filter** by **decorating** a function
-       with the expression `@env.filter`
-       (or by adding it to the `env.filters` dictionary).
+This must be done *within* that `define_env()` function.
+You may, however, place any imports or other declarations
+outside of the function.
 
-    This must be done *within* that `define_env()` function.
-    You may, however, place any imports or other declarations
-    outside of the function.
+
+[^2]: _From version 0.5.10._ Before that, macros were inserted in `env.variables`.
 
 ### Priority of variables
 !!! Warning
@@ -147,6 +153,9 @@ your functions (the `env` object does all the 'magic').
     Conversely, keep that fact in mind, 
     if users start complaining that an `extra` 
     value has a different value than the one which they expected!
+
+
+
 
 
 ## Content of the env object
@@ -404,13 +413,15 @@ def compare_price(my_price):
 ```
 
 ### Accessing macros
-> Note that since a macro is also a variable (function), you can also "import"
-it in a module. 
-For example, `fix_url` is a predefined macro that fixes relative
-urls (when applicable) so that they point to the root of the site:
+!!! Note "A macro is Python variable"
+    Note that since a macro is also a Python 
+    variable (function), you can also "import"
+    it in a module. 
+    For example, `fix_url` is a predefined macro that fixes relative
+    urls (when applicable) so that they point to the root of the site:
 
 
 ```
-fix_url = env.variables.fix_url
+fix_url = env.macros.fix_url
 my_url = fix_url(url)
 ```

@@ -1,50 +1,60 @@
 mkdocs-macros
 =============
-** A plugin for unleashing the power of Mkdocs, by using variables and macros **
+** A plugin for unleashing the power of [Mkdocs](https://www.mkdocs.org/), 
+by using variables and macros. **
 
-!!! Tip "Attention"
-    This is more than a plugin: it's a **mini-framework**!
+!!! Tip "A mini-framework"
+    mkdocs-macros is more than a "plugin". It is a **mini-framework**
+    developped with one goal in mind: 
+    
+    **To enhance mkdocs with the macro and automation capabilities
+    available to a [wiki engine](https://wiki.c2.com/?WikiEngine).** [^6]
+
+    For more information, see [Why this project?](why)
+    
+
+[^6]: With reference to existing wiki engines such as [Dokuwiki](https://www.dokuwiki.org/dokuwiki) or [Atlassian Confluence](https://www.atlassian.com/software/confluence).
 
 ## Overview
+
+### Definition
+
 **mkdocs-macros-plugin** is a plugin/framework that
 makes it easy for contributors
 of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It can do two things:
 
 1. Transforming the markdown pages
 into [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) templates
-that use **variables**, calls to **macros** and custom **filters**.
+that:  
+     - Use environment or custom **variables**, 
+     - Call pre-defined or custom **macros**, 
+     - Exploit standard or custom **filters**
 1. **Replacing MkDocs plugins** for a wide range of tasks: e.g. manipulating the navigation, adding files after the html pages have already been generated etc.
 
-**mkdocs-macros-plugin** is very easy to use out of the box: it provides
+The capabilities of **mkdocs-macros-plugin** are such 
+that it can be called a **"mini-framework"**.
+
+**mkdocs-macros-plugin** is very easy to use **out of the box**,
+even for small documentation projects: it provides
 data about the platform, the git repository (if any), etc. 
 
-On the other hand, you can go all the way as to pre-package modules
-into [**pluglets**](pluglets) that can be installed as Python packages.
-
-**mkdocs-macros-plugin** is so powerful that it can be called a **"mini-framework"**.
 
 
-!!! Note
-
-    By using mkdocs-macros, you can **cut down the number of plugins required**
-    for your documentation project.
-
-    In a wide range of cases, **[writing your own module with macros](python)**
-    (Python functions for a single website), 
-    could **save the effort of developing
-    _new_ plugins for mkdocs**.
 
 
 ### Variables
-Regular **variables** can be defined in five different ways:
+Regular **variables** are loaded with each markdown page which is 
+being rendered.
+
+Variables can be defined in five different ways:
 
   1. **Global**, i.e. for the whole documentation project:
     1. (for designers of the website): in the `mkdocs.yml` file,
        under the `extra` heading
-    1. (for contributors): in external yaml definition files
-    1. (for programmers): in a module (Python),
+    2. (for contributors): in external yaml definition files
+    3. (for programmers): in a module (Python),
     by adding them to a dictionary
-  1. **Local**, i.e. in each Markdown page (for contributors): 
+  2. **Local**, i.e. in each Markdown page (for contributors): 
     1. in the YAML header
     2. in the text, with a `{%set variable = value %}`
  statement
@@ -118,7 +128,28 @@ their **macros** and **filters**.
     to make custom extensions to the syntax of markdown, such as buttons,
     calls to email, embedding YouTube videos, etc.
 
+### Boosting large or complex documentation projects
+mkdocs-macros was also developed with 
+[**large or complex projects in mind**](advanced).
 
+You can include separate configurations files, import Jinja2 macro definitions,
+add "post-production" elements to your website, etc.
+
+You can go all the way as to pre-package modules
+into [**pluglets**](pluglets) that can be installed as Python packages.
+
+
+
+
+!!! Note
+
+    By using mkdocs-macros, you can **cut down the number of plugins required**
+    for your documentation project.
+
+    In a wide range of cases, **[writing your own module with macros](python)**
+    (Python functions for a single website), 
+    could **save the effort of developing
+    _new_ plugins for mkdocs**.
 
 
 ## Installation

@@ -19,6 +19,11 @@ See also the [MkDocs documentation on the config object](https://www.MkDocs.org/
 
 {{ context(config)| pretty }}
 
+## Macros
+These macros have been defined programmatically for this environment
+(module or pluglets). 
+{{ context(macros)| pretty }}
+
 ## Git Information
 Information available on the last commit and the git repository containing the
 documentation project:

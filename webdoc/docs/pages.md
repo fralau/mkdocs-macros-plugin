@@ -155,8 +155,14 @@ accessible from the python code.
     `{{ page.url }}`, `{{ page.is_homepage }}`, etc.
 
 ### Page-level macros
+It is possible to write **Jinja2 macros** 
+written with the Jinja2 syntax (instead of a Python module). 
+This allows you benefit from the power of that language
+for the manipulation of strings.
 
-Here is an example of macro, from the official Jinja2 documentation:
+
+Here is an example of Jinja2 macro, 
+from the official documentation:
 
 ``` {.jinja2}
 {% macro input(name, value='', type='text', size=20) -%}
@@ -172,7 +178,14 @@ Which can be called (within the page) as:
 <p>{{ input('password', type='password') }}</p>
 ```
 
-All definitions will remain **local** to the page.
+!!! Note
+    All definitions will remain **local** to the page.
+
+    It is possible to define Jinja2 macros in a separate file,
+    and to import them from there in any page, using the
+    `{% import ..}` directive.
+    See explanations under [Advanced Usage](advanced/#importing-macros-from-a-separate-file).
+
 
 Conditionals, loops, etc.
 -------------------------
