@@ -2,10 +2,12 @@
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+![Language](https://img.shields.io/github/languages/top/fralau/mkdocs_macros_plugin)
 ![PyPI](https://img.shields.io/pypi/v/mkdocs-macros-plugin)
+![Github](https://img.shields.io/github/v/tag/fralau/mkdocs_macros_plugin?label=github%20tag)
 ![macros](https://img.shields.io/pypi/dm/mkdocs-macros-plugin)
 
-* **View the [MkDocs macro documentation](https://mkdocs-macros-plugin.readthedocs.io/) on Read the Docs**
+* **View the [mkdocs-macro documentation](https://mkdocs-macros-plugin.readthedocs.io/) on Read the Docs**
 * View the [general Mkdocs documentation](https://www.mkdocs.org/)
 
 <!-- To update, run the following command:
@@ -14,18 +16,21 @@ markdown-toc -i README.md
 
 <!-- toc -->
 
-- [mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros](#mkdocs-macros-plugin-unleash-the-power-of-mkdocs-with-variables-and-macros)
-  - [Overview](#overview)
-    - [Using variables](#using-variables)
-    - [Defining variables](#defining-variables)
-    - [Macros and filters](#macros-and-filters)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Standard installation](#standard-installation)
-    - ["Manual installation"](#manual-installation)
-    - [Development/test installation](#developmenttest-installation)
-    - [Declaration of plugin](#declaration-of-plugin)
-    - [Check that it works](#check-that-it-works)
+- [Overview](#overview)
+  * [Using variables](#using-variables)
+  * [Defining variables](#defining-variables)
+  * [Macros and filters](#macros-and-filters)
+- [Installation](#installation)
+  * [Prerequisites](#prerequisites)
+  * [Standard installation](#standard-installation)
+  * ["Manual installation"](#manual-installation)
+  * [Development/test installation](#developmenttest-installation)
+  * [Declaration of plugin](#declaration-of-plugin)
+  * [Check that it works](#check-that-it-works)
+- [Using pluglets](#using-pluglets)
+  * [What are pluglets?](#what-are-pluglets)
+  * [How to add a pluglet to an mkdocs project?](#how-to-add-a-pluglet-to-an-mkdocs-project)
+  * [How to write a pluglet?](#how-to-write-a-pluglet)
 
 <!-- tocstop -->
 
@@ -166,3 +171,40 @@ of what you can do out of the box with the macros plugin.
 
 The other parts give you more detailed information.
 
+
+## Using pluglets
+
+### What are pluglets?
+
+**Pluglets** are small, easy-to-write programs
+that use mkdocs-macro's foundation
+to offer services to mkdocs projects, which would normally
+be offered by plugins.
+
+Pluglets are Python packages, which can be hosted on github, and 
+distributed through [PyPI](https://pypi.org/).
+
+
+### How to add a pluglet to an mkdocs project?
+
+Install it: 
+
+```python
+pip install <pluglet_name>
+```
+
+Declare it in the project's config (`mkdocs.yml`) file:
+
+```yaml
+plugins:
+  - search
+  - macros:
+      modules:
+        - <pluglet_name> 
+```
+
+### How to write a pluglet?
+
+[See instructions in the documentation](https://mkdocs-macros-plugin.readthedocs.io/en/latest/pluglets/).
+
+A sample pluglet can be found in [mkdocs-test (github)](https://github.com/fralau/mkdocs-macros-test).
