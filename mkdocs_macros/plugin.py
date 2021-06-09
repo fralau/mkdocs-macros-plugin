@@ -597,7 +597,12 @@ class MacrosPlugin(BasePlugin):
         # necessary because of a bug in mkdocs:
         # more information in:
         # https://github.com/mkdocs/mkdocs/issues/1952))
-        builder = list(server.watcher._tasks.values())[0]["func"]
+        try:
+            builder = list(server.watcher._tasks.values())[0]["func"]
+        except AttributeError:
+            # change in mkdocs 1.2, see: https://www.mkdocs.org/about/release-notes/#backward-incompatible-changes-in-12
+            # this parameter is now optional
+            builder = None
         # go ahead and watch
         for el in additional:
             if el:
