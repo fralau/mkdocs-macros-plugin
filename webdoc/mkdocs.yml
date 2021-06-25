@@ -13,6 +13,7 @@ theme:
     primary: teal
     accent: teal
 repo_url: https://github.com/fralau/mkdocs_macros_plugin
+edit_uri: edit/master/webdoc/docs/
 copyright: © Laurent Franceschetti, 2020. This work is licensed under CC BY-SA 4.0.
 nav:
     - Home: index.md
