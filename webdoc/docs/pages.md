@@ -24,7 +24,7 @@ Each call to the macro in markdown page will be replaced by that result.
 
 !!! Note
     For more information on the full concept of a macro, 
-    see [the detailed explanation](../why##use-case-overcoming-the-intrinsic-limitations-of-markdown-syntax).
+    see [the detailed explanation](./why.md##use-case-overcoming-the-intrinsic-limitations-of-markdown-syntax).
     
 ### 3. Filter
 A custom **filter** is a Jinja2 concept. It is essentially a Python
