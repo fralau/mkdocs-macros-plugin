@@ -178,6 +178,10 @@ class MacrosPlugin(BasePlugin):
 
         name = name or v.__name__
         self.macros[name] = v
+        # Maintain backwards compatible behavior with `variables` for now. In
+        # next major version, we remove this.
+        if name not in self.variables:
+            self.variables[name] = v
         return v
 
 

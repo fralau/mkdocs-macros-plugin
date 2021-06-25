@@ -1,0 +1,10 @@
+site_name: My own
+theme: mkdocs
+
+nav:
+    - Home: index.md
+
+plugins:
+  - search
+  - macros
+
