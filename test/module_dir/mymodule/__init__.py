@@ -13,8 +13,6 @@ def define_env(env):
     # use dot notation for adding
     env.macros.baz = env.macros.fix_url('foo')
 
-
-
     # Optional: a special function for making relative urls point to root
     fix_url = env.macros.fix_url
 
