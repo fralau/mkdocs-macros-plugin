@@ -16,9 +16,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## 0.5.10, 2021-04-23
 
+Warning: Breaking Change
+
 * Fixed: impossibility to use imported Jinja2 macros, without `with context`
     clause (#81). Now macros are imported as global.
-* Deprecated: Do not define macros as variables, but as macros.
+* **Removed: Do not define macros as variables any longer, but as macros.**
     - incorrect: `env.variables['foo'] = foo` (though it should still work)
     - correct: prefix declaration with `@env.macros` 
       or `env.macros['foo'] = foo`
