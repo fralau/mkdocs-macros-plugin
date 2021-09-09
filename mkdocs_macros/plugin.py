@@ -18,7 +18,7 @@ from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
 
 
-from .util import trace, debug, update, SuperDict, import_local_module, format_chatter, LOG
+from .util import install_package, parse_package, trace, debug, update, SuperDict, import_local_module, format_chatter, LOG
 from .context import define_env
 
 # ------------------------------------------
@@ -365,19 +365,29 @@ class MacrosPlugin(BasePlugin):
         self._post_macro_functions = [] 
         self._post_build_functions = []
 
-        # installed modules (as in pip list)
+        # pluglets installed modules (as in pip list)
         modules = self.config['modules']
         if modules:
             trace("Preinstalled modules: ", ','.join(modules))
-        for module_name in modules:
+        for m in modules:
+            # split the name of package in source (pypi) and module name
+            source_name, module_name = parse_package(m)
             try:
                 module = importlib.import_module(module_name)
-                self._load_module(module, module_name)
             except ModuleNotFoundError:
-                raise ModuleNotFoundError("Could not import installed "
-                                          "module '%s' (missing?)" % 
-                                          module_name,
-                                          name=module_name)
+                try:
+                    # if absent, install (from pypi)
+                    trace("Module '%s' not found, installing (source: '%s')" %
+                                (module_name, source_name))
+                    install_package(source_name)
+                    # install package raises NameError
+                    module = importlib.import_module(module_name)
+                except (NameError, ModuleNotFoundError):
+                    raise ModuleNotFoundError("Could not import installed "
+                                            "module '%s' (missing?)" % 
+                                            module_name,
+                                            name=module_name)
+            self._load_module(module, module_name)
         # local module (file or dir)
         local_module_name = self.config['module_name']
         debug("Project dir '%s'" %  self.project_dir)

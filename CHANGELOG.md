@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 * Fixed: documentation (for readthedocs) now contains proper
          link to edit uri on github
 * Fixed: broken link in webdoc/docs/pages.md
-* Bump version to 0.6.0, to acknowledge the breaking changing in 0.5.10
+* Bump version to 0.6.0, to acknowledge the breaking change in 0.5.10
 
 ## 0.5.12, 2021-06-09
 
