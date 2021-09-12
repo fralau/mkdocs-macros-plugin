@@ -241,7 +241,7 @@ of the MkDocs' config file:
 | `module_name` | `main` | [Name of the Python module](python/#local-module) containing macros, filters and variables. Indicate the file or directory, without extension; you may specify a path (e.g. `include/module`). If no `main` module is available, it is ignored.
 | `modules` | `[]`| [List of preinstalled Python modules](python/#adding-pre-installed-modules), i.e. listed by `pip list`.
 | `include_dir` | | [Directory for including external files](advanced/#changing-the-directory-of-the-includes) 
-| `include_yaml`| `[]` | [List of yaml files to be included](advanced/#including-external-yaml-files)
+| `include_yaml`| `[]` | [List of yaml files or `key: filename` pairs to be included](advanced/#including-external-yaml-files)
 | `j2_block_start_string` | | [Non-standard Jinja2 marker for start of block](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 | `j2_block_end_string` || [Non-standard Jinja2 marker for end of block](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 | `j2_variable_start_string` || [Non-standard Jinja2 marker for start of variable](advanced/#solution-3-altering-the-syntax-of-jinja2-for-mkdocs-macros) 

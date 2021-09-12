@@ -282,12 +282,13 @@ class MacrosPlugin(BasePlugin):
     def _load_yaml(self):
         "Load the the external yaml files"
         for el in self.config['include_yaml']:
-            # get the directory of the yaml file:
+            # el is either a filename or {key: filename} single-entry dict
             try:
                 [[key, filename]] = el.items()
             except AttributeError:
                 key = None
                 filename = el
+            # Paths are be relative to the project root.
             filename = os.path.join(self.project_dir, filename)
             if os.path.isfile(filename):
                 with open(filename) as f:
