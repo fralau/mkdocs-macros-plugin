@@ -282,15 +282,23 @@ class MacrosPlugin(BasePlugin):
     def _load_yaml(self):
         "Load the the external yaml files"
         for el in self.config['include_yaml']:
-            # get the directory of the yaml file:
-            filename = os.path.join(self.project_dir, el)
+            # el is either a filename or {key: filename} single-entry dict
+            try:
+                [[key, filename]] = el.items()
+            except AttributeError:
+                key = None
+                filename = el
+            # Paths are be relative to the project root.
+            filename = os.path.join(self.project_dir, filename)
             if os.path.isfile(filename):
                 with open(filename) as f:
                     # load the yaml file
                     # NOTE: for the SafeLoader argument, see: https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
                     content = yaml.load(f, Loader=yaml.SafeLoader)
                     trace("Loading yaml file:", filename)
-                    update(self.variables, content)
+                if key is not None:
+                    content = {key: content}
+                update(self.variables, content)
             else:
                 trace("WARNING: YAML configuration file was not found!",
                     filename)
