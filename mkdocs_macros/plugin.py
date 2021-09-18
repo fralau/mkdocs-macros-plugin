@@ -231,6 +231,16 @@ class MacrosPlugin(BasePlugin):
             raise AttributeError("Too early: raw markdown is not available"
                                  "at this stage!")
 
+
+    @raw_markdown.setter
+    def raw_markdown(self, value):
+        try:
+            _ = self._raw_markdown
+        except AttributeError:
+            raise AttributeError("Too early: raw markdown is not available"
+                                 "at this stage!")
+        self._raw_markdown = value
+
     # ----------------------------------
     # Function lists, for later events
     # ----------------------------------
