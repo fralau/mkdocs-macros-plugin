@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 # Initialization
 # --------------------
 
-VERSION_NUMBER = '0.6.1'
+VERSION_NUMBER = '0.6.2'
 
 # required if you want to run document/test
 # pip install 'mkdocs-macros-plugin[test]'
@@ -37,7 +37,7 @@ setup(
     long_description_content_type='text/markdown',
     keywords='mkdocs python markdown macros',
     url='https://github.com/fralau/mkdocs_macros_plugin',
-    author='Laurent Franceschetti',
+    author='Laurent Franceschbetti',
     author_email='info@settlenext.com',
     license='MIT',
     python_requires='>=3.5',

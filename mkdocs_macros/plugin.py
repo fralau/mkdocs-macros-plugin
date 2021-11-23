@@ -6,7 +6,8 @@
 # MIT License
 # --------------------------------------------
 
-import os, traceback
+import os
+import traceback
 from copy import copy
 import importlib
 
@@ -26,14 +27,16 @@ from .context import define_env
 # ------------------------------------------
 
 # The subsets of the YAML file that will be used for the variables:
-YAML_VARIABLES  = 'extra'
+YAML_VARIABLES = 'extra'
 
 # The default name of the Python module:
-DEFAULT_MODULE_NAME = 'main' # main.py
+DEFAULT_MODULE_NAME = 'main'  # main.py
 
 # ------------------------------------------
 # Plugin
 # ------------------------------------------
+
+
 class MacrosPlugin(BasePlugin):
     """
     Inject config 'extra' variables into the markdown
@@ -49,10 +52,10 @@ class MacrosPlugin(BasePlugin):
     J2_STRING = PluginType(str, default='')
     config_scheme = (
         # main python module:
-        ('module_name',  PluginType(str, 
+        ('module_name',  PluginType(str,
                                     default=DEFAULT_MODULE_NAME)),
-        ('modules', PluginType(list, 
-                                    default=[])),
+        ('modules', PluginType(list,
+                               default=[])),
         # include directory for templates ({% include ....%}):
         ('include_dir',  J2_STRING),
         # list of additional yaml files:
@@ -65,8 +68,7 @@ class MacrosPlugin(BasePlugin):
         ('verbose', PluginType(bool, default=False))
     )
 
-
-    def start_chatting(self, prefix:str, color:str='yellow'):
+    def start_chatting(self, prefix: str, color: str = 'yellow'):
         "Generate a chatter function (trace for macros)"
         def chatter(*args):
             """
@@ -88,16 +90,16 @@ class MacrosPlugin(BasePlugin):
             Will result in:
 
             INFO    -  [macros - Simple module] - This is a dull info message.
-            """ 
-            if self.config['verbose']:         
+            """
+            if self.config['verbose']:
                 LOG.info(format_chatter(*args, prefix=prefix, color=color))
 
         return chatter
-        
 
     # ------------------------------------------------
     # These properties are available in the env object
     # ------------------------------------------------
+
     @property
     def conf(self):
         """
@@ -117,7 +119,6 @@ class MacrosPlugin(BasePlugin):
             raise AttributeError("Conf property of macros plugin "
                                  "was called before it was initialized!")
 
-
     @property
     def variables(self):
         "The cumulative list of variables, initialized by on_config()"
@@ -126,7 +127,6 @@ class MacrosPlugin(BasePlugin):
         except AttributeError:
             raise AttributeError("Property called before on_config()")
 
-
     @property
     def macros(self):
         "The cumulative list of macros, initialized by on_config()"
@@ -134,7 +134,6 @@ class MacrosPlugin(BasePlugin):
             return self._macros
         except AttributeError:
             raise AttributeError("Property called before on_config()")
-
 
     @property
     def filters(self):
@@ -145,14 +144,12 @@ class MacrosPlugin(BasePlugin):
             self._filters = {}
             return self._filters
 
-
     @property
     def project_dir(self):
         "The directory of project"
         # we calculate it from the configuration file
         CONFIG_FILE = self.conf['config_file_path']
         return os.path.dirname(os.path.abspath(CONFIG_FILE))
-
 
     def macro(self, v, name=''):
         """
@@ -180,7 +177,6 @@ class MacrosPlugin(BasePlugin):
         self.macros[name] = v
         return v
 
-
     def filter(self, v, name=''):
         """
         Register a filter in the template,
@@ -207,7 +203,6 @@ class MacrosPlugin(BasePlugin):
         self.filters[name] = v
         return v
 
-
     @property
     def page(self):
         """
@@ -219,7 +214,6 @@ class MacrosPlugin(BasePlugin):
             raise AttributeError("Too early: page information is not available"
                                  "at this stage!")
 
-
     @property
     def raw_markdown(self):
         """
@@ -230,6 +224,17 @@ class MacrosPlugin(BasePlugin):
         except AttributeError:
             raise AttributeError("Too early: raw markdown is not available"
                                  "at this stage!")
+
+    @raw_markdown.setter
+    def raw_markdown(self, s):
+        """
+        Used to set the raw markdown
+        """
+        if not isinstance(s, str):
+            raise ValueError("Value provided to attribute raw_markdown "
+                             "should be a string")
+        self.raw_markdown
+        self._raw_markdown = s
 
     # ----------------------------------
     # Function lists, for later events
@@ -246,7 +251,6 @@ class MacrosPlugin(BasePlugin):
         except AttributeError:
             raise AttributeError("You called the pre_macro_functions property "
                                  "too early. Does not exist yet !")
-
 
     @property
     def post_macro_functions(self):
@@ -272,9 +276,6 @@ class MacrosPlugin(BasePlugin):
             raise AttributeError("You called post_build_functions property "
                                  "too early. Does not exist yet !")
 
-
-
-
     # ----------------------------------
     # load elements
     # ----------------------------------
@@ -293,13 +294,12 @@ class MacrosPlugin(BasePlugin):
                     update(self.variables, content)
             else:
                 trace("WARNING: YAML configuration file was not found!",
-                    filename)
-
+                      filename)
 
     def _load_module(self, module, module_name):
         """
         Load a single module
-        
+
         Add variables and functions to the config dictionary,
         via the python module
         (located in the same directory as the Yaml config file).
@@ -325,11 +325,11 @@ class MacrosPlugin(BasePlugin):
             def foobar(x):
                 ...
 
-        """      
+        """
         if not module:
             return
         trace("Found external Python module '%s' in:" % module_name,
-                self.project_dir)
+              self.project_dir)
         # execute the hook for the macros
         function_found = False
         if hasattr(module, 'define_env'):
@@ -339,15 +339,16 @@ class MacrosPlugin(BasePlugin):
             # this is for compatibility (DEPRECATED)
             module.declare_variables(self.variables, self.macro)
             trace("You are using declare_variables() in the python "
-                    "module '%s'. Prefer the define_env() function "
-                    "(see documentation)!" % module_name)
+                  "module '%s'. Prefer the define_env() function "
+                  "(see documentation)!" % module_name)
             function_found = True
         if not function_found:
             raise NameError("No valid function found in module '%s'" %
                             module_name)
         # DECLARE additional event functions
         # NOTE: each of these functions requires self (the environment).
-        def add_function(funcname:str, funclist:list):
+
+        def add_function(funcname: str, funclist: list):
             "Add an optional function to the module"
             if hasattr(module, funcname):
                 func = getattr(module, funcname)
@@ -356,13 +357,10 @@ class MacrosPlugin(BasePlugin):
         add_function('on_post_page_macros', self.post_macro_functions)
         add_function('on_post_build',       self.post_build_functions)
 
-
-
-
     def _load_modules(self):
         "Load all modules"
-        self._pre_macro_functions = [] 
-        self._post_macro_functions = [] 
+        self._pre_macro_functions = []
+        self._post_macro_functions = []
         self._post_build_functions = []
 
         # pluglets installed modules (as in pip list)
@@ -378,23 +376,23 @@ class MacrosPlugin(BasePlugin):
                 try:
                     # if absent, install (from pypi)
                     trace("Module '%s' not found, installing (source: '%s')" %
-                                (module_name, source_name))
+                          (module_name, source_name))
                     install_package(source_name)
                     # install package raises NameError
                     module = importlib.import_module(module_name)
                 except (NameError, ModuleNotFoundError):
                     raise ModuleNotFoundError("Could not import installed "
-                                            "module '%s' (missing?)" % 
-                                            module_name,
-                                            name=module_name)
+                                              "module '%s' (missing?)" %
+                                              module_name,
+                                              name=module_name)
             self._load_module(module, module_name)
         # local module (file or dir)
         local_module_name = self.config['module_name']
-        debug("Project dir '%s'" %  self.project_dir)
+        debug("Project dir '%s'" % self.project_dir)
         module = import_local_module(self.project_dir, local_module_name)
         if module:
             trace("Found local Python module '%s' in:" % local_module_name,
-                     self.project_dir)
+                  self.project_dir)
             self._load_module(module, local_module_name)
 
         else:
@@ -404,10 +402,8 @@ class MacrosPlugin(BasePlugin):
                 pass
             else:
                 raise ImportError("Macro plugin could not find custom '%s' "
-                                "module in '%s'." %
-                                (local_module_name, self.project_dir))
-
-
+                                  "module in '%s'." %
+                                  (local_module_name, self.project_dir))
 
     def render(self, markdown):
         """
@@ -433,7 +429,7 @@ class MacrosPlugin(BasePlugin):
             # a trick to force of a page NOT to be interpreted,
             if meta_variables.get('ignore_macros') == True:
                 return markdown
-            # trace("Metavariables for '%s':" % self.variables['page'].title, 
+            # trace("Metavariables for '%s':" % self.variables['page'].title,
             #                 meta_variables)
             page_variables.update(meta_variables)
 
@@ -445,26 +441,25 @@ class MacrosPlugin(BasePlugin):
         except TemplateSyntaxError as e:
             line = markdown.splitlines()[e.lineno-1]
             output = ["# _Macro Syntax Error_",
-                        "_Line %s in Markdown file:_ **%s** " %
-                            (e.lineno, e.message),
-                        "```python",
-                        line,
-                        "```"]
-            error = "\n".join(output) 
+                      "_Line %s in Markdown file:_ **%s** " %
+                      (e.lineno, e.message),
+                      "```python",
+                      line,
+                      "```"]
+            error = "\n".join(output)
             trace("ERROR", error)
             return error
         except Exception as e:
             output = ["# _Macro Rendering Error_",
-                        "",
-                        "**%s**: %s" % (type(e).__name__, e),
-                        "", "",
-                        "```",
-                        traceback.format_exc(),
-                        "```"]
-            error = "\n".join(output) 
+                      "",
+                      "**%s**: %s" % (type(e).__name__, e),
+                      "", "",
+                      "```",
+                      traceback.format_exc(),
+                      "```"]
+            error = "\n".join(output)
             trace("ERROR", error)
             return error
-
 
     # ----------------------------------
     # Standard Hooks for a mkdocs plugin
@@ -486,7 +481,7 @@ class MacrosPlugin(BasePlugin):
         # load the extra variables
         extra = dict(config.get(YAML_VARIABLES))
         # make a copy for documentation:
-        self.variables['extra'] = extra 
+        self.variables['extra'] = extra
         # actual variables (top level will be loaded later)
 
         # export the whole data passed as argument, in case of need:
@@ -504,7 +499,6 @@ class MacrosPlugin(BasePlugin):
 
         # at this point load the actual variables from extra (YAML file)
         self.variables.update(extra)
-        
 
         # add variables, functions and filters from the Python module:
         # by design, this MUST be the last step, so that programmers have
@@ -516,8 +510,7 @@ class MacrosPlugin(BasePlugin):
             trace("Extra variables (config file):", list(extra.keys()))
             debug("Content of extra variables (config file):", extra)
         if self.filters:
-            trace("Extra filters (module):", list (self.filters.keys()))
-        
+            trace("Extra filters (module):", list(self.filters.keys()))
 
         # -------------------
         # Create the jinja2 environment:
@@ -532,7 +525,7 @@ class MacrosPlugin(BasePlugin):
         if not os.path.isdir(include_dir):
             raise FileNotFoundError("MACROS ERROR: Include directory '%s' "
                                     "does not exist!" %
-                                        include_dir)
+                                    include_dir)
         if self.config['include_dir']:
             trace("Includes directory:", include_dir)
         else:
@@ -544,15 +537,15 @@ class MacrosPlugin(BasePlugin):
         # read the config variables for jinja2:
         for key, value in self.config.items():
             # take definitions in config_scheme where key starts with 'j2_'
-            # (if value is not empty) 
+            # (if value is not empty)
             # and forward them to jinja2
             # this is used for the markers
             if key.startswith('j2_') and value:
-                variable_name = key.split('_', 1)[1] # remove prefix
+                variable_name = key.split('_', 1)[1]  # remove prefix
                 trace("Found j2 variable '%s': '%s'" %
-                            (variable_name, value))
+                      (variable_name, value))
                 env_config[variable_name] = value
-        
+
         # finally build the environment:
         self.env = Environment(**env_config)
 
@@ -564,18 +557,16 @@ class MacrosPlugin(BasePlugin):
         # add the macros to the environment's global (not to the template!)
         self.env.globals.update(self.macros)
 
-
         # -------------------
         # Process filters
         # -------------------
         # reference all filters, for doc [these are copies, so no black magic]
         # NOTE: self.variables is reflected in the list of variables
         #       in the jinja2 environment (same object)
-        self.variables['filters'] = copy(self.filters) 
-        self.variables['filters_builtin'] = copy(self.env.filters) 
+        self.variables['filters'] = copy(self.filters)
+        self.variables['filters_builtin'] = copy(self.env.filters)
         # update environment with the custom filters:
         self.env.filters.update(self.filters)
-
 
     def on_nav(self, nav, config, files):
         """
@@ -590,8 +581,7 @@ class MacrosPlugin(BasePlugin):
         # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/files.py
         # NOTE: useful for writing macros that check for the existence of files; e.g., a macro to mark a link as disabled, if its target doesn't exist
         self.variables['files'] = files
-        
-        
+
     def on_serve(self, server, config, **kwargs):
         """
         Called when the serve command is used during development.
@@ -599,8 +589,8 @@ class MacrosPlugin(BasePlugin):
         files for auto-reloading.
         """
         # define directories to add, keep non nulls
-        additional = [self.config['include_dir'] # markdown includes
-                     ]
+        additional = [self.config['include_dir']  # markdown includes
+                      ]
         additional = [el for el in additional if el]
         if additional:
             trace("We will also watch:", additional)
@@ -616,11 +606,10 @@ class MacrosPlugin(BasePlugin):
         # go ahead and watch
         for el in additional:
             if el:
-                server.watch(el, builder)        
-
+                server.watch(el, builder)
 
     def on_page_markdown(self, markdown, page, config,
-                          site_navigation=None, **kwargs):
+                         site_navigation=None, **kwargs):
         """
         Pre-rendering for each page of the website.
         It uses the jinja2 directives, together with

@@ -1,8 +1,6 @@
 import os
 
 
-
-
 def define_env(env):
     """
     This is the hook for the functions (new form)
@@ -12,7 +10,7 @@ def define_env(env):
 
     env.macros.cwd = os.getcwd()
 
-    # use dot notation for adding
+    # use dot notat ion for adding
     env.macros.baz = env.macros.fix_url('foo')
 
     @env.macro
@@ -29,13 +27,11 @@ def define_env(env):
             lines = f.readlines()
         line_range = lines[start_line:end_line]
         return '\n'.join(line_range)
-    
 
     @env.macro
     def doc_env():
         "Document the environment"
-        return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
-
+        return {name: getattr(env, name) for name in dir(env) if not name.startswith('_')}
 
     # Optional: a special function for making relative urls point to root
     fix_url = env.macros.fix_url
@@ -48,9 +44,15 @@ def define_env(env):
         HTML = """<a class='md-button' href="%s">%s</a>"""
         return HTML % (url, label)
 
-    
     env.variables.special_docs_dir = env.variables.config['docs_dir']
 
+
+def on_post_page_macros(env):
+    "After macros were executed"
+    # This will add a (Markdown or HTML) footer
+    footer = '\n'.join(
+        ['', '# Added Footer (Post-build)', 'Name of the page is _%s_' % env.page.title])
+    env.raw_markdown += footer
 
 
 def on_post_build(env):

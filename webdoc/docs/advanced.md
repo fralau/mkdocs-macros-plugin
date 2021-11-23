@@ -35,11 +35,11 @@ and fail to behave properly.
 
 The most likely places where this can occur are the following:
 
-Location in Markdown file (Block or Inline) | Description 
--- | --
-**Code** | Documented Jinja2 statements (or similar syntax), LaTeX  
-**Maths** | LaTeX statements 
-*_Elsewhere_* | Some pre-existing templating or macro language, typically with some constructs starting with `{#` or `{{`.
+| Location in Markdown file (Block or Inline) | Description                                                                                                |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Code**                                    | Documented Jinja2 statements (or similar syntax), LaTeX                                                    |
+| **Maths**                                   | LaTeX statements                                                                                           |
+| *_Elsewhere_*                               | Some pre-existing templating or macro language, typically with some constructs starting with `{#` or `{{`. |
 
 <br>
 
@@ -549,7 +549,7 @@ The proper time to do that, would be
 
 
 
-### Use Case
+### Use Case 1: Adding meta values to a page
 
 There are cases where you want to make modifications to a specific 
 markdown page, based on the content of that page.
@@ -583,6 +583,12 @@ description: This is a description
     **But supposing this was not the case ?** Or supposing you want
     to check or alter that information?
 
+### Use Case 2: Modifying the raw_markdown generated for a page
+
+
+
+You might still change that raw markdown, if you really want,
+e.g. by adding "footer" information at the bottom of each page.
 
 
 ### Solution
@@ -593,8 +599,8 @@ you may use the two functions, before the markdown is actually rendered:
 1. `on_pre_page_macros(env)` : ** before ** the macros are interpreted
    (macros are still present).
 1. `on_post_page_macros(env)` : ** after ** the macros are rendered
-   (macros have been interpreted). At that point you have an
-   `env.raw_markdown` property available.
+   (macros have been interpreted). At that point, you have a string `env.raw_markdown` property available, which contains the markdown _after_ the conversion of the Jinja2 template.
+
 
 
 
@@ -604,12 +610,15 @@ For example:
 def on_post_page_macros(env):
     """
     Actions to be done after macro interpretation,
-    just before the markdown is generated
+    when the markdown is already generated
     """
+    # This information will get carried into the HTML template.
     env.page.meta['description'] = ...
-```
-This information will get carried into the HTML template.
 
+    # This will add a (Markdown or HTML) footer
+    footer = '\n...'
+    env.raw_markdown += footer
+```
 
 
 ### Additional Notes for `on_pre_page_macros()` and `on_post_page_macros()`
@@ -635,13 +644,13 @@ It is **not** available for the `define_env(env)` function.
 
 It contains notably the following information:
 
-Attribute | Value
---- | -----
-`title` | title of the page
-`abs_url` | the absolute url of the page from the top of the hierarchy
-`canonical_url`| the complete url of the page (typically with `https://...`)
-`markdown` | the whole markdown code (**before** interpretation; for the **interpreted markdown**, use instead `env.raw_markdown`, see below).
-`meta` | the meta data dictionary, as updated (typically) from the YAML header.
+| Attribute       | Value                                                                                                                             |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `title`         | title of the page                                                                                                                 |
+| `abs_url`       | the absolute url of the page from the top of the hierarchy                                                                        |
+| `canonical_url` | the complete url of the page (typically with `https://...`)                                                                       |
+| `markdown`      | the whole markdown code (**before** interpretation; for the **interpreted markdown**, use instead `env.raw_markdown`, see below). |
+| `meta`          | the meta data dictionary, as updated (typically) from the YAML header.                                                            |
 
 ---
 
