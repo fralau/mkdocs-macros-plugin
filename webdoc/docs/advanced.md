@@ -452,7 +452,7 @@ and thus the risk that it becomes accidentally corrupted.
 
 To include external data files, add the `include_yaml` to the
 configuration file of mkdocs (`mkdocs.yml` by default), followed by the
-list of external files:
+list of external filenames or `key: filename` pairs:
 
 ``` {.yaml}
 plugins:
@@ -461,13 +461,16 @@ plugins:
         include_yaml:
           - data/foo.yaml
           - data/bar.yaml
+          - key: data/baz.yaml
 ```
 
 The default directory is the project's root.
 
 Upon loading, the plugin will read each yaml file in order and merge the
-variables with those read from the main configuration file. In case of
-conflicts, the latest value will override the earlier ones.
+variables with those read from the main configuration file. If an entry is
+specified in the `key: filename` format, the data from the file will be assigned
+to the `key`. In case of conflicts, the latest value will override the earlier
+ones.
 
 ### Merging branches
 

@@ -3,7 +3,7 @@ Where Can I get Help?
 
 ## RFM 
 
-Read the Frigging on-line [Manual](/index.html) and especially the [Faq](../tips)... seriously: there are good chances that they already contain
+Read the Frigging on-line [Manual](../) and especially the [Faq](../tips)... seriously: there are good chances that they already contain
 the answer you are looking for. 🙂
 
 ## Issues
