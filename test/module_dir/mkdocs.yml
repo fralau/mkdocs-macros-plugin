@@ -1,6 +1,6 @@
 site_name: Main test site (module dir)
 theme: material
-copyright: (C) SettleNext Laurent Franceschetti 2021
+copyright: (C) SettleNext Laurent Franceschetti 2020
 
 nav:
     - Home: index.md

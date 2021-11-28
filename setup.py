@@ -1,7 +1,7 @@
 # --------------------------------------------
 # Setup file for the package
 #
-# Laurent Franceschetti (c) 2018-2021
+# Laurent Franceschetti (c) 2018-2020
 # --------------------------------------------
 
 import os
