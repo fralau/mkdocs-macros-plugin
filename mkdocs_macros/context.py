@@ -6,7 +6,7 @@ that a template designer is likely to need.
 
 It contains in particular documentation functions.
 
-Laurent Franceschetti (c) 2020
+Laurent Franceschetti (c) 2021
 """
 import os, sys, subprocess, platform, traceback
 import pkg_resources
