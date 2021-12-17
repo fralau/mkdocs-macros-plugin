@@ -158,7 +158,7 @@ website), e.g.:
 ``` {.html}
 Here is my code:
 
-<a class='button' href="http:your.website.com/page">Try this</a>
+<a class='button' href="http://your.website.com/page">Try this</a>
 ```
 
 The combination of HTML and css works well and can solve a wide range of
@@ -187,7 +187,7 @@ What if mkdocs provided **macros** like a wiki engine,
 that would allow you to write the
 above HTML as:
 
-    {{ button('Try this', 'http:your.website.com/page') }}
+    {{ button('Try this', 'http://your.website.com/page') }}
 
 ... that call was translated into the proper HTML?
 
