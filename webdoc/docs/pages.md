@@ -135,7 +135,7 @@ Then you can access the content of the YAML header in two ways:
     already defined (suche as `extra`, `config`, etc.) those will
     be overwritten, but for this page only.
 
-### Using the`Set` keyword
+### Using the `set` keyword
 
 Variables can be defined in the template with the `set` keyword, e.g.:
 
