@@ -183,7 +183,7 @@ Pluglets are Python packages, which can be hosted on github, and
 distributed through [PyPI](https://pypi.org/).
 
 
-### How to add a pluglet to an mkdocs project?
+### How to add a pluglet to an mkdocs project?
 
 Install it: 
 
