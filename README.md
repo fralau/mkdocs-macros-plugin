@@ -1,5 +1,23 @@
 # mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros
 
+# Table of Contents
+* [Overview](#Overview)
+	* [Using variables](#Using-variables)
+	* [Defining variables](#Defining-variables)
+	* [Macros and filters](#Macros-and-filters)
+* [Installation](#Installation)
+	* [Prerequisites](#Prerequisites)
+	* [Standard installation](#Standard-installation)
+	* ["Manual installation"](#"Manual-installation")
+	* [Development/test installation](#Development/test-installation)
+	* [Declaration of plugin](#Declaration-of-plugin)
+	* [Check that it works](#Check-that-it-works)
+* [Using pluglets](#Using-pluglets)
+	* [What are pluglets?](#What-are-pluglets?)
+	* [How to add a pluglet to an mkdocs project?](#How-to-add-a-pluglet-to-an-mkdocs-project?)
+	* [How to write a pluglet?](#How-to-write-a-pluglet?)
+
+
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 ![Language](https://img.shields.io/github/languages/top/fralau/mkdocs_macros_plugin)
