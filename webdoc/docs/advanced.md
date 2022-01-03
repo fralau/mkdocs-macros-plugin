@@ -21,7 +21,7 @@ How to prevent accidental interpretation of "Jinja-like" statements
 
 The most frequent issue, when adding the mkdocs-macros plugin to an
 existing mkdocs project, is some markdown pages 
-may no be rendered correctly,
+may not be rendered correctly,
 or cause a syntax error, or some other error.
 
 The reason is that if Jinja2 template engine in the **macro plugin** 
