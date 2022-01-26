@@ -13,7 +13,7 @@ import importlib
 
 
 import yaml
-from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError
+from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError, DebugUndefined
 from mkdocs.plugins import BasePlugin
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
@@ -540,8 +540,11 @@ class MacrosPlugin(BasePlugin):
         else:
             debug("Includes directory:", include_dir)
         # will contain all parameters:
+        # undefined jinja2 variables will be left as-is
+            # see https://stackoverflow.com/a/53134416
         env_config = {
-            'loader': FileSystemLoader(include_dir)
+            'loader': FileSystemLoader(include_dir),
+            'undefined': DebugUndefined
         }
         # read the config variables for jinja2:
         for key, value in self.config.items():
