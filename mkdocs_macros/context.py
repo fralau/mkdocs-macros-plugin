@@ -8,13 +8,21 @@ It contains in particular documentation functions.
 
 Laurent Franceschetti (c) 2020
 """
-import os, sys, subprocess, platform, traceback
+from urllib.parse import urlparse
+from mkdocs.structure.nav import get_navigation
+from mkdocs.structure.files import File
+import os
+import sys
+import subprocess
+import platform
+import traceback
 import pkg_resources
 import datetime
 from dateutil.parser import parse as date_parse
 from functools import partial
 
-import mkdocs, jinja2
+import mkdocs
+import jinja2
 from jinja2 import Template
 from markdown import markdown
 
@@ -41,8 +49,8 @@ def list_items(obj):
     try:
         return obj.items()
     except AttributeError:
-            # it's an object
-            return obj.__dict__.items()
+        # it's an object
+        return obj.__dict__.items()
     except TypeError:
         # it's a list: enumerate
         return enumerate(list(obj))
@@ -61,7 +69,6 @@ def get_first_para(s):
     if r.endswith(':'):
         r = r[:-1] + '.'
     return r
-    
 
 
 def format_value(value):
@@ -70,12 +77,12 @@ def format_value(value):
     # NOTE: using the name does nto force us to import them
     LISTED_CLASSES = 'Config', 'File', 'Section'
     # those types will be printed without question
-    SHORT_TYPES = int, float, str, list  
+    SHORT_TYPES = int, float, str, list
     if callable(value):
         # for functions
         docstring = get_first_para(value.__doc__)
-        # we interpret the markdown in the docstring, 
-        # since both jinja2 and ourselves use markdown, 
+        # we interpret the markdown in the docstring,
+        # since both jinja2 and ourselves use markdown,
         # and we need to produce a HTML table:
         docstring = markdown(docstring)
         try:
@@ -84,8 +91,8 @@ def format_value(value):
         except AttributeError:
             # code not available
             return docstring
-    elif (isinstance(value, dict) or 
-        type(value).__name__ in LISTED_CLASSES):
+    elif (isinstance(value, dict) or
+          type(value).__name__ in LISTED_CLASSES):
         # print("Processing:", type(value).__name__, isinstance(value, SHORT_TYPES))
         r_list = []
         for key, value in list_items(value):
@@ -93,18 +100,16 @@ def format_value(value):
                 r_list.append("%s = %s" % (key, repr(value)))
             else:
                 # object or dict: write minimal info:
-                r_list.append("<b>%s</b> [<i>%s</i>]" % 
-                            (key, type(value).__name__))
+                r_list.append("<b>%s</b> [<i>%s</i>]" %
+                              (key, type(value).__name__))
         return ', '.join(r_list)
     else:
         return repr(value)
 
 
-
-
 def make_html(rows, header=[], tb_class='pretty'):
     "Produce an HTML table"
-    back_color = "#F0FFFF" # light blue
+    back_color = "#F0FFFF"  # light blue
     grid_color = "#DCDCDC"
     padding = "5px"
     style = "border:1px solid %s; padding: %s" % (grid_color, padding)
@@ -130,28 +135,33 @@ def get_git_info():
     Get the abbreviated commit version (not provided by get_git_info())
     Returns a dictionary
     """
+    LAST_COMMIT = ['git', 'log', '-1']
     COMMANDS = {
-        'short_commit' : ['git', 'rev-parse', '--short', 'HEAD'],
-        'commit' : ['git', 'rev-parse', 'HEAD'],
-        'author': ['git', 'log', '-1', "--pretty=format:%an"],
-        'tag' : ['git', 'describe', '--tags'],
-        'date_ISO' : ['git', '--no-pager', 'log', '-1', '--format=%ai'],
-        'message' : ['git', 'log', '-1', "--pretty=%B"],
-        'raw' : ['git', 'log', '-1'],
+        'short_commit': ['git', 'rev-parse', '--short', 'HEAD'],
+        'commit': ['git', 'rev-parse', 'HEAD'],
+        'tag': ['git', 'describe', '--tags'],
+        'author': LAST_COMMIT + ["--pretty=format:%an"],
+        'author_email': LAST_COMMIT + ["--pretty=format:%ae"],
+        'committer': LAST_COMMIT + ["--pretty=format:%cn"],
+        'committer_email': LAST_COMMIT + ["--pretty=format:%ce"],
+        # %cd is the commit date
+        'date_ISO': LAST_COMMIT + ['--pretty=format:%cd'],
+        'message': LAST_COMMIT + ["--pretty=format:%B"],
+        'raw': LAST_COMMIT,
         'root_dir': ['git', 'rev-parse', '--show-toplevel']
-        }
-    
+    }
+
     # always return a date, even in case of failure
     r = {'status': False, 'date': None}
     try:
         for var, command in COMMANDS.items():
-            # NOTE: The 'text' argument is clearer, 
-            #       but for Python < 3.7, only `universal_newlines` 
+            # NOTE: The 'text' argument is clearer,
+            #       but for Python < 3.7, only `universal_newlines`
             #       is accepted
             try:
-                r[var] = subprocess.check_output(command, 
-                                        universal_newlines=True,
-                                        stderr=subprocess.DEVNULL).strip()
+                r[var] = subprocess.check_output(command,
+                                                 universal_newlines=True,
+                                                 stderr=subprocess.DEVNULL).strip()
                 # keep first part
                 if var == 'tag':
                     r[var] = r[var].split('-')[0]
@@ -161,23 +171,24 @@ def get_git_info():
             except subprocess.CalledProcessError as e:
                 if e.returncode == 128:
                     # generally means "unexpected error"
-                    # git status (no repo), 
+                    # git status (no repo),
                     # git tag (no tag)
                     r[var] = ''
                 else:
                     # should be 1, type whatever that is
                     r[var] = "# Cannot execute '%s': %s" % (command, e)
             except Exception as e:
-                    # any other error, it's probably meaningless at this point
-                    r[var] = "# Unexpected error '%s': %s" % (command, e)
-        # convert 
+                # any other error, it's probably meaningless at this point
+                r[var] = "# Unexpected error '%s': %s" % (command, e)
+        # convert
         return r
     except FileNotFoundError as e:
         # not git command
         return r.update(
-                {'status': False,
-                'diagnosis': 'Git command not found',
-                'error': str(e)})
+            {'status': False,
+             'diagnosis': 'Git command not found',
+             'error': str(e)})
+
 
 def python_version():
     "Get the python version"
@@ -186,6 +197,7 @@ def python_version():
     except (AttributeError, IndexError) as e:
         return str(e)
 
+
 def system_name():
     "Get the system name"
     r = platform.system()
@@ -193,9 +205,9 @@ def system_name():
         # you never know
         return "<UNKNOWN>"
     # print("Found:", r)
-    CONV = {'Win': 'Windows', 'Darwin':'MacOs'}
+    CONV = {'Win': 'Windows', 'Darwin': 'MacOs'}
     return CONV.get(r, r)
-    
+
 
 def system_version():
     "Get the system version"
@@ -204,11 +216,13 @@ def system_version():
     except (AttributeError, IndexError) as e:
         return str(e)
 
+
 # for the navigation
-from mkdocs.structure.files import File
-from mkdocs.structure.nav import get_navigation
+
+
 class Files(object):
     "This helper class is needed to rebuild the navigation"
+
     def __init__(self, config):
         self.config = config
         self._filenames = []
@@ -221,7 +235,7 @@ class Files(object):
     def get_file_from_path(self, path):
         "Build the filenames"
         self._filenames.append(path)
-        file = File(os.path.basename(path), 
+        file = File(os.path.basename(path),
                     os.path.dirname(path),
                     os.path.dirname(path), True)
         return file
@@ -234,7 +248,7 @@ class Files(object):
 # Urls
 # ---------------------------------
 
-from urllib.parse import urlparse
+
 def is_relative(url):
     """
     Check whether a url is relative
@@ -247,6 +261,7 @@ def is_relative(url):
     """
     p = urlparse(url)
     return (not p.scheme) and p.path
+
 
 def fix_url(url):
     """
@@ -264,6 +279,7 @@ def fix_url(url):
 # Exports to the environment
 # ---------------------------------
 
+
 def define_env(env):
     """
     This is the hook for declaring variables, macros and filters
@@ -276,19 +292,19 @@ def define_env(env):
             'system_version': system_version(),
             'python_version': python_version(),
             'mkdocs_version': mkdocs.__version__,
-            'macros_plugin_version': 
-                    pkg_resources.get_distribution(PACKAGE_NAME).version,
+            'macros_plugin_version':
+            pkg_resources.get_distribution(PACKAGE_NAME).version,
             'jinja2_version': jinja2.__version__,
             # 'site_git_version': site_git_version(),
         }
     except Exception as e:
         # Avoid breaking the system if error in reading the system info:
-        environment = ("<i><b>Cannot read system info!</b> %s: %s</i>" % 
-                    (type(e).__name__, str(e)))
+        environment = ("<i><b>Cannot read system info!</b> %s: %s</i>" %
+                       (type(e).__name__, str(e)))
     env.variables['environment'] = environment
 
     # configuration of the plugin, in the yaml file:
-    env.variables['plugin'] = env.config 
+    env.variables['plugin'] = env.config
 
     # git information:
     env.variables['git'] = get_git_info()
@@ -309,7 +325,7 @@ def define_env(env):
         "*Default mkdocs_macro* List the defined variables"
         try:
             return [(var, type(value).__name__, format_value(value))
-                        for var, value in list_items(obj)]
+                    for var, value in list_items(obj)]
         except jinja2.exceptions.UndefinedError as e:
             return [("<i>Error!</i>", type(e).__name__, str(e))]
         except AttributeError:
@@ -330,15 +346,15 @@ def define_env(env):
             return ''
         else:
             try:
-                rows = [("<b>%s</b>" % var, "<i>%s</i>" % var_type, 
+                rows = [("<b>%s</b>" % var, "<i>%s</i>" % var_type,
                         content.replace('\n', '<br/>'))
                         for var, var_type, content in var_list]
-                header = ['Variable','Type', 'Content']
+                header = ['Variable', 'Type', 'Content']
                 return make_html(rows, header)
             except Exception as e:
                 # dont make the whole page fail:
                 return "#%s: %s\n%s" % (type(e).__name__, e,
-                                       traceback.format_exc())
+                                        traceback.format_exc())
 
     @env.macro
     def macros_info():
@@ -359,7 +375,5 @@ def define_env(env):
         """
         return datetime.datetime.now()
 
-
     # add fix url function as macro
     env.macro(fix_url)
-

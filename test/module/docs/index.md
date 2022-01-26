@@ -41,16 +41,20 @@ The total costs is {{ unit_price }} euros.
 This is user: {{ user }}
 
 
-### Git version:
+### Git version
 
 {% if git.status %}
 
-{{ git.short_commit }} ({{ git.date }})
+{{ git.short_commit }} ({{ git.date }} by {{ git.author }})
 
 {{ git.date.strftime("%b %d, %Y %H:%M:%S") }}
 
 
 ({{ git.non_existent or now() }})
+
+{% else %}
+
+_Not a git directory, cannot test fully._
 
 {% endif %}
 
