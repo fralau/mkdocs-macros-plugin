@@ -64,7 +64,7 @@ of the form `\{\{ .... }}` or `{% ... %}`
 in your pages, which you want to appear in the HTML output,
 are intended for it.
 
-![dog eating ice-cream, credit: https://unsplash.com/photos/OYUzC-h1glg](../dog-eating.jpg)
+![dog eating ice-cream, credit: https://unsplash.com/photos/OYUzC-h1glg](dog-eating.jpg)
 
 This result is usually **an empty string where you expected one**.
 

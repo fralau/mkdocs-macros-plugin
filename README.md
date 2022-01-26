@@ -17,18 +17,21 @@ markdown-toc -i README.md
 <!-- toc -->
 
 - [mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros](#mkdocs-macros-plugin-unleash-the-power-of-mkdocs-with-variables-and-macros)
-  - [Overview](#overview)
-    - [Using variables](#using-variables)
-    - [Defining variables](#defining-variables)
-    - [Macros and filters](#macros-and-filters)
-  - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Standard installation](#standard-installation)
-    - ["Manual installation"](#manual-installation)
-    - [Development/test installation](#developmenttest-installation)
-    - [Declaration of plugin](#declaration-of-plugin)
-    - [Check that it works](#check-that-it-works)
-    - [How to write a pluglet?](#how-to-write-a-pluglet)
+  - [Overview](#Overview)
+    - [Using variables](#Using-variables)
+    - [Defining variables](#Defining-variables)
+    - [Macros and filters](#Macros-and-filters)
+  - [Installation](#Installation)
+    - [Prerequisites](#Prerequisites)
+    - [Standard installation](#Standard-installation)
+    - ["Manual installation"](#"Manual-installation")
+    - [Development/test installation](#Development/test-installation)
+    - [Declaration of plugin](#Declaration-of-plugin)
+    - [Check that it works](#Check-that-it-works)
+  - [Using pluglets](#Using-pluglets)
+    - [What are pluglets?](#What-are-pluglets?)
+    - [How to add a pluglet to an mkdocs project?](#How-to-add-a-pluglet-to-an-mkdocs-project?)
+    - [How to write a pluglet?](#How-to-write-a-pluglet?)
 
 <!-- tocstop -->
 
@@ -183,7 +186,7 @@ Pluglets are Python packages, which can be hosted on github, and
 distributed through [PyPI](https://pypi.org/).
 
 
-### How to add a pluglet to an mkdocs project?
+### How to add a pluglet to an mkdocs project?
 
 Install it: 
 
