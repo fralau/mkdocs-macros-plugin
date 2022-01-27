@@ -1,6 +1,6 @@
 {#
 Template for the macro_info() command
-(C) SettleNext 2019
+(C) Laurent Franceschetti 2019
 #}
 
 

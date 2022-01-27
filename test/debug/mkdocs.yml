@@ -1,0 +1,12 @@
+site_name: My Docs
+theme: material
+copyright: (C) Laurent Franceschetti 2021
+
+nav:
+  - Home: index.md
+
+plugins:
+  - search
+  - macros:
+      verbose: true # toggle to true if you want to macro debug
+      on_undefined: lax

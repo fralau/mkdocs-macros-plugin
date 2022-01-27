@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.6.4, 2022-01-27
+
+* Fixed: (#118) `{{ git.date }}` is now committer date (no longer author date).
+* Added: new git info elements (author email, committer, committer email); 
+         documentation was updated
+* Added: by default, unknown variables in a markdown page (`{{ foo }}`)
+         are no longer replaced by blanks but displayed as is (DebugUndefined) (#117);
+         for better compatibility with other plugins or error detection
+* Added: `on_undefined` parameter in plugin definition to alter behavior 
+         with unknown jinja2 variables: 'keep' (default), 'silent', 'strict', 'lax';
+         documentation was updated
+
 ## 0.6.3, 2021-11-23
 
 * Fixed: Broken build of 0.6.2

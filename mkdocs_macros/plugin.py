@@ -13,7 +13,8 @@ import importlib
 
 
 import yaml
-from jinja2 import Environment, FileSystemLoader, TemplateSyntaxError, DebugUndefined
+from jinja2 import (Environment, FileSystemLoader, TemplateSyntaxError,
+                    Undefined, DebugUndefined, StrictUndefined)
 from mkdocs.plugins import BasePlugin
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
@@ -31,6 +32,27 @@ YAML_VARIABLES = 'extra'
 
 # The default name of the Python module:
 DEFAULT_MODULE_NAME = 'main'  # main.py
+
+# Possible behavior in case of ignored variables or macros (first is default)
+
+
+class LaxUndefined(Undefined):
+    "Pass anything wrong as blank"
+
+    def _fail_with_undefined_error(self, *args, **kwargs):
+        return ''
+
+
+UNDEFINED_BEHAVIOR = {'keep': DebugUndefined,
+                      'silent': Undefined,
+                      'strict': StrictUndefined,
+                      # lax will even pass unknown objects:
+                      'lax': LaxUndefined}
+
+# By default undefined jinja2 variables AND macros will be left as-is
+# see https://stackoverflow.com/a/53134416
+DEFAULT_UNDEFINED_BEHAVIOR = 'keep'
+
 
 # ------------------------------------------
 # Plugin
@@ -65,6 +87,8 @@ class MacrosPlugin(BasePlugin):
         ('j2_block_end_string',      J2_STRING),
         ('j2_variable_start_string', J2_STRING),
         ('j2_variable_end_string',   J2_STRING),
+        # for behavior of unknown macro (e.g. other plugin):
+        ('on_undefined',  PluginType(str, default=DEFAULT_UNDEFINED_BEHAVIOR)),
         ('verbose', PluginType(bool, default=False))
     )
 
@@ -539,12 +563,15 @@ class MacrosPlugin(BasePlugin):
             trace("Includes directory:", include_dir)
         else:
             debug("Includes directory:", include_dir)
-        # will contain all parameters:
-        # undefined jinja2 variables will be left as-is
-            # see https://stackoverflow.com/a/53134416
+        # get the behavior in case of unknown variable (default: keep)
+        on_undefined = self.config['on_undefined']
+        if on_undefined not in UNDEFINED_BEHAVIOR:
+            raise ValueError("Illegal value for undefined macro parameter '%s'" % on_undefined)
+        undefined = UNDEFINED_BEHAVIOR[on_undefined]
+        debug("Undefined behavior:", undefined)
         env_config = {
             'loader': FileSystemLoader(include_dir),
-            'undefined': DebugUndefined
+            'undefined': undefined
         }
         # read the config variables for jinja2:
         for key, value in self.config.items():

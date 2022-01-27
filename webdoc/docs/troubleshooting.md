@@ -11,6 +11,41 @@ Before anything else
     Also, check that your version of mkdocs is sufficiently up-to-date.
 
 
+What happens if a variable or object is unknown?
+--------------------------------------
+
+The default behavior is called **keep** (DebugUndefined):
+
+1. Unknown variables are rendered as is (`{{ foobar }}` will be printed as such if 
+  `foobar` is undefined).
+2. Any other cases (notably unknown attribute, function or object) will cause the page
+   to **fail** (be rendered with an error message plus the traceback).  
+
+!!! Tip Compatibility with other plugins
+    There were two reasons for adopting this behavior:
+    
+    1. This reduces cognitive overhead in case of misspelled variable.
+       Anyone will be able to detect this error (it is better having an odd jinja2 statement 
+       in the page than having a "blank" that is likely to go unnoticed) 
+    2. Other plugins than
+       mkdocs-macros make use of jinja2 variables (as specified in the config file). In this way, mkdocs-macros
+       will not "eat up" those variables and give other plugins a better chance to work.
+
+You may alter this behavior with the `on_undefined` parameter in mkdocs_macros 
+section of the config file (`mkdocs.yaml`):
+
+| Value  | Definition                                                                                   | Undefined Type                             |
+| ------ | -------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| keep   | (Default) Unknown variables are rendered as-is; all other cases will cause the page to fail. | DebugUndefined                             |
+| silent | Unknown variables are rendered as blank; all other cases will cause the page to fail.        | Undefined                                  |
+| strict | Anything incorrect will cause the page to fail (closest behavior to Python).                 | StrictUndefined                            |
+| lax    | Like silent (blank); will be more tolerant, typically in case of unknown attribute.          | LaxUndefined (_specific to mkdocs-macros_) |
+
+!!! Warning
+    A call to an unknown macro (callable) will always cause the page to fail.
+
+The Undefined Type is the Jinja2 class used to implement that behavior (see [definition in official documentation](https://jinja.palletsprojects.com/en/3.0.x/api/#undefined-types)).
+
 Error Information in case of module error
 -----------------------------------------
 
@@ -56,22 +91,24 @@ the plugin's environment:
     {{ context() | pretty }}
 
 
-Help! mkdocs-macros is eating pieces of my documentation!
+Help! mkdocs-macros is breaking down or eating pieces of my documentation!
 ------------------------------------------------
 
-The problem is that mkdocs-macros is believing that statements
+!!! Note 
+    In principle, anything that looks like an unknown variable (e.g. `{{ foo }}`) will be preserved.
+    But in some cases there could be a broken page or  **an empty string where you expected one**.
+
+A likely cause to the problem is that mkdocs-macros is believing that statements
 of the form `\{\{ .... }}` or `{% ... %}` 
-in your pages, which you want to appear in the HTML output,
+in your pages, which you want to appear in the HTML output or be processed by another plugin,
 are intended for it.
 
 ![dog eating ice-cream, credit: https://unsplash.com/photos/OYUzC-h1glg](dog-eating.jpg)
 
-This result is usually **an empty string where you expected one**.
 
 For the solutions to that problem, see 
 [how to prevent interpretation of Jinja-like
 statements](../advanced/#how-to-prevent-interpretation-of-jinja-like-statements).
-
 
 
 
