@@ -63,6 +63,12 @@ Page: {{ page }}
 
 Date: {{ now().year }} {{ now().month }}
 
+### Unknown variable
+
+A non existing variable {{ foo_bar_baz }} is being **printed**.
+
+
+
 ### List of users
 {% set users = ['joe', 'jill', 'david', 'sam'] %}
 With a made up list: `{{ users }}`
