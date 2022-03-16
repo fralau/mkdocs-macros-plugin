@@ -20,7 +20,8 @@ from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
 
 
-from .util import install_package, parse_package, trace, debug, update, SuperDict, import_local_module, format_chatter, LOG
+from .util import (install_package, parse_package, trace, debug,
+        update, SuperDict, import_local_module, format_chatter, LOG)
 from .context import define_env
 
 # ------------------------------------------
@@ -52,6 +53,9 @@ UNDEFINED_BEHAVIOR = {'keep': DebugUndefined,
 # By default undefined jinja2 variables AND macros will be left as-is
 # see https://stackoverflow.com/a/53134416
 DEFAULT_UNDEFINED_BEHAVIOR = 'keep'
+
+# Return codes in case of error
+ERROR_MACRO = 100
 
 
 # ------------------------------------------
@@ -89,6 +93,8 @@ class MacrosPlugin(BasePlugin):
         ('j2_variable_end_string',   J2_STRING),
         # for behavior of unknown macro (e.g. other plugin):
         ('on_undefined',  PluginType(str, default=DEFAULT_UNDEFINED_BEHAVIOR)),
+        # for CD/CI set that parameter to true
+        ('on_error_fail', PluginType(bool, default=False)),
         ('verbose', PluginType(bool, default=False))
     )
 
@@ -467,6 +473,7 @@ class MacrosPlugin(BasePlugin):
             page_variables.update(meta_variables)
 
         # expand the template
+        on_error_fail = self.config['on_error_fail']
         try:
             md_template = self.env.from_string(markdown)
             # Execute the jinja2 template and return
@@ -481,7 +488,11 @@ class MacrosPlugin(BasePlugin):
                       "```"]
             error = "\n".join(output)
             trace("ERROR", error)
-            return error
+            if on_error_fail:
+                exit(ERROR_MACRO)
+            else:
+                # default case
+                return error
         except Exception as e:
             output = ["# _Macro Rendering Error_",
                       "",
@@ -492,7 +503,11 @@ class MacrosPlugin(BasePlugin):
                       "```"]
             error = "\n".join(output)
             trace("ERROR", error)
-            return error
+            if on_error_fail:
+                exit(ERROR_MACRO)
+            else:
+                # default case
+                return error
 
     # ----------------------------------
     # Standard Hooks for a mkdocs plugin
