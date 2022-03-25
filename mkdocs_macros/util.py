@@ -80,13 +80,7 @@ def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
     return msg
 
 
-def die(*args, exit_code:int, **kwargs):
-    """
-    Gracefully exit the program with a message to stderr and 
-    a return error code
-    """
-    print(*args, file=sys.stderr, **kwargs)
-    exit(exit_code)
+
 
 
 # ------------------------------------------

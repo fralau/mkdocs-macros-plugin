@@ -14,7 +14,54 @@ specific technical requirements**.
     stage in their existence.
 
 
-How to prevent accidental interpretation of "Jinja-like" statements
+Can I make mkdocs-macros build process to fail in case of error (instead of displaying the error on the page)?
+-----------------------------------------------------------
+Yes. In a context of CD/CI (Continuous Development/Continuous Integration)
+the generation of the mkdocs site can be part of a larger script.
+
+In that case, the expected behavior is not to display the eror message
+in the respective webpage (default behavior), 
+but to terminate the build process with an error code.
+That is the best way to advertise that something went wrong.
+
+It should then be possible to consult the log (console output)
+and track down the offending markdown file and line number.
+
+To activate that behavior, set the `on_error_fail` parameter to `true`
+in the config file:
+
+```yaml
+plugins:
+  - search
+  - macros:
+      # toggle to true if you are in CD/CI environment
+      on_error_fail: true
+```
+
+In that case, an error in a macro will terminate 
+the mkdocs-macros build or serve process with an **error 100**.
+
+!!! Tip "Make the behavior depend on an environment variable"
+
+    As of version 1.2, [mkdocs incorporates a yaml extension](https://www.mkdocs.org/user-guide/configuration/#environment-variables)
+    that allows the value of a configuration option to be set 
+    to the value of an environment variable.
+
+You could therefore write:
+
+```yaml
+plugins:
+    - search
+    - macros:
+        on_error_fail: !ENV [MACRO_ERROR_FAIL, false]
+```
+
+Meaning that the parameter "`on_error_fail` should be set to the value of 
+`MACRO_ERROR_FAIL`; or if the environment variable is absent to `false`.
+
+
+
+How to prevent accidental interpretation of "Jinja-like" statements?
 ------------------------
 
 ### Issue

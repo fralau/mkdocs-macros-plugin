@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.7.0, 2022-03-25
+
+* Added: (#133) `on_error_fail` in config file to make build/serve process
+        fail in case of macro error, with return code 100.
+
+* Added: (#130) Documentation on the tree structure of a typical 
+         macro directory (package) 
+
 ## 0.6.4, 2022-01-27
 
 * Fixed: (#118) `{{ git.date }}` is now committer date (no longer author date).
