@@ -19,7 +19,7 @@ Can I make mkdocs-macros build process to fail in case of error (instead of disp
 Yes. In a context of CD/CI (Continuous Development/Continuous Integration)
 the generation of the mkdocs site can be part of a larger script.
 
-In that case, the expected behavior is not to display the eror message
+In that case, the expected behavior is not to display the error message
 in the respective webpage (default behavior), 
 but to terminate the build process with an error code.
 That is the best way to advertise that something went wrong.
