@@ -18,8 +18,9 @@ from jinja2 import (Environment, FileSystemLoader, TemplateSyntaxError,
 from mkdocs.plugins import BasePlugin
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
+from mkdocs.structure.pages import Page
 
-
+from .errors import format_error
 from .util import (install_package, parse_package, trace, debug,
         update, SuperDict, import_local_module, format_chatter, LOG)
 from .context import define_env
@@ -444,7 +445,7 @@ class MacrosPlugin(BasePlugin):
                                   "module in '%s'." %
                                   (local_module_name, self.project_dir))
 
-    def render(self, markdown):
+    def render(self, markdown: str, page: Page):
         """
         Render a page through jinja2: it executes the macros
 
@@ -478,35 +479,19 @@ class MacrosPlugin(BasePlugin):
             md_template = self.env.from_string(markdown)
             # Execute the jinja2 template and return
             return md_template.render(**page_variables)
-        except TemplateSyntaxError as e:
-            line = markdown.splitlines()[e.lineno-1]
-            output = ["# _Macro Syntax Error_",
-                      "_Line %s in Markdown file:_ **%s** " %
-                      (e.lineno, e.message),
-                      "```python",
-                      line,
-                      "```"]
-            error = "\n".join(output)
-            trace("ERROR", error)
+
+        except Exception as error:
+            error_message = format_error(
+                error,
+                markdown=markdown,
+                page=page,
+            )
+
+            trace('ERROR', error_message)
             if on_error_fail:
                 exit(ERROR_MACRO)
+
             else:
-                # default case
-                return error
-        except Exception as e:
-            output = ["# _Macro Rendering Error_",
-                      "",
-                      "**%s**: %s" % (type(e).__name__, e),
-                      "", "",
-                      "```",
-                      traceback.format_exc(),
-                      "```"]
-            error = "\n".join(output)
-            trace("ERROR", error)
-            if on_error_fail:
-                exit(ERROR_MACRO)
-            else:
-                # default case
                 return error
 
     # ----------------------------------
@@ -685,7 +670,10 @@ class MacrosPlugin(BasePlugin):
             for func in self.pre_macro_functions:
                 func(self)
             # render the macros
-            self._raw_markdown = self.render(markdown)
+            self._raw_markdown = self.render(
+                markdown=markdown,
+                page=page,
+            )
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
                 func(self)
