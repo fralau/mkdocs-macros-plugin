@@ -492,7 +492,7 @@ class MacrosPlugin(BasePlugin):
                 exit(ERROR_MACRO)
 
             else:
-                return error
+                return error_message
 
     # ----------------------------------
     # Standard Hooks for a mkdocs plugin
