@@ -6,24 +6,25 @@
 # MIT License
 # --------------------------------------------
 
-import os
-import traceback
-from copy import copy
 import importlib
-
+import os
+from copy import copy
 
 import yaml
-from jinja2 import (Environment, FileSystemLoader, TemplateSyntaxError,
-                    Undefined, DebugUndefined, StrictUndefined)
-from mkdocs.plugins import BasePlugin
+from jinja2 import (
+    Environment, FileSystemLoader, Undefined, DebugUndefined, StrictUndefined,
+)
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
+from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
 
-from .errors import format_error
-from .util import (install_package, parse_package, trace, debug,
-        update, SuperDict, import_local_module, format_chatter, LOG)
-from .context import define_env
+from mkdocs_macros.errors import format_error
+from mkdocs_macros.context import define_env
+from mkdocs_macros.util import (
+    install_package, parse_package, trace, debug,
+    update, SuperDict, import_local_module, format_chatter, LOG,
+)
 
 # ------------------------------------------
 # Initialization
