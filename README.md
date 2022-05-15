@@ -127,7 +127,7 @@ pip install "mkdocs-macros-plugin[test]"
 ```
 
 ### Declaration of plugin
-Declare the plugin in the the file `mkdocs.yml`:
+Declare the plugin in the file `mkdocs.yml`:
 
 ```yaml
 plugins:
@@ -190,7 +190,7 @@ distributed through [PyPI](https://pypi.org/).
 
 Install it: 
 
-```python
+```shell
 pip install <pluglet_name>
 ```
 
