@@ -24,8 +24,8 @@ nav:
       - Writing pluglets: pluglets.md
       - "Advanced usage": advanced.md
     - Faq:
-      - "Tips and Tricks?": tips.md
-      - "Troubleshooting?": troubleshooting.md
+      - "Tips and Tricks": tips.md
+      - "Troubleshooting": troubleshooting.md
       - "Asking for help?": help.md
     - Contributing: contribute.md
     - Changelog: changelog.md

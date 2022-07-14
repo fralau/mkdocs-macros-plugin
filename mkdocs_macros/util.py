@@ -80,6 +80,9 @@ def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
     return msg
 
 
+
+
+
 # ------------------------------------------
 # Packages and modules
 # ------------------------------------------

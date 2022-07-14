@@ -22,12 +22,6 @@ website's project directory (generally beside the `mkdocs.yml` file).
 
 **If no `main` module is available, this is ignored.**
 
-
-!!! Tip
-    Instead of a module file, could also be a *package* (i.e. a `main`
-    subdirectory), as long as the `define_env()` function is accessible
-    through the `__init__.py` file.
-
 If you wish, you can change the name of that module by adding a
 `module_name` entry to the `mkdocs.yml` file (no need to add the `.py`
 suffix):
@@ -41,6 +35,11 @@ plugins:
 
 ** If you specify a module name, it must be available, or this will 
 raise an error.**
+
+!!! Note
+    If you wish, you can implement your module as a [package (subdirectory)](/#implementing-the-module-as-a-package-module-subdirectory)
+    instead of a single file. 
+
 
 ### Preinstalled modules (pluglets)
 
@@ -298,6 +297,53 @@ Function | Description | Typical Use | Triggered by MkDoc's event
 `on_post_page_macros(env)`| Executed just after the Jinja2 code (markdown page) have been rendered | [Directly modify a markdown page](../advanced/#adding-post-build-files-to-the-html-website) | on_page
 `on_post_build(env)` | Executed after the html pages have been produced | [Add files to the website](../advanced/#adding-post-build-files-to-the-html-website) | on_post_build
 `declare_variables(variables, macro)`| _Main function_ | [_Deprecated (< version 0.3.0)_](#the-declare_variables-function-deprecated) | *on_config*
+
+
+## Implementing the module as a package (module subdirectory)
+
+Instead of implementing the Python module as a file (typically `main.py`), 
+you can create a *package* (i.e. a `main` subdirectory). 
+
+The Python rules for defining a package apply: particularly
+the dot (`.`) prefix for relative imports inside the package.
+
+The `define_env()` function should be accessible
+through the `__init__.py` file.
+
+A typical directory file could look like this:
+
+```
+main
+├── __init__.py
+├── util.py
+├── ...
+└── ...
+```
+
+The `__init__.py` file could look like this:
+
+```python
+from .util import foo, bar
+
+def define_env(env):
+    """
+    This is the hook for defining variables, macros and filters
+    """
+
+    @env.macro
+    def make_foo():
+        .......
+        return foo(s)
+
+    @env.macro
+    def get_bar(s):
+        s = bar(s, ...)
+        return s
+
+    ...
+
+```
+
 
 
 ## A caution about security

@@ -11,7 +11,7 @@ bottles:
 
 # Test Page (Modules)
 
-The total costs is {{ unit_price }} euros.
+The total costs is {{ unit_price}} euros.
 
 > The figure 50 should appear (`unit_price`), defined in config file).
 

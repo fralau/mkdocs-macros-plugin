@@ -14,6 +14,8 @@ plugins:
   - macros:
       include_dir: include
       modules: ['mkdocs-macros-test:mkdocs_macros_test']
+      # toggle to true if you are in CD/CI environment
+      on_error_fail: true
       verbose: true # toggle to true if you want to macro debug
 
 extra:
