@@ -11,25 +11,27 @@ Before anything else
     Also, check that your version of mkdocs is sufficiently up-to-date.
 
 
-What happens if a variable or object is unknown?
+What happens if a variable is undefined?
 --------------------------------------
 
-The default behavior is called **keep** (DebugUndefined):
+_New on 0.6.4._
+
+The default behavior in case of undefined variable is called **keep** (DebugUndefined):
 
 1. Unknown variables are rendered as is (`{{ foobar }}` will be printed as such if 
   `foobar` is undefined).
-2. Any other cases (notably unknown attribute, function or object) will cause the page
-   to **fail** (be rendered with an error message plus the traceback).  
+2. Any other cases (notably unknown attribute or function call) will cause the page
+   to **fail** (be rendered with an error message within the page plus the traceback).  
 
-!!! Tip Compatibility with other plugins
+!!! Tip Motivations for default behavior
     There were two reasons for adopting this behavior:
     
-    1. This reduces cognitive overhead in case of misspelled variable.
+    1. This "debug" mode reduces cognitive overhead in case of misspelled variable.
        Anyone will be able to detect this error (it is better having an odd jinja2 statement 
        in the page than having a "blank" that is likely to go unnoticed) 
     2. Other plugins than
        mkdocs-macros make use of jinja2 variables (as specified in the config file). In this way, mkdocs-macros
-       will not "eat up" those variables and give other plugins a better chance to work.
+       will not "eat up" those variables; it will give other plugins a better chance to work.
 
 You may alter this behavior with the `on_undefined` parameter in mkdocs_macros 
 section of the config file (`mkdocs.yaml`):
