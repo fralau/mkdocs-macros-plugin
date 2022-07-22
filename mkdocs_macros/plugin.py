@@ -446,7 +446,7 @@ class MacrosPlugin(BasePlugin):
                                   "module in '%s'." %
                                   (local_module_name, self.project_dir))
 
-    def render(self, markdown: str, page: Page):
+    def render(self, markdown: str):
         """
         Render a page through jinja2: it executes the macros
 
@@ -485,7 +485,7 @@ class MacrosPlugin(BasePlugin):
             error_message = format_error(
                 error,
                 markdown=markdown,
-                page=page,
+                page=self.page,
             )
 
             trace('ERROR', error_message)
@@ -673,7 +673,7 @@ class MacrosPlugin(BasePlugin):
             # render the macros
             self._raw_markdown = self.render(
                 markdown=markdown,
-                page=page,
+                # page=page,
             )
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:

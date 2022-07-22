@@ -162,10 +162,7 @@ def get_git_info():
                 r[var] = subprocess.check_output(command,
                                                  universal_newlines=True,
                                                  stderr=subprocess.DEVNULL).strip()
-                # keep first part
-                if var == 'tag':
-                    r[var] = r[var].split('-')[0]
-                elif var == 'date_ISO':
+                if var == 'date_ISO':
                     r['date'] = date_parse(r[var])
                 r['status'] = True
             except subprocess.CalledProcessError as e:
@@ -311,7 +308,7 @@ def define_env(env):
 
     def render_file(filename):
         """
-        Render an external page (filename) containing jinj2 code
+        Render an external page (filename) containing jinja2 code
         Do not declare as macro, as this is pointless.
         """
         SOURCE_FILE = os.path.join(SOURCE_DIR, filename)
