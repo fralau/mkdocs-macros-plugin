@@ -245,7 +245,7 @@ as all objects that could be manipulated.
     (which is `env.config['config']`).
 
 !!! Caution
-    This is object is **not** accessible as a variable from the markdown pages.
+    This object is **not** accessible as a variable from the markdown pages.
     Exposing it might encourage black magic.
 
 
