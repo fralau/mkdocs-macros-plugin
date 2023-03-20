@@ -34,7 +34,7 @@ function called `uppercase` and declared as a filter). Just as a
 macro, a filter should return a *string* that can be plain, markdown
 or HTML.
 
-"Batteries included": defaut objects
+"Batteries included": default objects
 --------------------------------------
 
 The following objects are, in particular, available by default,
