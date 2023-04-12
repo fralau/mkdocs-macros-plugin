@@ -1,0 +1,14 @@
+site_name: Main test site
+theme: material
+copyright: (C) Laurent Franceschetti 2020
+
+nav:
+    - Home: index.md
+    - Not interpreted: literal.md
+
+plugins:
+  - macros:
+      ignore_macros: true
+      # toggle to true if you are in CD/CI environment
+      on_error_fail: true
+      verbose: true # toggle to true if you want to macro debug

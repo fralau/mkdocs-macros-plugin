@@ -84,6 +84,8 @@ class MacrosPlugin(BasePlugin):
                                     default=DEFAULT_MODULE_NAME)),
         ('modules', PluginType(list,
                                default=[])),
+        # allow default 'ignore' configuration
+        ('ignore_macros', PluginType(bool, default=False)),
         # include directory for templates ({% include ....%}):
         ('include_dir',  J2_STRING),
         # list of additional yaml files:
@@ -466,10 +468,15 @@ class MacrosPlugin(BasePlugin):
         page_variables = copy(self.variables)
         meta_variables = self.variables['page'].meta
         # it must be possible to completely
-        if meta_variables:
+        if meta_variables and 'ignore_macros' in meta_variables:
+            ignore_macros = meta_variables.get('ignore_macros')
+        else:
+            ignore_macros = self.config['ignore_macros']
+        if ignore_macros:
             # a trick to force of a page NOT to be interpreted,
-            if meta_variables.get('ignore_macros') == True:
-                return markdown
+            return markdown
+
+        if meta_variables:
             # trace("Metavariables for '%s':" % self.variables['page'].title,
             #                 meta_variables)
             page_variables.update(meta_variables)

@@ -301,6 +301,28 @@ You may, of course, chose the combination that best suits your needs.
     of trouble, please do not expect help from the maintainers of this
     plugin.
 
+#### Solution 5: Make the rendering process opt-in, instead of opt-out
+
+_From version x.x.x_
+
+Sometimes, only a select few pages need to make use of the Jinja2 statements, or
+the introduction of mkdocs-macros is late. To facilitate this, it's possible to
+make the rengering process opt-in, instead of opt-out.
+
+For example, place the following parameter in the `macros` section of the config:
+
+      - macros:
+          ignore_macros: true
+
+And then, for the pages which require rendering, add the following to the page's
+header section:
+
+```yaml
+---
+ignore_macros: false
+---
+```
+
 
 
 Including snippets in pages
