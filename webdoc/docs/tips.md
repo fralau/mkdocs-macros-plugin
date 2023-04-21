@@ -203,6 +203,7 @@ create a file `main.py`:
 
 ```{.python}
 import os
+import json
 
 def define_env(env):
     """
@@ -211,7 +212,6 @@ def define_env(env):
     - variables: the dictionary that contains the environment variables
     - macro: a decorator function, to declare a macro.
     """
-
 
     @env.macro
     def include_file(filename, start_line=0, end_line=None):
@@ -225,8 +225,26 @@ def define_env(env):
         with open(full_filename, 'r') as f:
             lines = f.readlines()
         line_range = lines[start_line:end_line]
-        return ''.join(line_range)
+        line_range_parsed = ''.join(line_range)
+        line_range_parsed = parse_vars(line_range_parsed)
+        return line_range_parsed
 
+    @env.macro
+    def parse_vars(s):
+        while "{{" in s:
+            var = s[s.find("{{"):s.find("}}")+2]
+            varPath = var[2:len(var)-2]
+            varResult = replace_vars(varPath)
+            s = s.replace(var, varResult)
+        return s
+
+    @env.macro
+    def replace_vars(env_path):
+        env_json = env.variables
+        env_paths = env_path.split(".")
+        for path in env_paths:
+            env_json = env_json[str(p)]
+        return env_json
 ```
 
 !!! Tip
