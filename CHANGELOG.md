@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.0-alpha, 2023.04-25
+
+* Added: (#162) Allow opt-in of page rendering, by using parameter
+    `render_macros: true` in yaml header of the page
+    (requires `render_by_default:false` in the macro parameters,
+    in the config file).
+
+* Fixed: `macro_info()` now generates a header of category 2,
+    so as to be used with other material in the same page,
+    and not confuse the macro generators.
+
+* Changed: `ignore_macros: true` in page header is deprecated. 
+    Use `render_macros: false` instead.
+
+* Fixed: issues #155 (documentation type), #143 (`git.tab`), 
+    #135 (indicate page where rendering failed).
+
+* Bump version to 1.1.0 to acknowledge that API is stable
+
 ## 0.7.0, 2022-03-25
 
 * Added: (#133) `on_error_fail` in config file to make build/serve process

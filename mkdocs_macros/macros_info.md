@@ -4,13 +4,13 @@ Template for the macro_info() command
 #}
 
 
-# Macros Plugin Environment
+## Macros Plugin Environment
 
-## General List
+### General List
 All available variables and filters within the macros plugin:
 {{ context() | pretty }}
 
-## Config Information
+### Config Information
 Standard MkDocs configuration information. Do not try to modify.
 
 e.g. {{ "`{{ config.docs_dir }}`" }}
@@ -19,12 +19,12 @@ See also the [MkDocs documentation on the config object](https://www.MkDocs.org/
 
 {{ context(config)| pretty }}
 
-## Macros
+### Macros
 These macros have been defined programmatically for this environment
 (module or pluglets). 
 {{ context(macros)| pretty }}
 
-## Git Information
+### Git Information
 Information available on the last commit and the git repository containing the
 documentation project:
 
@@ -32,7 +32,7 @@ e.g. {{ "`{{ git.message }}`" }}
 
 {{ context(git)| pretty }}
 
-## Page Attributes
+### Page Attributes
 Provided by MkDocs. These attributes change for every page
 (the attributes shown are for this page).
 
@@ -53,11 +53,11 @@ To have all titles of all pages, use:
 {% endraw %}
 ```
 
-## Plugin Filters
+### Plugin Filters
 These filters are provided as a standard by the macros plugin.
 {{ context(filters)| pretty }}
 
-## Builtin Jinja2 Filters
+### Builtin Jinja2 Filters
 These filters are provided by Jinja2 as a standard.
 
 See also the [Jinja2 documentation on builtin filters](https://jinja.palletsprojects.com/en/2.11.x/templates/#builtin-filters)).

@@ -23,6 +23,7 @@ nav:
       - "Writing modules": macros.md
       - Writing pluglets: pluglets.md
       - "Advanced usage": advanced.md
+      - Controlling page rendering: rendering.md 
     - Faq:
       - "Tips and Tricks": tips.md
       - "Troubleshooting": troubleshooting.md

@@ -1,0 +1,15 @@
+site_name: Opt-out for rendering pages
+theme: mkdocs
+
+nav:
+    - Home: index.md
+    - Second: page_with_macros.md
+
+
+plugins:
+  - search
+  - macros:
+      # do not render the pages by default
+      # this is the default case
+      render_by_default: true
+

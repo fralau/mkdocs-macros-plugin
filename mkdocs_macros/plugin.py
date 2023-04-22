@@ -84,6 +84,8 @@ class MacrosPlugin(BasePlugin):
                                     default=DEFAULT_MODULE_NAME)),
         ('modules', PluginType(list,
                                default=[])),
+        # How to render pages by default: yes (opt-out), no (opt-in)
+        ('render_by_default', PluginType(bool, default=True)),
         # include directory for templates ({% include ....%}):
         ('include_dir',  J2_STRING),
         # list of additional yaml files:
@@ -461,19 +463,39 @@ class MacrosPlugin(BasePlugin):
           then NO rendering will be done, and the markdown will be returned
           as is.
         """
+
+        # Process meta_variables
+        # ----------------------
         # copy the page variables and update with the meta data
         # in the YAML header:
         page_variables = copy(self.variables)
         meta_variables = self.variables['page'].meta
-        # it must be possible to completely
+        # Warning this is ternary logique (True, False, None: nothing said)
+        ignore_macros = None
+        render_macros = None
+        
         if meta_variables:
-            # a trick to force of a page NOT to be interpreted,
-            if meta_variables.get('ignore_macros') == True:
-                return markdown
-            # trace("Metavariables for '%s':" % self.variables['page'].title,
-            #                 meta_variables)
-            page_variables.update(meta_variables)
+            # determine whether the page will be rendered or not
+            # the two formulations are accepted
+            ignore_macros = meta_variables.get('ignore_macros')
+            render_macros = meta_variables.get('render_macros')
 
+        if self.config['render_by_default']:
+            # opt-out: force of a page NOT to be interpreted,
+            opt_out = ignore_macros == True or render_macros == False
+            if opt_out:
+                return markdown
+        else:
+            # opt-in: force a page to be interpreted
+            opt_in = render_macros == True or ignore_macros == False
+            if not opt_in:
+                return markdown
+        # Update the page with meta variables
+        # i.e. what's in the yaml header of the page
+        page_variables.update(meta_variables)
+
+        # Rendering
+        # ----------------------
         # expand the template
         on_error_fail = self.config['on_error_fail']
         try:

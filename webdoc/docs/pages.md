@@ -190,7 +190,7 @@ Which can be called (within the page) as:
 Conditionals, loops, etc.
 -------------------------
 
-With the macros plugin, you may use the [conditional](https://jinja.palletsprojects.com/en/2.11.x/templates/#if)
+With the macros plugin, you may use the [conditional](https://jinja.palletsprojects.com/en/3.0.x/templates/#if)
 statement of Jinja2, e.g.
 
 ``` {.jinja2}
@@ -205,7 +205,7 @@ _Second version_
 You may produce Markdown or any mix of Markdown, HTML, css
 and even javascript that you wish.
 
-Similarly, you could use [for loops](https://jinja.palletsprojects.com/en/2.11.x/templates/#for):
+Similarly, you could use [for loops](https://jinja.palletsprojects.com/en/3.0.x/templates/#for):
 
 ``` {.jinja2}
 ### List of users
