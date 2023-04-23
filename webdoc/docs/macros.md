@@ -366,108 +366,40 @@ web pages** (for business applications).
 
 
 
-The `declare_variables()` function (DEPRECATED)
-----------------------------------------
 
-!!! Warning
-    `declare_variables()` is the old paradigm, before 0.3.0
-    and it is DEPRECATED. 
-    Support for this call will be discontinued in a future version.
-    
-    Use instead the `define_env()` function.
 
-As a first step, you need declare a hook function called
-`declare_variables`, with two arguments:
+## What you can and can't do with `define_env()`
 
--   `variables`: the dictionary that contains the variables. It is
-    initialized with the values contained in the `extra` section of the
-    `mkdocs.yml` file.
--   `macro`: a decorator function that you can use to declare a Python
-    function as a Jinja2 callable ('macro' for MkDocs).
+The fact is that you **cannot** actually access page information
+in the `define_env()` function, since
+it operates at the configuration stage of the page building process 
+(during the [`on_config()` event of MkDocs](https://www.mkdocs.org/user-guide/plugins/#on_config)). 
+At that point, **you don't have access to specific pages**
 
-The example should be self-explanatory:
 
-``` {.python}
-def declare_variables(variables, macro):
-    """
-    This is the hook for the functions
+!!! Warning "Vital Note on mkdocs-macros" 
+    Of course, you **can** declare **macros**, which **appear** to act on pages. 
+    But realize that these are only **declarations** and that their
+    execution is **deferred**. 
+    The macros will actually be run ** later** 
+    (by MkDocs' [`on_page_markdown()` event](https://www.mkdocs.org/user-guide/plugins/#on_page_markdown)),
+    just before the markdown is rendered. The framework is so organized
+    that, in macros, you are actually "talking" about objects that don't exist yet.
 
-    - variables: the dictionary that contains the environment variables
-    - macro: a decorator function, to declare a macro.
-    """
-
-    variables['baz'] = "John Doe"
-
-    @macro
-    def bar(x):
-        return (2.3 * x) + 7
+    So you **cannot** influence the rendering process other than by
+    adding macros, variables and filters to `mkdocs_macros`.
 
 
 
-    # If you wish, you can  declare a macro with a different name:
-    def f(x):
-        return x * x
-
-    macro(f, 'barbaz')
-
-    # or to export some predefined function
-    import math
-    macro(math.floor) # will be exported as 'floor'
-```
-
-Your **registration** of variables or macros for MkDocs should be done
-inside that hook function. On the other hand, nothing prevents you from
-making imports or declarations **outside** of this function.
-
-> **Note:** You can export a wide range of objects, and their attributes
-> remain accessible (see [more
-> information](http://jinja.pocoo.org/docs/2.10/templates/#variables))
-
-### Accessing variables
-
-In case you need to access some variables defined in the config file
-(under `extra`), use the `variables` dictionary:
-
-Suppose you have:
-
-``` {.yaml}
-extra:
-    price: 12.50
-```
-
-You could write a macro:
-
-``` {.python}
-@macro
-def compare_price(my_price):
-    "Compare the price to the price in config file"
-    if my_price > env.variables['price']:
-        return("Price is higher than standard")
-    else:
-        return("Price is lower than standard")
-```
-
-For your convenience, you may also use the dot notation:
-``` {.python}
-@macro
-def compare_price(my_price):
-    "Compare the price to the price in config file"
-    if my_price > env.variables.price:
-        return("Price is higher than standard")
-    else:
-        return("Price is lower than standard")
-```
-
-### Accessing macros
-!!! Note "A macro is Python variable"
-    Note that since a macro is also a Python 
-    variable (function), you can also "import"
-    it in a module. 
-    For example, `fix_url` is a predefined macro that fixes relative
-    urls (when applicable) so that they point to the root of the site:
 
 
-```
-fix_url = env.macros.fix_url
-my_url = fix_url(url)
-```
+!!! Danger "Do not modify system entities in `env.variables`"
+
+    Also, the system information in `env.variables`
+    is for **reading** purposes.
+    You could modify it in your Python code, of course (at your own peril).
+    But **by design**, it may have no effect on the mechanics
+    of `mkdocs` (these are shallow copies). 
+
+    Whatever you do in that way, is likely to be branded **black magic**.
+

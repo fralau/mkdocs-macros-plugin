@@ -249,27 +249,46 @@ class MacrosPlugin(BasePlugin):
                                  "at this stage!")
 
     @property
-    def raw_markdown(self):
+    def markdown(self):
         """
-        The page information
+        The markdown after interpretation
         """
         try:
-            return self._raw_markdown
+            return self._markdown
         except AttributeError:
             raise AttributeError("Too early: raw markdown is not available"
                                  "at this stage!")
 
-    @raw_markdown.setter
-    def raw_markdown(self, value):
+    @markdown.setter
+    def markdown(self, value):
         """
         Used to set the raw markdown
         """
         if not isinstance(value, str):
-            raise ValueError("Value provided to attribute raw_markdown "
+            raise ValueError("Value provided to attribute markdown "
                              "should be a string")
         # check whether attribute is accessible:
-        self.raw_markdown
-        self._raw_markdown = value
+        self.markdown
+        self._markdown = value
+
+
+    @property
+    def raw_markdown(self):
+        """
+        Cancelled attribute
+        """
+        trace("Property env.raw_markdown is removed "
+                             "as of 1.1.0; use env.markdown instead!")
+        return self.markdown(self)
+    
+    @markdown.setter
+    def raw_markdown(self, value):
+        """
+        Used to set the raw markdown
+        """
+        trace("Property env.raw_markdown is removed "
+             "as of 1.1.0; use env.markdown instead!")
+        self.markdown = value
 
     # ----------------------------------
     # Function lists, for later events
@@ -689,18 +708,20 @@ class MacrosPlugin(BasePlugin):
             # page is an object with a number of properties (title, url, ...)
             # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
             self.variables["page"] = copy(page)
+            # set the markdown (for the first time)
+            self._markdown = markdown
             # execute the pre-macro functions in the various modules
             for func in self.pre_macro_functions:
                 func(self)
             # render the macros
-            self._raw_markdown = self.render(
-                markdown=markdown,
+            self.markdown = self.render(
+                markdown=self.markdown,
                 # page=page,
             )
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
                 func(self)
-            return self.raw_markdown
+            return self.markdown
 
     def on_post_build(self, config: config_options.Config):
         """

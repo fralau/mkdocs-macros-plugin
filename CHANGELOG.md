@@ -4,7 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 1.1.0-alpha, 2023.04-25
+## 1.1.0-alpha, 2024-04-23
+
+* Improved user guide, with introduction of two new pages:
+    "Controlling macro rendering" and "Post production".
+
+* Fixed: (#158) In modules, `on_pre_page_macros()`, the `env.markdown` 
+    attribute is now available to create a header or footer.
+
+* Changed: In `on_post_page_macros()` use `env.markdown` instead of
+    `env.raw_markdown`, for the same purpose.
 
 * Added: (#162) Allow opt-in of page rendering, by using parameter
     `render_macros: true` in yaml header of the page
@@ -21,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 * Fixed: issues #155 (documentation type), #143 (`git.tab`), 
     #135 (indicate page where rendering failed).
 
-* Bump version to 1.1.0 to acknowledge that API is stable
+* Bump version to 1.1.0 to acknowledge that API is stable.
 
 ## 0.7.0, 2022-03-25
 
@@ -49,7 +58,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## 0.6.2, 2021-11-22 (yanked)
 
-* Added: `env.raw_markdown` is now modifiable, for use in `on_post_page_macros()`
+* Added: `env.markdown` is now modifiable, for use in `on_post_page_macros()`
 
 ## 0.6.1, 2021-09-09
 

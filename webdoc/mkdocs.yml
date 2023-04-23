@@ -21,9 +21,10 @@ nav:
       - "Rich Markdown Pages": pages.md
       - "Git information": git_info.md
       - "Writing modules": macros.md
-      - Writing pluglets: pluglets.md
       - "Advanced usage": advanced.md
-      - Controlling page rendering: rendering.md 
+      - Controlling macros rendering: rendering.md
+      - Post-production: post_production.md
+      - Writing pluglets: pluglets.md
     - Faq:
       - "Tips and Tricks": tips.md
       - "Troubleshooting": troubleshooting.md

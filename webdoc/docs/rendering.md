@@ -1,6 +1,7 @@
 Controlling the rendering of pages
 ==================================
 
+
 !!! Tip "Migrations to mkdocs-macros"
     This page may be useful for **large mkdocs projects**
     that have decided to adopt mkdocs-macros at a later
@@ -157,15 +158,16 @@ render_macros: false
 Any other value than `true` (or an absence of this key), will be interpreted
 as a `false` value.
 
-_From version 1.0.0_
-This directive is also accepted, though it is now deprecated:
 
-```yaml
----
-# YAML header
-ignore_macros: true
----
-```
+!!! Warning "_From version 1.0.0_"
+    
+    This directive is also accepted, though it is now deprecated:
+       
+        ---
+        # YAML header
+        ignore_macros: true
+        ---
+       
 
 
 

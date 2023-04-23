@@ -46,13 +46,17 @@ def define_env(env):
 
     env.variables.special_docs_dir = env.variables.config['docs_dir']
 
+def on_pre_page_macros(env):
+    "Before macros are executed"
+    footer = "\n##Added Footer (Pre-macro)\nBuild hour is {{ now() }}"
+    env.markdown += footer
 
 def on_post_page_macros(env):
     "After macros were executed"
     # This will add a (Markdown or HTML) footer
     footer = '\n'.join(
-        ['', '# Added Footer (Post-build)', 'Name of the page is _%s_' % env.page.title])
-    env.raw_markdown += footer
+        ['', '##Added Footer (Post-macro)', 'Name of the page is _%s_' % env.page.title])
+    env.markdown += footer
 
 
 def on_post_build(env):
