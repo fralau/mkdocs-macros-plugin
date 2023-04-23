@@ -8,10 +8,11 @@ Controlling the rendering of pages
     stage of their existence.
 
 
-## Issue
 
-### Introduction
 
+## Introduction
+
+### Issue
 The most frequent issue, when adding the mkdocs-macros plugin to an
 existing mkdocs project, is some markdown pages 
 may not be rendered correctly,
