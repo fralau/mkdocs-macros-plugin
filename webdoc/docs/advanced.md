@@ -21,6 +21,7 @@ To include external files within a page, you may use the
 
 ```jinja2
 ## Paragraph
+
 {% include 'snippet.md' %}
 ```
 
@@ -59,9 +60,12 @@ You could conceivably include any type of text file;
 and particularly HTML files, since markdown may
 contain pure HTML code:
 
+{% raw %}
 ```jinja2
 {% include 'html/content1.html' %}
+
 ```
+{% endraw %}
 
 The above would fetch the file from a in a html subdirectory (by
 default: `docs/html`).
@@ -95,9 +99,11 @@ On the other hand, it is possible to place your definitions
 in a single file, which you can import
 (see [Jinja2 documentation](https://jinja.palletsprojects.com/en/2.11.x/templates/#import)):
 
-```
+{% raw %}
+```jinja2
 {% import 'includes.md' as includes %}
 ```
+{% endraw %}
 
 (in this case, all Jinja2 macros[^1] defined in the imported file 
 will be available with a prefixed notation 
