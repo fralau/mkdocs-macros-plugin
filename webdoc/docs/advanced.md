@@ -11,20 +11,20 @@ specific technical requirements**.
 
 
 
-Including snippets in pages
+Including external files in pages
 ---------------------------------
 
 ### Usage
 
-To include snippets (markdown files) within a markdown file, you may use the
+To include external files within a page, you may use the
 `include` directive from jinja2, directly in your markdown code e.g.:
 
-``` {.jinja2}
+```jinja2
 ## Paragraph
 {% include 'snippet.md' %}
 ```
 
-Including another markdown file **will** therefore execute the macros.
+Including another file file **will** therefore execute the macros in that file.
 
 By default the root directory for your included files is in
 [docs\_dir](https://www.mkdocs.org/user-guide/configuration/#docs_dir),
@@ -50,15 +50,16 @@ These are the advantages for using a distinct directory for includes:
 -   A better separation between normal pages and included pages
 
 If you often use `mkdocs serve`, modifying an included page *will*
-auto-reload the pages in the browser (the directory is added to the list
-of the "watched" directories).
+auto-reload the pages in the browser (this include directory
+is added to the list of the "watched" directories).
 
-### Other uses
+### Other uses of {% include ... %}
 
-You could conceivably also include HTML files, since markdown may
+You could conceivably include any type of text file;
+and particularly HTML files, since markdown may
 contain pure HTML code:
 
-``` {.jinja2}
+```jinja2
 {% include 'html/content1.html' %}
 ```
 
@@ -98,9 +99,11 @@ in a single file, which you can import
 {% import 'includes.md' as includes %}
 ```
 
-(in this case, all macros defined in the imported file 
+(in this case, all Jinja2 macros[^1] defined in the imported file 
 will be available with a prefixed notation 
 as, e.g.  `includes.myfunction`)
+
+[^1]: These [macros are written in jinja2](https://jinja.palletsprojects.com/en/3.1.x/templates/#macros); they are distinct from the macros of mkdocs.
 
 You may also write:
 
