@@ -16,7 +16,7 @@ import sys
 import subprocess
 import platform
 import traceback
-import pkg_resources
+from importlib.metadata import version as package_version
 import datetime
 from dateutil.parser import parse as date_parse
 from functools import partial
@@ -289,8 +289,7 @@ def define_env(env):
             'system_version': system_version(),
             'python_version': python_version(),
             'mkdocs_version': mkdocs.__version__,
-            'macros_plugin_version':
-            pkg_resources.get_distribution(PACKAGE_NAME).version,
+            'macros_plugin_version': package_version(PACKAGE_NAME),
             'jinja2_version': jinja2.__version__,
             # 'site_git_version': site_git_version(),
         }

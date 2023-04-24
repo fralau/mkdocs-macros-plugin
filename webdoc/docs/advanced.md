@@ -17,7 +17,7 @@ Including external files in pages
 ### Usage
 
 To include external files within a page, you may use the
-`include` directive from jinja2, directly in your markdown code e.g.:
+[`include` directive of jinja2](https://jinja.palletsprojects.com/en/3.1.x/templates/#include), directly in your markdown code e.g.:
 
 ```jinja2
 ## Paragraph
