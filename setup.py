@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 # Initialization
 # --------------------
 
-VERSION_NUMBER = '1.0.0-alpha'
+VERSION_NUMBER = '1.0.1'
 
 # required if you want to run document/test
 # pip install 'mkdocs-macros-plugin[test]'
@@ -40,7 +40,7 @@ setup(
     author='Laurent Franceschbetti',
     author_email='info@settlenext.com',
     license='MIT',
-    python_requires='>=3.5',
+    python_requires='>=3.8',
     install_requires=[
         'mkdocs>=0.17',
         'jinja2',
