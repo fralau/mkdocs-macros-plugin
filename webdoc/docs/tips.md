@@ -1,6 +1,33 @@
 Tips and Tricks
 ===============
 
+Can I use macros in page titles?
+--------------------------------
+_New in 1.0.2_
+
+Yes. You can use a macro in the title of the page in:
+
+1. The `nav` section of the config file 
+1. As the metadata `title` in the yaml header of the page.
+1. Directly as the header 1 of the page, e.g.  
+`#Environment at {{unit_price}}"`.
+
+For example, in `nav`section of the config file,
+e.g. 
+
+```yaml
+nav:
+    - Home: index.md
+    - Environment at {{ unit_price}}: environment.md
+    - Second:
+        - Also for {{ unit_price}}: other.md
+    - Not interpreted: literal.md
+```
+
+!!! Note "Rendering"
+    The macros in the title are rendered _just after_ those in the markdown
+    file. Hence they benefit from the whole context (variables, functions, filters) available in the page.
+
 How can I get the project's document directory?
 -------------------------------------
 
