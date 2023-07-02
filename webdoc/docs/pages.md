@@ -90,6 +90,8 @@ See [more information on the website]({{ company.website }}).
 See <a href="{{ company.website }}">more information on the website</a>.
 ```
 
+!!! Note "Literals"
+    Only literals (strings or numbers) can be used in the `extra` section.
 
 Local (page-level) variables and macros
 ---------------------------------------
@@ -123,14 +125,25 @@ Then you can access the content of the YAML header in two ways:
 1. Explicitly, i.e. using the dot notation, e.g. 
 `{{ page.meta.title }}` and `{{ page.meta.bottles.whine }}`.
 
+If used, the `title` variable will be used for the page's title and
+in the navigation of the website (unless specified in the config file). It does not alter the content of the page itself. 
 
+!!! Note "Literals or macros"
+    Only use literals in the header (strings or numbers).
 
-!!! Tip
+    _As of 1.0.2_ The only exception is the `title` field: macros used there will be rendered just after the page content itself.
+    E.g. (supposing that product_name is an existing variable):
+    
+    ```
+    title: Description of {{ product_name }}
+    ```
+
+!!! Tip "Displaying the content of variables"
     `{{ page.meta }}` gives the content of the header.
     If you wish to have it typed in a nice tabular form, you can use:
     `{{ context(page.meta) | pretty }}`
 
-!!! Warning "Caution"
+!!! Warning "Caution: overwriting variables"
     If variables in the metadata have the same name as variables
     already defined (suche as `extra`, `config`, etc.) those will
     be overwritten, but for this page only.
