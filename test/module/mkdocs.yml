@@ -4,7 +4,7 @@ copyright: (C) Laurent Franceschetti 2020
 
 nav:
     - Home: index.md
-    - Environment: environment.md
+    - Environment for {{ unit_price}}: environment.md
     - Second:
         - other.md
     - Not interpreted: literal.md

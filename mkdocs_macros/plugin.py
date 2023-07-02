@@ -18,6 +18,8 @@ from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
+from mkdocs.structure.nav import Section
+from mkdocs.utils import get_markdown_title
 
 from mkdocs_macros.errors import format_error
 from mkdocs_macros.context import define_env
@@ -488,7 +490,11 @@ class MacrosPlugin(BasePlugin):
         # copy the page variables and update with the meta data
         # in the YAML header:
         page_variables = copy(self.variables)
-        meta_variables = self.variables['page'].meta
+        try:
+            meta_variables = self.variables['page'].meta
+        except KeyError as e:
+            # this is a premature rendering, no meta variables in the page
+            meta_variables = {}
         # Warning this is ternary logique (True, False, None: nothing said)
         ignore_macros = None
         render_macros = None
@@ -655,6 +661,20 @@ class MacrosPlugin(BasePlugin):
         Capture the nav and files objects so they can be used by
         templates.
         """
+        # Render also the navigation items, so that macros are interpreted
+        # also in navigation
+        # solution to issue #144
+        def render_nav(nav):
+            for nav_item in nav:
+                try:
+                    nav_item.title = self.render(nav_item.title)
+                except AttributeError:
+                    # not title in pre-page navigation, do nothing
+                    pass
+                if isinstance(nav_item, Section): 
+                    # for second, third level titles
+                    render_nav(nav_item.children)
+        render_nav(nav)
         # nav has useful properties like 'pages' and 'items'
         # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py
         self.variables['navigation'] = nav
@@ -718,6 +738,10 @@ class MacrosPlugin(BasePlugin):
                 markdown=self.markdown,
                 # page=page,
             )
+            # HACK: convert macros in the title from render (if exists)
+            # to answer 144
+            page.title = self.render(page.title)
+
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
                 func(self)

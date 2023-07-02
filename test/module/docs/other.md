@@ -1,5 +1,5 @@
-# Other Page
-## Pages (simple)
+# Other Page {{ unit_price}}
+## Pages (simple) for {{ unit_price}}:
 {{ context(navigation) | pretty }}
 
 # Items

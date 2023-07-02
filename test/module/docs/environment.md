@@ -6,6 +6,8 @@ bar:
 bingo: Hello
 ---
 
+# Environment
+
 {{ macros_info() }}
 
 
