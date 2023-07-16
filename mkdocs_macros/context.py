@@ -107,12 +107,13 @@ def format_value(value):
         return repr(value)
 
 
-def make_html(rows, header=[], tb_class='pretty'):
+def make_html(rows, header=[], tb_class='macros-tb'):
     "Produce an HTML table"
+    font_color = "#000000"  # black
     back_color = "#F0FFFF"  # light blue
     grid_color = "#DCDCDC"
     padding = "5px"
-    style = "border:1px solid %s; padding: %s" % (grid_color, padding)
+    style = f"color:{font_color}; border:1px solid {grid_color}; padding: {padding}"
     templ = Template("""
 <table class="{{ tb_class }}" style="background-color: {{ back_color}}; {{ style }}">
     {% for item in header %}
