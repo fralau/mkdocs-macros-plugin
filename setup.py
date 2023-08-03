@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 # Initialization
 # --------------------
 
-VERSION_NUMBER = '1.0.3'
+VERSION_NUMBER = '1.0.4'
 
 # required if you want to run document/test
 # pip install 'mkdocs-macros-plugin[test]'

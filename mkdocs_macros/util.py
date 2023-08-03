@@ -7,8 +7,10 @@ Utilities for mkdocs-macros
 import subprocess
 from copy import deepcopy
 import os, sys, importlib.util
+from packaging.version import Version
 
 from termcolor import colored
+import mkdocs
 
 # ------------------------------------------
 # Trace and debug
@@ -17,9 +19,13 @@ TRACE_COLOR = 'green'
 TRACE_PREFIX = 'macros' 
 
 import logging
-from mkdocs.utils import warning_filter
 LOG = logging.getLogger("mkdocs.plugins." + __name__)
-LOG.addFilter(warning_filter)
+
+MKDOCS_LOG_VERSION = '1.2'
+if Version(mkdocs.__version__) < Version(MKDOCS_LOG_VERSION):
+    # filter doesn't do anything since that version
+    from mkdocs.utils import warning_filter
+    LOG.addFilter(warning_filter)
 
 
 def format_trace(*args):
