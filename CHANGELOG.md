@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.4, 2023-08-07
+
+* Fixed: Warning due to filter issue with mkdocs >= 1.5
+* Fixed: Debug html tables (including for `macro_info()`) are 
+    now readable also in dark mode.
+
 ## 1.0.2, 2023-07-02
 * Added: it is now possible to use macros in page titles, in the
     nav section of the yaml file, or in the level 1 titles; 
