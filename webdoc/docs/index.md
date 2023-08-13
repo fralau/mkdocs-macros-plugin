@@ -1,7 +1,7 @@
-mkdocs-macros
+Mkdocs-Macros
 =============
-** A plugin for unleashing the power of [Mkdocs](https://www.mkdocs.org/), 
-by using variables and macros. **
+** A plugin/mini-framework for unleashing the power of [Mkdocs](https://www.mkdocs.org/)
+static website generator, with the use of variables and macros. **
 
 !!! Tip "A mini-framework"
     mkdocs-macros is more than a "plugin". It is a **mini-framework**
@@ -15,11 +15,11 @@ by using variables and macros. **
 
 [^6]: With reference to existing wiki engines such as [Dokuwiki](https://www.dokuwiki.org/dokuwiki) or [Atlassian Confluence](https://www.atlassian.com/software/confluence).
 
-## Overview
+## Getting started
 
 ### Definition
 
-**mkdocs-macros-plugin** is a plugin/framework that
+**Mkdocs-Macros** is a plugin/mini-framework that
 makes it easy for contributors
 of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It can do two things:
 
@@ -27,11 +27,11 @@ of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beaut
 into [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) templates
 that:  
      - Use environment or custom **variables**, 
-     - Call pre-defined or custom **macros**, 
-     - Exploit standard or custom **filters**
+     - Call pre-defined or custom **macros** (functions, generally defined in a Python module), 
+     - Exploit standard or custom **[filters](https://jinja.palletsprojects.com/en/3.1.x/templates/#filters)**
 1. **Replacing MkDocs plugins** for a wide range of tasks: e.g. manipulating the navigation, adding files after the html pages have already been generated etc.
 
-The capabilities of **mkdocs-macros-plugin** are such 
+The capabilities of **mkdocs-macros-plugin** are so wide 
 that it can be called a **"mini-framework"**.
 
 **mkdocs-macros-plugin** is very easy to use **out of the box**,
@@ -41,12 +41,121 @@ data about the platform, the git repository (if any), etc.
 
 
 
+### Simple Example
+
+In this example, the markdown page contains a variable `unit price` defined
+in the config file of Mkdocs.
+
+```markdown
+The unit price of our product is {{ unit_price }} EUR.
+```
+
+```mermaid
+flowchart LR
+    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> variable
+    variable["Variable in the page\n{{ unit_price }}"] --> renderer
+    renderer(("Template Renderer")) --> text
+    text("Markdown text\n10")
+```
+
+In the config file (`mkdocs.yml`), define the unit price 
+in the `extra` section:
+
+```yaml
+extra:
+    unit_price: 10
+```
+
+
+
+This is **rendered** (translated) as:
+
+```markdown
+The unit price of our product is 10 EUR.
+```
+
+### Full Example
+
+This example in the markdown page uses a variable and a **macro** (function):
+
+```markdown
+The unit price of our product is {{ unit_price }} EUR.
+Taking the standard discount into account,
+the sale price of 50 units is {{ price(unit_price, 50) }} EUR.
+```
+
+As in the simple example above, define the unit price 
+in the `extra` section of the config file:
+
+```yaml
+extra:
+    unit_price: 10
+```
+
+
+```mermaid
+flowchart LR
+    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> macro
+    module["Python module\n(main.py)\ndef unit_price(...):"]  --> macro
+    macro["Macro in the page\n{{ price(unit_price, 50) }}"] --> renderer
+    renderer(("Template Renderer")) --> text
+    text("Markdown text\n500")
+```
+
+
+Then define a `price()` function in the module (`main.py`),
+in the same directory as the config file:
+
+```Python
+def define_env(env):
+    """
+    This is the hook for the functions (new form)
+    """
+
+    @env.macro
+    def price(unit_price, no):
+        "Calculate price"
+        return unit_price * no
+```
+
+This will translate into the final markdown as:
+
+```
+The unit price of our product A is 10.00 EUR.
+Taking the standard discount into account,
+the sale price of 50 units is 500.00 EUR.
+```
+
+
+
+It is possible to use the wide range of facilities provided by
+[Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
+
 
 ### Variables
 Regular **variables** are loaded with each markdown page which is 
 being rendered.
 
-Variables can be defined in five different ways:
+Variables can be defined in **five** different ways:
+
+```mermaid
+flowchart LR
+    subgraph "MkDocs-Macros"
+    variable["Variable in the page\n{{ unit_price }}"] --> renderer
+    renderer(("Template Renderer")) --> text
+    text("Markdown text\n10")
+
+    end
+    subgraph Global
+    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> variable
+    external["External yaml file\nunit_price: 10"]  --> variable
+    module["In Python module\n(main.py)\nunit_price = 10"]  --> variable
+    end
+    subgraph "Local (page-level)"
+    header["YAML header"\nunit_price: 10]  --> variable
+    page["In the text\n{%set unit_price = 10 %}"]  --> variable
+    end
+```
 
   1. **Global**, i.e. for the whole documentation project:
     1. (for designers of the website): in the `mkdocs.yml` file,
@@ -56,38 +165,18 @@ Variables can be defined in five different ways:
     by adding them to a dictionary
   2. **Local**, i.e. in each Markdown page (for contributors): 
     1. in the YAML header
-    2. in the text, with a `{%set variable = value %}`
- statement
-
-
-### Enrich markdown with templating
-
-You can leverage the power of Python in markdown thanks to jinja2
-by writing this :
-
-```markdown
-The unit price of product A is {{ unit_price }} EUR.
-Taking the standard discount into account,
-the sale price of 50 units is {{ price(unit_price, 50) }} EUR.
-```
-
-If you defined a `price()` function, this could translate into:
-
-```
-The unit price of product A is 10.00 EUR.
-Taking the standard discount into account,
-the sale price of 50 units is 450.00 EUR.
-```
-
-
-
-It is possible to use the wide range of facilities provided by
-[Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
+    2. in the text of the page, with a `{%set variable = value %}` statement.
 
 ### Create Your Own Macros and Filters
 
 Instead of creating countless new plugins, programmers can define 
 their **macros** and **filters**.
+
+**Macros** are functions usable in a markdown page, which are exported
+from a Python module. Most of them produce text to be displayed.
+
+**Filters** are special functions that operate on the result of a function,
+for formatting purposes.
 
 !!! Note "Getting Started with Macros"
     Need a function to display some repetitive markdown,
@@ -102,16 +191,17 @@ their **macros** and **filters**.
     Create a `main.py` file in the top directory of your mkdocs
     project and add this call:
 
-        import ...
+    ```python
+    import ...
 
-        def define_env(env):
-          "Hook function"
+    def define_env(env):
+        "Hook function"
 
-          @env.macro
-          def mymacro(...)
-              ...
-              return some_string
-    
+        @env.macro
+        def mymacro(...)
+            ...
+            return some_string
+    ```
 
     You can insert a call in any markdown page of your project:
 
@@ -161,13 +251,13 @@ into [**pluglets**](pluglets) that can be installed as Python packages.
     (it should be compatible with post 1.0 versions)
 
 ### Standard installation
-```
+```sh
 pip install mkdocs-macros-plugin
 ```
 
 If you wish to also run the tests or rebuild the project's documentation:
 
-```
+```sh
 pip install 'mkdocs-macros-plugin[test]'
 ```
 

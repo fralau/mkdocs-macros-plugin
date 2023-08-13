@@ -38,6 +38,12 @@ nav:
 markdown_extensions:
   - admonition
   - footnotes
+  - pymdownx.superfences:
+        # make exceptions to highlighting of code:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
 
 plugins:
   # do not use the macros plugin, for 
@@ -45,5 +51,8 @@ plugins:
   # 2. avoid interpreting the jinja2 code examples as instructions.
   - search
   - include-markdown
+  - mermaid2:
+      arguments:
+        securityLevel: 'loose'
 
 

@@ -101,9 +101,9 @@ use without much difficulty, as jinja2 directives in the markdown page.
 
 ### Prerequisites
 
-  - Python version > 3.5
-  - MkDocs version >= 1.0 (it should work > 0.17
-    (it should be compatible with post 1.0 versions)
+  - Python version > 3.7
+  - MkDocs version >= 1.0
+    (compatible with post 1.5 versions)
 
 ### Standard installation
 ```
