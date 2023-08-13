@@ -1,4 +1,7 @@
-# mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros
+<div align="center">
+
+# MkDocs Macros:<br> Unleash the power of MkDocs with variables and macros
+
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
@@ -7,33 +10,30 @@
 ![Github](https://img.shields.io/github/v/tag/fralau/mkdocs_macros_plugin?label=github%20tag)
 ![macros](https://img.shields.io/pypi/dm/mkdocs-macros-plugin)
 
-* **View the [mkdocs-macro documentation](https://mkdocs-macros-plugin.readthedocs.io/) on Read the Docs**
-* View the [general Mkdocs documentation](https://www.mkdocs.org/)
+:open_file_folder: [Used by > 2K repositories on Github](https://github.com/fralau/mkdocs_macros_plugin/network/dependents)<br>
+🥇 Listed as [High-Quality Plugin](https://github.com/mkdocs/catalog#-code-execution-variables--templating)
+
+
+**mkdocs-macros-plugin** is a general-purpose plugin for [MkDocs](https://www.mkdocs.org/)<br>that uses  **variables** and **macros** (functions) to  automate tasks, and produce richer and more beautiful pages.
+
+
+
+
+
+```markdown
+The unit price of product A is {{ unit_price }} EUR.
+Taking the standard discount into account,
+the sale price of 50 units is {{ price(unit_price, 50) }} EUR.
+```
+
+
+View the [mkdocs-macro documentation](https://mkdocs-macros-plugin.readthedocs.io/) on Read the Docs.
+</div>
+
 
 <!-- To update, run the following command:
 markdown-toc -i README.md 
 -->
-
-<!-- toc -->
-
-- [mkdocs-macros-plugin: Unleash the power of MkDocs with variables and macros](#mkdocs-macros-plugin-unleash-the-power-of-mkdocs-with-variables-and-macros)
-  - [Overview](#Overview)
-    - [Using variables](#Using-variables)
-    - [Defining variables](#Defining-variables)
-    - [Macros and filters](#Macros-and-filters)
-  - [Installation](#Installation)
-    - [Prerequisites](#Prerequisites)
-    - [Standard installation](#Standard-installation)
-    - ["Manual installation"](#"Manual-installation")
-    - [Development/test installation](#Development/test-installation)
-    - [Declaration of plugin](#Declaration-of-plugin)
-    - [Check that it works](#Check-that-it-works)
-  - [Using pluglets](#Using-pluglets)
-    - [What are pluglets?](#What-are-pluglets?)
-    - [How to add a pluglet to an mkdocs project?](#How-to-add-a-pluglet-to-an-mkdocs-project?)
-    - [How to write a pluglet?](#How-to-write-a-pluglet?)
-
-<!-- tocstop -->
 
 ## Overview
 **mkdocs-macros-plugin** is a plugin that makes it easier for contributors
