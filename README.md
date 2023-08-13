@@ -10,7 +10,9 @@
 ![Github](https://img.shields.io/github/v/tag/fralau/mkdocs_macros_plugin?label=github%20tag)
 ![macros](https://img.shields.io/pypi/dm/mkdocs-macros-plugin)
 
+:open_file_folder: [Used by > 2K repositories on Github](https://github.com/fralau/mkdocs_macros_plugin/network/dependents)<br>
 🥇 Listed as [High-Quality Plugin](https://github.com/mkdocs/catalog#-code-execution-variables--templating)
+
 
 **mkdocs-macros-plugin** is a general-purpose plugin for [MkDocs](https://www.mkdocs.org/)<br>that uses  **variables** and **macros** (functions) to  automate tasks, and produce richer and more beautiful pages.
 
