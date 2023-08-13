@@ -1,6 +1,8 @@
 <div align="center">
 
-# MkDocs Macros:<br> Unleash the power of MkDocs with variables and macros
+![Mkdocs-Macros](logo.png)
+
+#  Unleash the power of MkDocs with variables and macros
 
 
 

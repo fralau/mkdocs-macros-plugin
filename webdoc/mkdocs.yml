@@ -1,9 +1,11 @@
-site_name: mkdocs-macros
+site_name: Mkdocs-Macros
 site_description: A framework for macros and automation for mkdocs
 docs_dir: docs # indispensable or readthedocs will fail
 theme: 
   # name: readthedocs
   name: material
+  icon:
+    logo: material/cog
   language: en
   features:
     - navigation.sections
