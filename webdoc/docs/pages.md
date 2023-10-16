@@ -114,16 +114,16 @@ For example, if the the header is as follows:
 ---
 title: My special title
 bottles:
-  whine: 500
+  wine: 500
   beer: 123
 ---
 ```
 
 Then you can access the content of the YAML header in two ways:
 
-1. By name e.g. `{{ title }}` and `{{ bottles.whine }}`
+1. By name e.g. `{{ title }}` and `{{ bottles.wine }}`
 1. Explicitly, i.e. using the dot notation, e.g. 
-`{{ page.meta.title }}` and `{{ page.meta.bottles.whine }}`.
+`{{ page.meta.title }}` and `{{ page.meta.bottles.wine }}`.
 
 If used, the `title` variable will be used for the page's title and
 in the navigation of the website (unless specified in the config file). It does not alter the content of the page itself. 
