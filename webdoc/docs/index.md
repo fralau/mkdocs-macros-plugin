@@ -4,7 +4,7 @@ Mkdocs-Macros
 static website generator, with the use of variables and macros. **
 
 !!! Tip "A mini-framework"
-    mkdocs-macros is more than a "plugin". It is a **mini-framework**
+    Mkdocs-Macros is more than a "plugin". It is a **mini-framework**
     developped with one goal in mind: 
     
     **To enhance mkdocs with the macro and automation capabilities
@@ -34,7 +34,7 @@ that:
 The capabilities of **mkdocs-macros-plugin** are so wide 
 that it can be called a **"mini-framework"**.
 
-**mkdocs-macros-plugin** is very easy to use **out of the box**,
+**Mkdocs-Macros** is very easy to use **out of the box**,
 even for small documentation projects: it provides
 data about the platform, the git repository (if any), etc. 
 

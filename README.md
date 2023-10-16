@@ -163,7 +163,7 @@ INFO    -  Building documentation...
 ```
 
 Within the browser (e.g. http://127.0.0.1:8000/info), you should
-see a description of the plugins environment: 
+see a description of the plugin's environment: 
 
 ![macros_info()](macros_info.png)
 

@@ -52,9 +52,7 @@ plugins:
   # 1. a question of "boostrap" (avoid chicken and the egg issues)
   # 2. avoid interpreting the jinja2 code examples as instructions.
   - search
-  - include-markdown
-  - mermaid2:
-      arguments:
-        securityLevel: 'loose'
+  # - include-markdown
+  - mermaid2
 
 
