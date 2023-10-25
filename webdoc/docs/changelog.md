@@ -1,4 +1,1 @@
-
-{% 
-    include-markdown "../../CHANGELOG.md" 
-%}
+--8<-- "https://raw.githubusercontent.com/fralau/mkdocs_macros_plugin/master/CHANGELOG.md"
