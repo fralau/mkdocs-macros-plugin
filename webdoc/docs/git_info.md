@@ -52,7 +52,7 @@ Here is a list of attributes of the git object:
 
 
 | Attribute         | Description                                    |
-| ----------------- | ---------------------------------------------- |
+|-------------------|------------------------------------------------|
 | `short_commit`    | short hash of the last commit (e.g. _2bd7950_) |
 | `commit`          | long hash of the last commit                   |
 | `author`          | author's name                                  |
@@ -60,6 +60,7 @@ Here is a list of attributes of the git object:
 | `committer`       | committer's name                               |
 | `committer_email` | committer's email                              |
 | `tag`             | last active tag of the repo                    |
+| `short_tag`       | last active tag of the repo, abbreviated       |
 | `date`            | full date of the commit (as a date object)     |
 | `date_ISO`        | full date of the commit (as an ISO string)     |
 | `message`         | full message of the last commit                |
@@ -103,6 +104,13 @@ method, e.g.:
 which would return e.g.
 
     May 13, 2020 16:08:52        
+
+## `tag` and `short_tag`
+
+The tag attribute shows the full description of the tag, for
+example `v1.0.4-14-g2414721`. Meanwhile, `short_tag` shows the
+tag name without any suffix, for example `v1.0.4`. The later can
+be usefull when showing the latest release.
 
 ## Tip: Is this really a git repo?
 

@@ -141,6 +141,8 @@ def get_git_info():
         'short_commit': ['git', 'rev-parse', '--short', 'HEAD'],
         'commit': ['git', 'rev-parse', 'HEAD'],
         'tag': ['git', 'describe', '--tags'],
+        # With --abbrev set to 0, git will find the closest tagname without any suffix
+        'short_tag': ['git', 'describe', '--tags', '--abbrev=0'],
         'author': LAST_COMMIT + ["--pretty=format:%an"],
         'author_email': LAST_COMMIT + ["--pretty=format:%ae"],
         'committer': LAST_COMMIT + ["--pretty=format:%cn"],
