@@ -47,6 +47,7 @@ setup(
         'termcolor',
         'pyyaml',
         'python-dateutil',
+        'packaging'
     ],
     extras_require={
         'test': TEST_REQUIRE,
