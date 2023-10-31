@@ -21,7 +21,6 @@ To include external files within a page, you may use the
 
 ```jinja2
 ## Paragraph
-
 {% include 'snippet.md' %}
 ```
 

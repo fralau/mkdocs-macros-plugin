@@ -52,7 +52,10 @@ plugins:
   # 1. a question of "boostrap" (avoid chicken and the egg issues)
   # 2. avoid interpreting the jinja2 code examples as instructions.
   - search
-  # - include-markdown
+  - include-markdown:
+      # This is changed so that real include doesn't interefere with examples
+      opening_tag: "[%"
+      closing_tag: "%]"
   - mermaid2
 
 
