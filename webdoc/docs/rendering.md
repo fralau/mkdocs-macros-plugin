@@ -238,6 +238,12 @@ which exists for that purpose:
         recurse: true
     {% endraw %}
 
+
+The same approach can also be used for inline definitions, e.g.:
+
+     You can use the `raw` expression for inline definitions, for example: {% raw %} `{{{method}}}-{{{url}}}.json` {%  endraw %} for
+     escaping 3-bracket expressions often used in Handlebars.
+
 ### Solution 5: Altering the syntax of jinja2 for mkdocs-macros
 
 Sometimes the introduction of mkdocs-macros comes late in the chain, and the
