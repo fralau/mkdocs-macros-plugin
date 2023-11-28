@@ -86,7 +86,8 @@ class MacrosPlugin(BasePlugin):
                                default=[])),
         # How to render pages by default: yes (opt-out), no (opt-in)
         ('render_by_default', PluginType(bool, default=True)),
-        # include directory for templates ({% include ....%}):
+        # Include directory for external files
+        # also works for {% include ....%}) and {% import ....%}):
         ('include_dir',  J2_STRING),
         # list of additional yaml files:
         ('include_yaml', PluginType(list, default=[])),
@@ -397,27 +398,26 @@ class MacrosPlugin(BasePlugin):
         if hasattr(module, 'define_env'):
             module.define_env(self)
             function_found = True
-        if hasattr(module, 'declare_variables'):
-            # this is for compatibility (DEPRECATED)
-            module.declare_variables(self.variables, self.macro)
-            trace("You are using declare_variables() in the python "
-                  "module '%s'. Prefer the define_env() function "
-                  "(see documentation)!" % module_name)
-            function_found = True
-        if not function_found:
-            raise NameError("No valid function found in module '%s'" %
-                            module_name)
+
         # DECLARE additional event functions
         # NOTE: each of these functions requires self (the environment).
-
+        STANDARD_FUNCTIONS = ['define_env']
         def add_function(funcname: str, funclist: list):
-            "Add an optional function to the module"
+            "Add another standard function to the module"
+            STANDARD_FUNCTIONS.append(funcname)
             if hasattr(module, funcname):
+                nonlocal function_found
                 func = getattr(module, funcname)
                 funclist.append(func)
+                function_found = True
         add_function('on_pre_page_macros',  self.pre_macro_functions)
         add_function('on_post_page_macros', self.post_macro_functions)
         add_function('on_post_build',       self.post_build_functions)
+        print(STANDARD_FUNCTIONS)
+        if not function_found:
+            raise NameError("None of the standard functions was found "
+                            "in module '%s':\n%s" %
+                            (module_name, STANDARD_FUNCTIONS))
 
     def _load_modules(self):
         "Load all modules"
@@ -460,8 +460,7 @@ class MacrosPlugin(BasePlugin):
         else:
             if local_module_name == DEFAULT_MODULE_NAME:
                 # do not do anything if there is no main module
-                # trace("No module")
-                pass
+                trace("No default module `%s` found" % DEFAULT_MODULE_NAME)
             else:
                 raise ImportError("Macro plugin could not find custom '%s' "
                                   "module in '%s'." %

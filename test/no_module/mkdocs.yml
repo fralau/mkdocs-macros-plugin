@@ -1,0 +1,7 @@
+# this should fail 
+site_name: Empty module
+
+
+plugins:
+  - search
+  - macros
