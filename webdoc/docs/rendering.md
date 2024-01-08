@@ -43,7 +43,7 @@ The most likely places where this can occur are the following:
     2. If mkdocs-macros mistakenly tries to interprets a syntactically
     valid Jinja2 statement containing a variable,
     the most likely result is the page will fail (you can change
-    this behavior with the [`on_undefined` parameter in the config file](../troubleshooting#what-happens-if-a-variable-is-undefined)).
+    this behavior with the [`on_undefined` parameter in the config file](troubleshooting.md#what-happens-if-a-variable-is-undefined)).
 
     3. If the statement looks like a macro (callable, with arguments),
        an error and traceback will be displayed in the page.

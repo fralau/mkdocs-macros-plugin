@@ -178,7 +178,7 @@ of the form `\{\{ .... }}` or `{% ... %}`
 in your pages, 
 which you want to appear in the HTML output or be processed by another plugin,
 are intended for it. To solve that problem, see the page 
-[dedicated to that issue](../rendering).
+[dedicated to that issue](rendering.md).
 
 
 

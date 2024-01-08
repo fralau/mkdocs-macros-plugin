@@ -10,7 +10,7 @@ static website generator, with the use of variables and macros. **
     **To enhance mkdocs with the macro and automation capabilities
     available to a [wiki engine](https://wiki.c2.com/?WikiEngine).** [^6]
 
-    For more information, see [Why this project?](why)
+    For more information, see [Why this project?](why.md)
     
 
 [^6]: With reference to existing wiki engines such as [Dokuwiki](https://www.dokuwiki.org/dokuwiki) or [Atlassian Confluence](https://www.atlassian.com/software/confluence).
@@ -43,20 +43,14 @@ data about the platform, the git repository (if any), etc.
 
 ### Simple Example
 
-In this example, the markdown page contains a variable `unit price` defined
-in the config file of Mkdocs.
+In this example, the markdown page (`index.md`)
+contains a variable `unit price`:
 
 ```markdown
 The unit price of our product is {{ unit_price }} EUR.
 ```
 
-```mermaid
-flowchart LR
-    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> variable
-    variable["Variable in the page\n{{ unit_price }}"] --> renderer
-    renderer(("Template Renderer")) --> text
-    text("Markdown text\n10")
-```
+
 
 In the config file (`mkdocs.yml`), define the unit price 
 in the `extra` section:
@@ -68,11 +62,21 @@ extra:
 
 
 
-This is **rendered** (translated) as:
+With `mkdocs serve` the html page is **rendered** (translated) into markdown as:
 
 ```markdown
 The unit price of our product is 10 EUR.
 ```
+
+This is the diagram:
+```mermaid
+flowchart LR
+    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> variable
+    variable["Variable in the page\n{{ unit_price }}"] --> renderer
+    renderer(("Template Renderer")) --> text
+    text("Markdown text\n10")
+```
+MkDocs will then proceed, as usual, to render the Markdown text as HTML.
 
 ### Full Example
 
@@ -81,7 +85,7 @@ This example in the markdown page uses a variable and a **macro** (function):
 ```markdown
 The unit price of our product is {{ unit_price }} EUR.
 Taking the standard discount into account,
-the sale price of 50 units is {{ price(unit_price, 50) }} EUR.
+the sale price of {{ units }} units is {{ price(unit_price, units) }} EUR.
 ```
 
 As in the simple example above, define the unit price 
@@ -90,17 +94,11 @@ in the `extra` section of the config file:
 ```yaml
 extra:
     unit_price: 10
+    units: 50
 ```
 
 
-```mermaid
-flowchart LR
-    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> macro
-    module["Python module\n(main.py)\ndef unit_price(...):"]  --> macro
-    macro["Macro in the page\n{{ price(unit_price, 50) }}"] --> renderer
-    renderer(("Template Renderer")) --> text
-    text("Markdown text\n500")
-```
+
 
 
 Then define a `price()` function in the module (`main.py`),
@@ -126,7 +124,16 @@ Taking the standard discount into account,
 the sale price of 50 units is 500.00 EUR.
 ```
 
+This is the diagram:
 
+```mermaid
+flowchart LR
+    config["Mkdocs config file\n(extra section)\nunit_price: 10\nunits: 50"] --> macro
+    module["Python module\n(main.py)\ndef unit_price(...):"]  --> macro
+    macro["Macro in the page\n{{ price(unit_price, units) }}"] --> renderer
+    renderer(("Template Renderer")) --> text
+    text("Markdown text\n500")
+```
 
 It is possible to use the wide range of facilities provided by
 [Jinja2 templates](http://jinja.pocoo.org/docs/2.10/templates/).
@@ -136,7 +143,7 @@ It is possible to use the wide range of facilities provided by
 Regular **variables** are loaded with each markdown page which is 
 being rendered.
 
-Variables can be defined in **five** different ways:
+With Mkdocs-Macros there are **five** different ways to define variables:
 
 ```mermaid
 flowchart LR
@@ -147,13 +154,13 @@ flowchart LR
 
     end
     subgraph Global
-    config["Mkdocs config file\n(extra section)\nunit_price: 10"] --> variable
-    external["External yaml file\nunit_price: 10"]  --> variable
-    module["In Python module\n(main.py)\nunit_price = 10"]  --> variable
+    config["1a. Mkdocs config file\n(extra section)\nunit_price: 10"] --> variable
+    external["1b. External yaml file\nunit_price: 10"]  --> variable
+    module["1c. In Python module\n(main.py)\nunit_price = 10"]  --> variable
     end
     subgraph "Local (page-level)"
-    header["YAML header"\nunit_price: 10]  --> variable
-    page["In the text\n{%set unit_price = 10 %}"]  --> variable
+    header["2a. YAML header"\nunit_price: 10]  --> variable
+    page["2b. In the text\n{%set unit_price = 10 %}"]  --> variable
     end
 ```
 
@@ -164,7 +171,7 @@ flowchart LR
     3. (for programmers): in a module (Python),
     by adding them to a dictionary
   2. **Local**, i.e. in each Markdown page (for contributors): 
-    1. in the YAML header
+    1. in the [YAML header](pages.md/#in-the-yaml-header-of-the-page).
     2. in the text of the page, with a `{%set variable = value %}` statement.
 
 ### Create Your Own Macros and Filters
@@ -183,7 +190,7 @@ for formatting purposes.
     or environment information? 
 
     If you are a Python programmer, go ahead and  **[create your own
-    macros and filters in Python!](macros)**
+    macros and filters in Python!](macros.md)**
 
     It's actually much, much easier than writing 
     a VBA function for Excel...
@@ -220,13 +227,13 @@ for formatting purposes.
 
 ### Boosting large or complex documentation projects
 mkdocs-macros was also developed with 
-[**large or complex projects in mind**](advanced).
+[**large or complex projects in mind**](advanced.md).
 
 You can include separate configurations files, import Jinja2 macro definitions,
 add "post-production" elements to your website, etc.
 
 You can go all the way as to pre-package modules
-into [**pluglets**](pluglets) that can be installed as Python packages.
+into [**pluglets**](pluglets.md) that can be installed as Python packages.
 
 
 
@@ -236,7 +243,7 @@ into [**pluglets**](pluglets) that can be installed as Python packages.
     By using mkdocs-macros, you can **cut down the number of plugins required**
     for your documentation project.
 
-    In a wide range of cases, **[writing your own module with macros](macros)**
+    In a wide range of cases, **[writing your own module with macros](macros.md)**
     (Python functions for a single website), 
     could **save the effort of developing
     _new_ plugins for mkdocs**.
@@ -328,18 +335,18 @@ of the MkDocs' config file:
 
 | Argument | Default | Description
 | -- | -- | --
-|`render_by_default`|`true`|Render macros on all pages by default. If set to false, sets an [opt-in mode](rendering/#solution-2-opt-in-specify-which-pages-must-be-rendered) where only pages marked with `render_macros: true` in header will be displayed.
-| `module_name` | main| [Name of the Python module](macros/#local-module) containing macros, filters and variables. Indicate the file or directory, without extension; you may specify a path (e.g. `include/module`). If no `main` module is available, it is ignored.
-| `modules` | `[]`| [List of pluglets](pluglets) to be added to mkdocs-macros (preinstalled Python modules that can be listed by `pip list`).
-| `include_dir` | | [Directory for including external files](advanced/#changing-the-directory-of-the-includes) 
-| `include_yaml`| `[]` | [List of yaml files or `key: filename` pairs to be included](advanced/#including-external-yaml-files)
-| `j2_block_start_string` | | [Non-standard Jinja2 marker for start of block](rendering/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
-| `j2_block_end_string` || [Non-standard Jinja2 marker for end of block](rendering/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
-| `j2_variable_start_string` || [Non-standard Jinja2 marker for start of variable](rendering/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros) 
-| `j2_variable_end_string` || [Non-standard Jinja2 marker for end of variable](rendering/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
-|`on_error_fail`|`false`| [Make the building process fail in case of an error in macro rendering](/troubleshooting/#make-the-build-process-fail-in-case-of-error) (this is useful when the website is rebuilt automatically and errors must be detected.)
-|`on_undefined`|keep|[Behavior of the macros renderer in case of an undefined variable in a page](troubleshooting/#is-it-possible-to-make-the-building-process-fail-in-case-of-page-error). By default, it leaves the Jinja2 statement untouched (e.g. `{{ foo }}` will appear as such in the page.) Use the value 'strict' to make it fail.
-|`verbose`|`false`| Print [debug (more detailed) statements](troubleshooting/#verbose-debug-statements-in-macros) in the console.
+|`render_by_default`|`true`|Render macros on all pages by default. If set to false, sets an [opt-in mode](rendering.md/#solution-2-opt-in-specify-which-pages-must-be-rendered) where only pages marked with `render_macros: true` in header will be displayed.
+| `module_name` | main| [Name of the Python module](macros.md/#local-module) containing macros, filters and variables. Indicate the file or directory, without extension; you may specify a path (e.g. `include/module`). If no `main` module is available, it is ignored.
+| `modules` | `[]`| [List of pluglets](pluglets.md) to be added to mkdocs-macros (preinstalled Python modules that can be listed by `pip list`).
+| `include_dir` | | [Directory for including external files](advanced.md/#changing-the-directory-of-the-includes) 
+| `include_yaml`| `[]` | [List of yaml files or `key: filename` pairs to be included](advanced.md/#including-external-yaml-files)
+| `j2_block_start_string` | | [Non-standard Jinja2 marker for start of block](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
+| `j2_block_end_string` || [Non-standard Jinja2 marker for end of block](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
+| `j2_variable_start_string` || [Non-standard Jinja2 marker for start of variable](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros) 
+| `j2_variable_end_string` || [Non-standard Jinja2 marker for end of variable](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
+|`on_error_fail`|`false`| [Make the building process fail in case of an error in macro rendering](troubleshooting.md/#make-the-build-process-fail-in-case-of-error) (this is useful when the website is rebuilt automatically and errors must be detected.)
+|`on_undefined`|keep|[Behavior of the macros renderer in case of an undefined variable in a page](troubleshooting.md/#is-it-possible-to-make-the-building-process-fail-in-case-of-page-error). By default, it leaves the Jinja2 statement untouched (e.g. `{{ foo }}` will appear as such in the page.) Use the value 'strict' to make it fail.
+|`verbose`|`false`| Print [debug (more detailed) statements](troubleshooting.md/#verbose-debug-statements-in-macros) in the console.
 
 ___
 For example:

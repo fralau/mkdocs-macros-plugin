@@ -23,7 +23,7 @@ def define_env(env):
 
 !!! Question "What makes a pluglet different from a plain module?"
     The only difference between a **pluglet** and an ordinary
-    mkdocs-macros [**module**](macros) (typically `main.py` or `main` directory),
+    mkdocs-macros [**module**](macros.md) (typically `main.py` or `main` directory),
     is that the pluglet is preinstalled. In this way, you can
     benefit from pluglets written by others, and you could share the
     pluglets that you wrote.
@@ -49,7 +49,7 @@ def define_env(env):
     which are hooks for acting on the website at various stages of the config/build process.
 
     A mkdocs-macros pluglet operates mostly on the [on_config](https://www.mkdocs.org/user-guide/plugins/#on_config) event of MkDocs thanks to
-    `define_env(env)`hook; but [its use can be extended thanks to other hooks](macros/#list-of-hook-functions-within-a-module).
+    `define_env(env)`hook; but [its use can be extended thanks to other hooks](macros.md/#list-of-hook-functions-within-a-module).
 
 
 
@@ -180,7 +180,7 @@ or like so (if it is more complex):
 
 
 ### How to write the code
-For the code itself, proceed as for a [usual module](../macros):
+For the code itself, proceed as for a [usual module](macros.md):
 
 ```python
 """

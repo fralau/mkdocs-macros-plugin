@@ -37,14 +37,14 @@ plugins:
 raise an error.**
 
 !!! Note
-    If you wish, you can implement your module as a [package (subdirectory)](/#implementing-the-module-as-a-package-module-subdirectory)
+    If you wish, you can implement your module as a [package (subdirectory)](index.md/#implementing-the-module-as-a-package-module-subdirectory)
     instead of a single file. 
 
 
 ### Preinstalled modules (pluglets)
 
 If you wish to re-use modules across several documentation projects,
-you may want to pre-install them, turning them into [**pluglets**](../pluglets).
+you may want to pre-install them, turning them into [**pluglets**](pluglets.md).
 
 
 The `define_env()` function
@@ -116,7 +116,7 @@ your functions (the `env` object does all the 'magic').
     a wide range of objects, and their attributes
     will remain accessible to the jinja2 template via the standard Python
     convention, e.g. `{{ foo.bar }}` (see [more
-    information](https://jinja.palletsprojects.com/en/2.11.x/templates/#variables))
+    information](https://jinja.palletsprojects.com/en/latest/templates#variables))
 
 ### Definition of variables/macros/filters
 
@@ -195,7 +195,7 @@ Item|Type|Description
 
 
 Sometimes, you might need information from the [whole config file 
-(`mkdocs.yaml`)]((https://mkdocs.readthedocs.io/en/stable/user-guide/configuration)), e.g. `site_description`, `theme`, `copyright`, etc.
+(`mkdocs.yaml`)](https://mkdocs.readthedocs.io/en/stable/user-guide/configuration/), e.g. `site_description`, `theme`, `copyright`, etc.
 
 The property `conf` of the `env` object contains that information.
 
@@ -293,9 +293,9 @@ There are other functions available. Each is triggered by a [MkDocs event](https
 Function | Description | Typical Use | Triggered by MkDoc's event 
 ---  | ------ | ---- | ---
 `define_env(env)` | Main function | [Create macros, filters, etc.](#the-define_env-function) | on_config 
-`on_pre_page_macros(env)`| Executed just before the Jinja2 directives (markdown page) have been rendered | [Directly modify a markdown page](../advanced/#adding-post-build-files-to-the-html-website) | on_page 
-`on_post_page_macros(env)`| Executed just after the Jinja2 code (markdown page) have been rendered | [Directly modify a markdown page](../advanced/#adding-post-build-files-to-the-html-website) | on_page
-`on_post_build(env)` | Executed after the html pages have been produced | [Add files to the website](../advanced/#adding-post-build-files-to-the-html-website) | on_post_build
+`on_pre_page_macros(env)`| Executed just before the Jinja2 directives (markdown page) have been rendered | [Directly modify a markdown page](advanced.md/#adding-post-build-files-to-the-html-website) | on_page 
+`on_post_page_macros(env)`| Executed just after the Jinja2 code (markdown page) have been rendered | [Directly modify a markdown page](advanced.md/#adding-post-build-files-to-the-html-website) | on_page
+`on_post_build(env)` | Executed after the html pages have been produced | [Add files to the website](advanced.md/#adding-post-build-files-to-the-html-website) | on_post_build
 `declare_variables(variables, macro)`| _Main function_ | [_Deprecated (< version 0.3.0)_](#the-declare_variables-function-deprecated) | *on_config*
 
 

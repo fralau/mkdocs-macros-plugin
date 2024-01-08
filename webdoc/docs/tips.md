@@ -66,7 +66,7 @@ available in a page.
 It would be great if XY function was available in mkdocs-macro...
 ----
 
-Have you considered [writing your own macro in Python](../python)?
+Have you considered [writing your own macro in Python](macros.md)?
 It's quick and easy.
 
 !!! Tip "Seriously: macros are easy to write"
@@ -83,7 +83,7 @@ It's quick and easy.
 How can I access git information?
 --------------------------
 
-See the [page on git](../git_info).
+See the [page on git](git_info.md).
 
 
 How do I deal with relative links to documents/images?

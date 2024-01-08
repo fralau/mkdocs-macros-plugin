@@ -197,7 +197,7 @@ Which can be called (within the page) as:
     It is possible to define Jinja2 macros in a separate file,
     and to import them from there in any page, using the
     `{% import ..}` directive.
-    See explanations under [Advanced Usage](../advanced/#importing-macros-from-a-separate-file).
+    See explanations under [Advanced Usage](advanced.md/#importing-macros-from-a-separate-file).
 
 
 Conditionals, loops, etc.

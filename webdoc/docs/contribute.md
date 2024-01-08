@@ -3,35 +3,59 @@ Contributing to mkdocs-macros
 
 If you want to help, you've come to the right place.
 
-## Adding an issue?
+## Code of Conduct
+The vast majority of developers are good people, and this is a peaceful community.
 
-If, after having consulted the existing [issues](https://github.com/fralau/mkdocs_macros_plugin/issues), 
-you want to add **a new issue** (for a **bug** or an **enhancement request**), 
-or comment on an existing one, you are welcome!
+If you have any uncertainty, **apply the Golden Rule**:
 
-All issues are carefully reviewed and often get a quick answer.
+- What wouldn't you want other members of this community do to you? Don't do that to others.
+- How would you like to be treated by other members of this community? Treat them in that way.
 
-## Software issue, usage problem, not sure?
-
-There has been no need, so far, to regulate issues on this project.
-
-But if you don't know if what you are requesting is:
-
-- a bug correction,
-- a new feature,
-- a hint on how to use mkdocs-macros,
-
-or you have **an idea that is meaningful to you, and you wish to start a discussion**,
-
-just use the [project's Discussions space, on GitHub](https://github.com/fralau/mkdocs_macros_plugin/discussions), and enter a **new idea** 💡. 
-
-!!! Tip "Your ideas 💡 are valuable: tell about them!"
+For broad guidelines, members of this community uphold
+the [Universal Declaration of Human Rights](https://www.un.org/en/about-us/universal-declaration-of-human-rights):
+the answer to an issue might be in the first lines of the preamble, or in any of the 30 articles.
 
 
 
-## Want to contribute code?
+## Discussions: Questions, usage problem, ideas for evolution?
 
-Contributions of [PRs (Pull Requests)](https://github.com/fralau/mkdocs_macros_plugin/pulls) are welcome!
+
+If you have:
+- 🙏 something you don't know how to make work, 
+  or you don't know how to do it (after reading the [documentation](https://mkdocs-macros-plugin.readthedocs.io/en/latest/))
+- 🙌 a hint on how to use Mkdocs-Macros,
+- 💡 an idea for a new feature or a change
+- 📣 something you want everyone to know
+
+
+then open a **discussion** on the [project's forum](https://github.com/fralau/mkdocs_macros_plugin/discussions).
+
+The author of this project will do his best to review them all.
+
+
+!!! Tip "Your input and your ideas are valuable: tell about them!"
+
+## Software issues
+
+If you notice a bug, a problem with a new version, or the necessity
+for maintenance, open an issue on the [project's forum](https://github.com/fralau/mkdocs_macros_plugin/discussions)
+
+!!! Important "Do not use issues for questions or discussions"
+    For that, open a discussion [project's forum](https://github.com/fralau/mkdocs_macros_plugin/discussions)
+
+
+
+
+
+## Pull Requests
+
+Contributions of [PRs (Pull Requests)](https://github.com/fralau/mkdocs_macros_plugin/pulls) are welcome (but only after an issue
+has already beed discussed).
+
+Always indicate, in the pull request, the number of the issue (e.g. #15)
+that refers to the problem you are seeking to solve.
+
+Pull requests without an issue number will not be considered.
 
 More information on how to make pull requests can be found on [GitHub's docs](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests).
 
