@@ -1,7 +1,7 @@
 Mkdocs-Macros
 =============
-** A plugin/mini-framework for unleashing the power of [Mkdocs](https://www.mkdocs.org/)
-static website generator, with the use of variables and macros. **
+**A plugin/mini-framework for unleashing the power of [Mkdocs](https://www.mkdocs.org/)
+static website generator, with the use of variables and macros.**
 
 !!! Tip "A mini-framework"
     Mkdocs-Macros is more than a "plugin". It is a **mini-framework**
@@ -21,7 +21,8 @@ static website generator, with the use of variables and macros. **
 
 **Mkdocs-Macros** is a plugin/mini-framework that
 makes it easy for contributors
-of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It can do two things:
+of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more 
+beautiful Markdown pages (with the `.md` extension). It can do two things:
 
 1. Transforming the markdown pages
 into [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) templates
@@ -38,7 +39,11 @@ that it can be called a **"mini-framework"**.
 even for small documentation projects: it provides
 data about the platform, the git repository (if any), etc. 
 
-
+!!! Warning "Mkdocs-Macros is not for HTML templates"
+    The Jinja2 engine used for MkDocs-Macros is for Markdown pages
+    distinct from the one used by MkDocs for [HTML templates](https://www.mkdocs.org/dev-guide/themes/).
+    For more information and tips, see the paragraph on
+    [HTML templates](post_production.md#html-templates).
 
 
 ### Simple Example

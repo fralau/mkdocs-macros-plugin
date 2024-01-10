@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Cutting Edge (GitHub Only)
 * Fixed: `define_env() was always required in module (#191)
 * Added: trace the case when no module is found (INFO)
+* Improved documentation, particularly about HTML pages
 
 ## 1.0.5, 2023-10-31
 
