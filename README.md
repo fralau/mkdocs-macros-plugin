@@ -211,3 +211,7 @@ plugins:
 [See instructions in the documentation](https://mkdocs-macros-plugin.readthedocs.io/en/latest/pluglets/).
 
 A sample pluglet can be found in [mkdocs-test (github)](https://github.com/fralau/mkdocs-macros-test).
+
+### List of existing pluglets
+
+[See the wiki page on Github](https://github.com/fralau/mkdocs-macros-plugin/wiki/Mkdocs%E2%80%90Macros-Pluglets).
