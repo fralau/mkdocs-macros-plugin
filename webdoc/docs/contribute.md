@@ -50,7 +50,7 @@ for maintenance, open an issue on the [project's forum](https://github.com/frala
 ## Pull Requests
 
 Contributions of [PRs (Pull Requests)](https://github.com/fralau/mkdocs_macros_plugin/pulls) are welcome (but only after an issue
-has already beed discussed).
+has already been discussed).
 
 Always indicate, in the pull request, the number of the issue (e.g. #15)
 that refers to the problem you are seeking to solve.

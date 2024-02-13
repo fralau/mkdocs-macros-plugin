@@ -265,7 +265,7 @@ def is_relative(url):
 
 def fix_url(url):
     """
-    If url is relative, fix it so that it points to the docs diretory.
+    If url is relative, fix it so that it points to the docs directory.
     This is necessary because relative links in markdown must be adapted
     in html ('img/foo.png' => '../img/img.png').
     """

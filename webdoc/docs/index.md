@@ -5,7 +5,7 @@ static website generator, with the use of variables and macros.**
 
 !!! Tip "A mini-framework"
     Mkdocs-Macros is more than a "plugin". It is a **mini-framework**
-    developped with one goal in mind: 
+    developed with one goal in mind: 
     
     **To enhance mkdocs with the macro and automation capabilities
     available to a [wiki engine](https://wiki.c2.com/?WikiEngine).** [^6]

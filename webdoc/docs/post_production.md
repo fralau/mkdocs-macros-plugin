@@ -165,7 +165,7 @@ They operates on all pages, page by page.
 #### Content and availability of attributes
 the `env. markdown` and `env.page` attributes are available
  only from the point of `on_pre_page_macros()` on. 
-Thay are **not** available for the `define_env(env)` hook.
+They are **not** available for the `define_env(env)` hook.
 
 env.markdown contains the markdown of the page, before rendering
 (in `on_pre_page_macros()`) or after rendering (in `on_post_page_macros()`))

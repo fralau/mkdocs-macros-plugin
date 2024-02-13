@@ -19,7 +19,7 @@ may not be rendered correctly,
 or cause a syntax error, or some other error.
 
 The reason is that, by default, when the Jinja2 template engine in the **macro plugin** 
-encouters any text that has the standard markers (typically starting with `{%`} or
+encounters any text that has the standard markers (typically starting with `{%`} or
 `{{`) this will cause a conflict:
 it will try to interpret that text as a macro
 and fail to behave properly. 
@@ -111,7 +111,7 @@ For example, the following LaTeX snippet is used to draw a table:
     This is to allow advanced use cases where the content of the code block
     must be computed on the fly.
 
-!!! Note "No Risk of intereference of Jinja2 statements with HTML Rendering"
+!!! Note "No Risk of interference of Jinja2 statements with HTML Rendering"
 
     There is, of course, a **third use of Jinja2 statements**:
     MkDocs also use them in templates to render HTML pages. **Fortunately,
@@ -181,7 +181,7 @@ _From version 1.0.0_
     problematic pages, or do not wish to control
     the rendering of all pages, this solution may be for you.
 
-The **opt-in** solution consists of changing the defaut behavior of 
+The **opt-in** solution consists of changing the default behavior of 
 mkdocs-macros: no pages will be rendered (no macros interpreted)
 unless this is specifically requested in the page's header.
 
