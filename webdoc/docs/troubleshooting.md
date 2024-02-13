@@ -168,7 +168,7 @@ the plugin's environment:
 Help! mkdocs-macros is breaking down or eating pieces of my documentation!
 ------------------------------------------------
 
-![dog eating ice-cream, credit: https://unsplash.com/photos/OYUzC-h1glg](dog-eating.jpg)
+![dog eating ice-cream, credit: https://en.wikipedia.org/wiki/File:Dog_with_treat.jpg](dog-eating.jpg) <br/> <sup><sub>© [pbump](https://www.flickr.com/photos/pbump/with/5637773582/) / [Wikimedia Commons](https://en.wikipedia.org/wiki/File:Dog_with_treat.jpg) / [CC BY-SA 2.0 DEED](https://creativecommons.org/licenses/by-sa/2.0/deed.en)</sub></sup>
 
 1. In principle, anything that looks like an unknown variable (e.g. `{{ foo }}`) will be preserved.
 But in some cases there could be an error page or  **an empty string where you expected one**. [See how you can change the rendering behavior](#what-happens-if-a-variable-is-undefined).
