@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 * Fixed: `define_env() was always required in module (#191)
 * Added: trace the case when no module is found (INFO)
 * Improved documentation, particularly about HTML pages
+* Added: parameters `j2_comment_start_string` and
+  `j2_comment_end_string` to plugin's parameters, 
+  to specify alternate markers for comments.
 
 ## 1.0.5, 2023-10-31
 

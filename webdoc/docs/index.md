@@ -349,6 +349,8 @@ of the MkDocs' config file:
 | `j2_block_end_string` || [Non-standard Jinja2 marker for end of block](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 | `j2_variable_start_string` || [Non-standard Jinja2 marker for start of variable](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros) 
 | `j2_variable_end_string` || [Non-standard Jinja2 marker for end of variable](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
+| `j2_comment_start_string` || [Non-standard Jinja2 marker for end of variable](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
+| `j2_comment_end_string` || [Non-standard Jinja2 marker for end of variable](rendering.md/#solution-5-altering-the-syntax-of-jinja2-for-mkdocs-macros)
 |`on_error_fail`|`false`| [Make the building process fail in case of an error in macro rendering](troubleshooting.md/#make-the-build-process-fail-in-case-of-error) (this is useful when the website is rebuilt automatically and errors must be detected.)
 |`on_undefined`|keep|[Behavior of the macros renderer in case of an undefined variable in a page](troubleshooting.md/#is-it-possible-to-make-the-building-process-fail-in-case-of-page-error). By default, it leaves the Jinja2 statement untouched (e.g. `{{ foo }}` will appear as such in the page.) Use the value 'strict' to make it fail.
 |`verbose`|`false`| Print [debug (more detailed) statements](troubleshooting.md/#verbose-debug-statements-in-macros) in the console.

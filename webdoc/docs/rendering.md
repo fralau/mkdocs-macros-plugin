@@ -257,31 +257,49 @@ with the obligation of escaping Jinja2 statements.
 !!! Tip "Solution"
     Rather than refactoring all the existing markdown pages to fence
     those Jinja2 statements,
-    it may be preferable to alter the markers for variables or blocks
+    it may be preferable to alter the **markers** for variables or blocks
     used in mkdocs-macros.
+
+The parameters to control those markers are described in the
+documentation of the [high-level API for Jinja2](https://jinja.palletsprojects.com/en/3.1.x/api/#high-level-api).
 
 For example, you may want to replace the curly brackets by square ones,
 like this:
 
-    # This is a title
+```markdown
+# This is a title
+[# This is a jinja2 comment that will not appear. #]
 
-    It costs [[ unit_price ]].
+It costs [[ unit_price ]].
 
-    [[% if unit_price > 5 %]]
-    This is expensive!
-    [[% endif %]]
+[[% if unit_price > 5 %]]
+This is expensive!
+[[% endif %]]
+```
 
 To obtain this result, simply add the following parameters in the
-`macros` section. There are two parameters for code blocks (start and
-end) and two for variables (start and end).
+`macros` section in Mkdoc's config file.  There are:
 
-      - macros:
-          j2_block_start_string: '[[%'
-          j2_block_end_string: '%]]'
-          j2_variable_start_string: '[['
-          j2_variable_end_string: ']]'
+  - two parameters for code blocks (start and end)
+  - two for variables (start and end)
+  - two for comments (start and end)
 
-You may, of course, chose the combination that best suits your needs.
+```yaml
+plugins:
+  - search
+  - macros:
+      j2_block_start_string: '[[%'
+      j2_block_end_string: '%]]'
+      j2_variable_start_string: '[['
+      j2_variable_end_string: ']]'
+      j2_comment_start_string: '[#'
+      j2_comment_end_string: '#]'
+```
+
+
+_New in 1.0.7: parameters `j2_comment_start_string` and `j2_comment_end_string`_
+
+You may, of course, chose the combination of markers that best suits your needs.
 
 !!! Warning "Caution 1: You are walking out of the beaten path."
     Altering the standard markers used in jinja2 has far-reaching consequences,

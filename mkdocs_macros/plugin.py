@@ -96,6 +96,8 @@ class MacrosPlugin(BasePlugin):
         ('j2_block_end_string',      J2_STRING),
         ('j2_variable_start_string', J2_STRING),
         ('j2_variable_end_string',   J2_STRING),
+        ('j2_comment_start_string',   J2_STRING),
+        ('j2_comment_end_string',   J2_STRING),
         # for behavior of unknown macro (e.g. other plugin):
         ('on_undefined',  PluginType(str, default=DEFAULT_UNDEFINED_BEHAVIOR)),
         # for CD/CI set that parameter to true
