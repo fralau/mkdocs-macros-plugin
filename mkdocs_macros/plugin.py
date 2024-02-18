@@ -92,12 +92,13 @@ class MacrosPlugin(BasePlugin):
         # list of additional yaml files:
         ('include_yaml', PluginType(list, default=[])),
         # for altering the j2 markers, in case of need:
+        # https://jinja.palletsprojects.com/en/latest/api/
         ('j2_block_start_string',    J2_STRING),
         ('j2_block_end_string',      J2_STRING),
         ('j2_variable_start_string', J2_STRING),
         ('j2_variable_end_string',   J2_STRING),
-        ('j2_comment_start_string',   J2_STRING),
-        ('j2_comment_end_string',   J2_STRING),
+        ('j2_comment_start_string',  J2_STRING),
+        ('j2_comment_end_string',    J2_STRING),
         # for behavior of unknown macro (e.g. other plugin):
         ('on_undefined',  PluginType(str, default=DEFAULT_UNDEFINED_BEHAVIOR)),
         # for CD/CI set that parameter to true
