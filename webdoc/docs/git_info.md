@@ -110,7 +110,7 @@ which would return e.g.
 The tag attribute shows the full description of the tag, for
 example `v1.0.4-14-g2414721`. Meanwhile, `short_tag` shows the
 tag name without any suffix, for example `v1.0.4`. The later can
-be usefull when showing the latest release.
+be useful when showing the latest release.
 
 ## Tip: Is this really a git repo?
 

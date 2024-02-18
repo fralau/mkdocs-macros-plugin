@@ -43,7 +43,7 @@ raise an error.**
 
 ### Preinstalled modules (pluglets)
 
-If you wish to re-use modules across several documentation projects,
+If you wish to reuse modules across several documentation projects,
 you may want to pre-install them, turning them into [**pluglets**](pluglets.md).
 
 
@@ -171,7 +171,7 @@ or functions of that object:
 
 Item|Type|Description
 ---|---|---
-`variables`|_attribute_|The namespace that contains the variables and macros that will be available in mardkown pages with `{{ ... }}` notation. This dictionary is initialized with the values contained in the `extra` section of the configuration file (and optionally, with external yaml files). This object is also accessible with the dot notation; e.g. `env.variables['foo']` is equivalent to `env.variables.foo`.
+`variables`|_attribute_|The namespace that contains the variables and macros that will be available in markdown pages with `{{ ... }}` notation. This dictionary is initialized with the values contained in the `extra` section of the configuration file (and optionally, with external yaml files). This object is also accessible with the dot notation; e.g. `env.variables['foo']` is equivalent to `env.variables.foo`.
 `macro`|_function_|A decorator function that you can use to declare a Python function as a Jinja2 callable ('macro' for MkDocs).
 `filters`|_attribute_|A list list of jinja2 filters (default None)
 `filter`|_function_|A decorator for declaring a Python function as a jinja2 custom filter
@@ -211,7 +211,7 @@ def site_info():
 ```
 
 !!! Warning "Beware the change of name"
-    Beware that the what is usually called `config` is alled `env.conf`
+    Beware that the what is usually called `config` is allied `env.conf`
     in the module. That is is because there is already `env.config`
     property as part of the `BasePlugin` class.
 

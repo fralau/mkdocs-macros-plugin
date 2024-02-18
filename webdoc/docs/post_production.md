@@ -62,10 +62,10 @@ each page, not on the general configuration),
 you may use the two hooks in your module, which are executed
  _before_ the markdown page is rendered into HTML:
 
-1. `on_pre_page_macros(env)` : just ** before ** the macros are rendered
+1. `on_pre_page_macros(env)` : just **before** the macros are rendered
    on a specific page (macros are still present).
    At this stage you can still insert text that contains macros.
-2. `on_post_page_macros(env)` : just ** after ** the macros are rendered
+2. `on_post_page_macros(env)` : just **after** the macros are rendered
    on a specific page (macros have turned into their markdown equivalent).
    At this stage you can insert Markdown text or HTML, but no longer
    macros.
@@ -150,8 +150,8 @@ def on_pre_page_macros(env):
 `on_pre_page_macros(env)` and `on_post_page_macros(env)` are executed by the
 [`on_page_markdown()` event of MkDocs](https://www.mkdocs.org/user-guide/plugins/#on_page_markdown):
 
-- ** before or after** rendering of the macros into raw Markdown, respectively
-- ** before** the rendering the page from Markdown to HTML
+- **before or after** rendering of the macros into raw Markdown, respectively
+- **before** the rendering the page from Markdown to HTML
 
 They operates on all pages, page by page.
 
@@ -165,7 +165,7 @@ They operates on all pages, page by page.
 #### Content and availability of attributes
 the `env. markdown` and `env.page` attributes are available
  only from the point of `on_pre_page_macros()` on. 
-Thay are **not** available for the `define_env(env)` hook.
+They are **not** available for the `define_env(env)` hook.
 
 env.markdown contains the markdown of the page, before rendering
 (in `on_pre_page_macros()`) or after rendering (in `on_post_page_macros()`))

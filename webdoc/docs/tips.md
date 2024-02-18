@@ -293,7 +293,7 @@ custom macros,  you could declare the following macro:
             return {name:getattr(env, name) for name in dir(env) if not name.startswith('_')}
 
 
-And call it in witin a mardkown page:
+And call it in within a markdown page:
 
     ```
     {{ doc_env() | pprint }}
