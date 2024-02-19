@@ -316,8 +316,9 @@ def define_env(env):
         SOURCE_FILE = os.path.join(SOURCE_DIR, filename)
         with open(SOURCE_FILE) as f:
             s = f.read()
-        # now we need to render the jinja2 directives:
-        return env.render(s)
+        # now we need to render the jinja2 directives,
+        # always rendering (to skip reasoning about page header)
+        return env.render(s, force_rendering=True)
 
     @env.macro
     def context(obj=env.variables):

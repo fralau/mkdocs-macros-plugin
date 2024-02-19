@@ -3,7 +3,10 @@ theme: mkdocs
 
 nav:
     - Home: index.md
-    - Second: page_with_macros.md # opt-in
+    - Other: not_rendered/noname.md
+    - Rendered (by header): noname.md # opt-in by header
+    - Rendered (by dir): rendered/noname.md # opt-in by directory
+    - Rendered (by name): render_this_one.md  # opt-in by file pattern
 
 
 plugins:
@@ -12,4 +15,10 @@ plugins:
       # do not render the pages by default
       # requires an opt-in
       render_by_default: false
+      # render that path:
+      force_render_paths: |
+        # this directory will be rendered:
+        rendered/
+        render_*.md
+
 

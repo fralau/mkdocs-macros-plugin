@@ -14,6 +14,8 @@ import yaml
 from jinja2 import (
     Environment, FileSystemLoader, Undefined, DebugUndefined, StrictUndefined,
 )
+import pathspec
+
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
 from mkdocs.plugins import BasePlugin
@@ -86,6 +88,11 @@ class MacrosPlugin(BasePlugin):
                                default=[])),
         # How to render pages by default: yes (opt-out), no (opt-in)
         ('render_by_default', PluginType(bool, default=True)),
+        # Force the rendering of those directories and files
+        # Use Pathspec syntax (similar to gitignore)
+        # see: https://python-path-specification.readthedocs.io/en/stable/readme.html#tutorial
+        # this is relative to doc_dir
+        ('force_render_paths',  J2_STRING),
         # Include directory for external files
         # also works for {% include ....%}) and {% import ....%}):
         ('include_dir',  J2_STRING),
@@ -333,8 +340,24 @@ class MacrosPlugin(BasePlugin):
         except AttributeError:
             raise AttributeError("You called post_build_functions property "
                                  "too early. Does not exist yet !")
+        
+    def force_page_rendering(self, filename:str)->bool:
+        """
+        Predicate: it defines whether the rendering of this page
+        filename must be forced
+        (because it is in the `force_render_paths` parameters).
 
-    # ----------------------------------
+        That parameterer is parsed in on_config() and used to define
+        `render_paths_spec`.
+
+        """
+        try:
+            return self._render_paths_spec.match_file(filename)
+        except AttributeError:
+            raise AttributeError("You called the force_render() method "
+                                 "too early. Not initialized yet !") 
+
+    # -----------------------s-----------
     # load elements
     # ----------------------------------
 
@@ -469,9 +492,17 @@ class MacrosPlugin(BasePlugin):
                                   "module in '%s'." %
                                   (local_module_name, self.project_dir))
 
-    def render(self, markdown: str):
+    def render(self, markdown: str, force_rendering:bool=False):
         """
-        Render a page through jinja2: it executes the macros
+        Render a page through jinja2: it executes the macros.
+        It keeps account of the `render_macros` variable 
+        in the page's header to decide whether to actually
+        render or not (but you can force it).
+
+        Arguments
+        ---------
+        - markdown: the markdown/HTML page (with the jinja2 macros)
+        - force_rendering: force the rendering anyway
 
         Returns
         -------
@@ -495,26 +526,32 @@ class MacrosPlugin(BasePlugin):
         except KeyError as e:
             # this is a premature rendering, no meta variables in the page
             meta_variables = {}
-        # Warning this is ternary logique (True, False, None: nothing said)
-        ignore_macros = None
-        render_macros = None
-        
-        if meta_variables:
-            # determine whether the page will be rendered or not
-            # the two formulations are accepted
-            ignore_macros = meta_variables.get('ignore_macros')
-            render_macros = meta_variables.get('render_macros')
 
-        if self.config['render_by_default']:
-            # opt-out: force of a page NOT to be interpreted,
-            opt_out = ignore_macros == True or render_macros == False
-            if opt_out:
-                return markdown
+        if force_rendering:
+            # [if force_render=True, it skips all the reasoning in the else]
+            pass
         else:
-            # opt-in: force a page to be interpreted
-            opt_in = render_macros == True or ignore_macros == False
-            if not opt_in:
-                return markdown
+            # Warning this is ternary logic(True, False, None: nothing said)
+            ignore_macros = None # deprecated
+            render_macros = None
+            
+            if meta_variables:
+                # determine whether the page will be rendered or not
+                # the two formulations are accepted
+                ignore_macros = meta_variables.get('ignore_macros')
+                render_macros = meta_variables.get('render_macros')
+
+            if self.config['render_by_default']:
+                # opt-out: force of a page NOT to be interpreted,
+                opt_out = ignore_macros == True or render_macros == False
+                if opt_out:
+                    return markdown
+            else:
+                # opt-in: you must force a page to be interpreted
+                opt_in = render_macros == True or ignore_macros == False
+                if not opt_in:
+                    return markdown
+        
         # Update the page with meta variables
         # i.e. what's in the yaml header of the page
         page_variables.update(meta_variables)
@@ -592,7 +629,15 @@ class MacrosPlugin(BasePlugin):
             debug("Content of extra variables (config file):", extra)
         if self.filters:
             trace("Extra filters (module):", list(self.filters.keys()))
+        
 
+        # Define the spec for the file paths whose rendering must be forced.
+        # It will be used by the force_page_rendering() predicate:
+        force_render_paths = self.config['force_render_paths']
+        self._render_paths_spec = pathspec.PathSpec.from_lines(
+                    'gitwildmatch', 
+                    force_render_paths.splitlines())
+            
         # -------------------
         # Create the jinja2 environment:
         # -------------------
@@ -714,6 +759,11 @@ class MacrosPlugin(BasePlugin):
             # page is an object with a number of properties (title, url, ...)
             # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
             self.variables["page"] = copy(page)
+            # Define whether we must force the rendering of this page,
+            # based on filename (relative to docs_dir directory)
+            filename = page.file.src_path
+            force_rendering = self.force_page_rendering(filename)
+
             # set the markdown (for the first time)
             self._markdown = markdown
             # execute the pre-macro functions in the various modules
@@ -722,11 +772,12 @@ class MacrosPlugin(BasePlugin):
             # render the macros
             self.markdown = self.render(
                 markdown=self.markdown,
-                # page=page,
+                force_rendering=force_rendering
             )
             # Convert macros in the title from render (if exists)
             # to answer 144
-            page.title = self.render(markdown=page.title)
+            page.title = self.render(markdown=page.title,
+                                     force_rendering=force_rendering)
 
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
