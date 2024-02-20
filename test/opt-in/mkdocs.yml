@@ -4,10 +4,10 @@ theme: mkdocs
 nav:
     - Home: index.md
     - Other: not_rendered/noname.md
-    - Rendered (by header): noname.md # opt-in by header
-    - Rendered (by dir): rendered/noname.md # opt-in by directory
-    - Rendered (by name): render_this_one.md  # opt-in by file pattern
-
+    - Render (by header): noname.md # opt-in by header
+    - Render (by dir): rendered/noname.md # opt-in by directory
+    - Render (by name): render_this_one.md  # opt-in by file pattern
+    - Exception: rendered/exception.md # forced opt-out in header
 
 plugins:
   - search
@@ -19,6 +19,7 @@ plugins:
       force_render_paths: |
         # this directory will be rendered:
         rendered/
+        # this pattern of files will be rendered:
         render_*.md
 
 

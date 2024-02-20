@@ -249,7 +249,17 @@ of conflict, the plugin will attempt to privilege the latest branch.
     algorithm might not work as you expect.
 
 
+Controlling the rendering of pages
+--------------------------------------------
 
+A frequent issue, when adding the Mkdocs-Macros plugin to an
+**existing MkDocs project**, is that some pre-existing markdown pages 
+may not be rendered correctly,
+or cause a syntax error, or some other error.
 
+That is because Mkdocs-Macros might confuse snippets in those pages
+with Jinja2 statements, try to render them and fail.
+
+This issue (as well as its solutions) is described under the 
 
 

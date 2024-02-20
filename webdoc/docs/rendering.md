@@ -1,11 +1,17 @@
-Controlling the rendering of pages
-==================================
+Controlling the rendering of macros
+========================================
 
+What is meant here by _**rendering**_ is the translation
+by Mkdocs-Macros of macros as well as [Jinja2 control structures](https://jinja.palletsprojects.com/en/3.1.x/templates/#list-of-control-structures) 
+and [comments](https://jinja.palletsprojects.com/en/3.1.x/templates/#comments) into pure Markdown/HTML.
 
-!!! Tip "Migrations to mkdocs-macros"
-    This page may be useful for **large mkdocs projects**
-    that have decided to adopt mkdocs-macros at a later
-    stage of their existence.
+!!! Tip "Migrations to Mkdocs-Macros"
+    This page may be useful for **large MkDocs projects**
+    that have decided to:
+    
+    - adopt Mkdocs-Macros at a latet stage of their existence; 
+    - include a **subproject** using Mkdocs-Macros into a main project
+      that doesn't.
 
 
 
@@ -13,15 +19,15 @@ Controlling the rendering of pages
 ## Introduction
 
 ### Issue
-The most frequent issue, when adding the mkdocs-macros plugin to an
-existing mkdocs project, is some markdown pages 
+The most frequent issue, when adding the Mkdocs-Macros plugin to an
+existing MkDocs project, is that some pre-existing markdown pages 
 may not be rendered correctly,
 or cause a syntax error, or some other error.
 
 The reason is that, by default, when the Jinja2 template engine in the **macro plugin** 
 encounters any text that has the standard markers (typically starting with `{%`} or
 `{{`) this will cause a conflict:
-it will try to interpret that text as a macro
+it will try to interpret that text as as Jinj2 directive or macro
 and fail to behave properly. 
 
 The most likely places where this can occur are the following:
@@ -40,7 +46,7 @@ The most likely places where this can occur are the following:
     1. If the statement does not fit Jinja2 syntax, a syntax error
        will be displayed in the rendered page.
 
-    2. If mkdocs-macros mistakenly tries to interprets a syntactically
+    2. If Mkdocs-Macros mistakenly tries to interprets a syntactically
     valid Jinja2 statement containing a variable,
     the most likely result is the page will fail (you can change
     this behavior with the [`on_undefined` parameter in the config file](troubleshooting.md#what-happens-if-a-variable-is-undefined)).
@@ -52,14 +58,14 @@ The most likely places where this can occur are the following:
     This question of accidental rendering is covered generally in the Jinja2 documentation as
     [escaping](https://jinja.palletsprojects.com/en/2.11.x/templates/?highlight=raw#escaping). 
     
-    Here we need to help **mkdocs-macros** clearly distinguish
+    Here we need to help **Mkdocs-Macros** clearly distinguish
     between  **two types of Jinja2 statements**:
     
     1. **Documentation statements**, 
        which must appear as-is in the final HTML pages,
-       and therefore **must not** be interpreted by mkdocs-macros.
+       and therefore **must not** be interpreted by Mkdocs-Macros.
     2. **Actionable Jinja2 statements**: calls to variables or macros, etc.,
-       which mkdocs-macros **must** replace by their equivalent.
+       which Mkdocs-Macros **must** replace by their equivalent.
 
 
 ### Special Cases
@@ -127,7 +133,7 @@ For example, the following LaTeX snippet is used to draw a table:
  
     Here we are trying to solve a different problem:
     **how to avoid interpretation** of Jinja2 statements
-    **by mkdocs-macros**,
+    **by Mkdocs-Macros**,
     so that **they actually appear in the HTML output**?
 
 ## Solutions
@@ -138,14 +144,12 @@ _From version 0.5.7_
 
 !!! Tip "Quick fix"
     This solution is a quick fix, if you are "migrating"
-    a pre-existing mkdocs project under mkdocs-macros, and
-    some markdown pages fail, or do not display correctly.
-
-    This will leave more time to implement the next solutions.
+    a pre-existing MkDocs project under Mkdocs-Macros, and
+    only a few Markdown pages fail, or do not display correctly.
 
 
 In the header of the markdown page, indicate that the markdown should
-be used "as-is" (no rendering of mkdocs-macros),
+be used "as-is" (no rendering of Mkdocs-Macros),
 by setting the `ignore_macros` meta-data key to the `true`value.
 
 
@@ -156,13 +160,17 @@ render_macros: false
 ---
 ```
 
+!!! Important ""
+ That parameter takes priority over all other considerations.
+ It guarantees that Mkdocs-Macros will not attempt to render this page.
+
 Any other value than `true` (or an absence of this key), will be interpreted
 as a `false` value.
 
 
-!!! Warning "_From version 1.0.0_"
+!!! Warning "_From version 1.1.0_"
     
-    This directive is also accepted, though it is now deprecated:
+    This directive is no longer accepted and will cause an error:
        
         ---
         # YAML header
@@ -177,13 +185,20 @@ as a `false` value.
 _From version 1.0.0_
 
 !!! Tip "Large preexisting projects"
-    If you already have a large mkdocs project and have several
-    problematic pages, or do not wish to control
-    the rendering of all pages, this solution may be for you.
+    If you already have a particularly large MkDocs project and have several
+    problematic pages, or do not wish write a YAML header for all of them,
+    this solution may be for you.
 
 The **opt-in** solution consists of changing the default behavior of 
-mkdocs-macros: no pages will be rendered (no macros interpreted)
-unless this is specifically requested in the page's header.
+Mkdocs-Macros: no pages will be rendered (no macros interpreted)
+unless this is specifically requested.
+
+After that, there are two ways to specify which pages must be rendered:
+
+1. In the YAML header of each markdown page
+   (`render_macros: true`).
+2. _From version 1.1.0_ In the configuration file, by setting the
+   `force_render_paths` parameter.
 
 To change the default behavior, set the `render_by_default` parameter
 to false in the config file (mkdocs.yml):
@@ -195,6 +210,10 @@ plugins:
       render_by_default: false
 ```
 
+
+
+#### Opt-in with the markdown page's header
+
 To render a specific page:
 
 ```yaml
@@ -204,7 +223,107 @@ render_macros: true
 ---
 ```
 
-mkdocs-macros will _not_ attempt to render the other pages.
+Mkdocs-Macros will _not_ attempt to render the other pages.
+
+!!! Warning "_From version 1.1.0_"
+    
+    The following directive is no longer accepted and will cause an error:
+       
+        ---
+        # YAML header
+        ignore_macros: false
+        ---
+
+
+#### Opt-in through the config file
+
+_From version 1.1.0_
+
+When `render_macros`is set to `false`, the parameter `force_render_paths` 
+can be used to specify a list of **exceptions** (**opt-in**) i.e.
+relative paths of pages within the documents directory
+(as well as file patterns) in which macros must be rendered.
+
+
+!!! Note "Use case"
+    This feature was developed for very large MkDocs projects, typically when
+    a whole subproject is 
+    later inserted (as a subdirectory) into a bigger project that doesn't.
+    
+    Default rendering of macros is out of question since it would 
+    break the parent project; at the same time, adding a YAML header
+    in all pages of the child project would be tedious.
+    
+    Setting the subdirectory as an exception (opt-in) can solve the problem.
+
+
+
+The syntax follows more or less the [.gitignore pattern matching](https://git-scm.com/docs/gitignore#_pattern_format).
+
+For example:
+
+```yaml
+plugins:
+  - search
+  - macros:
+      # do not render the pages by default
+      # requires an opt-in
+      render_by_default: false
+      # render this subdirectory of the documents directory:
+      force_render_paths: rendered/ 
+```
+
+!!! Warning "The page header has the last word"
+    If `render_macros` is set to `false` in the YAML header of the page,
+    it will _**never**_ be rendered, even if it matches the specification in
+    `force_render_paths`.
+
+    Similarly, if it is set to `true`, it will be rendered regardless of
+    `force_render_paths`.
+
+
+
+The syntax allows more than one instruction, with [examples provided in this page of the Pathlib library documentation](https://python-path-specification.readthedocs.io/en/stable/readme.html#tutorial), e.g.: 
+
+
+```yaml
+plugins:
+  - search
+  - macros:
+      # do not render the pages by default
+      # requires an opt-in
+      render_by_default: false
+      # render those paths and patterns:
+      force_render_paths: |
+        # this directory will be rendered:
+        rendered/
+        # this pattern of files will be rendered:
+        render_*.md
+```
+
+!!! Note "Syntax of the multiline parameter"
+
+    `force_render_paths` 
+    can be a YAML multiline literal string (note the pipe symbol). 
+    Comments (starting with a `#`) are accepted _within_ the string
+    and are ignored.
+
+
+It is also possible to specify exceptions with `!` operator,
+(e.g. `!foo*.md` excludes all files starting with `foo` and with
+the `md` extension from the list of candidates.)
+
+!!! Warning "Location of the root directory"
+
+    Contrary to other parameters of the plugin,
+    which consider that the root directory is the Mkdocs project's directory
+    (where the config file resides),
+    the root directory here is the **documents** directory, generally
+    named `docs`. 
+    Starting the relative path from that subdirectory is logical,
+    since the markdown pages are not supposed
+    to exist outside of it.
+
 
 ### Solution 3: Snippets as jinja2 strings (one-liners)
 
@@ -244,21 +363,25 @@ The same approach can also be used for inline definitions, e.g.:
      You can use the `raw` expression for inline definitions, for example: {% raw %} `{{{method}}}-{{{url}}}.json` {%  endraw %} for
      escaping 3-bracket expressions often used in Handlebars.
 
-### Solution 5: Altering the syntax of jinja2 for mkdocs-macros
+### Solution 5: Altering the syntax of jinja2 for Mkdocs-Macros
 
-Sometimes the introduction of mkdocs-macros comes late in the chain, and the
-existing pages already contain a lot of Jinja2 statements that are
-should appear in the final HTML pages: escaping all of them
+Sometimes the introduction of Mkdocs-Macros comes late in the chain, and the
+existing pages already contain a lot of Jinja2 statements
+(or statements with a similar syntax) that
+should appear as-is in the final HTML pages: escaping all of them
 would not really be an option.
 
-Or else, you do not wish to bother the writers of markdown pages
-with the obligation of escaping Jinja2 statements.
+Or else, you are using some other plugin or Markdown extension that demands
+a syntax that is too similar to that normally used by Jinja2
+(and you do not wish to implement an MkDocs-Macros [pluglet](pluglets.md) to replace it).
+
 
 !!! Tip "Solution"
     Rather than refactoring all the existing markdown pages to fence
-    those Jinja2 statements,
-    it may be preferable to alter the **markers** for variables or blocks
-    used in mkdocs-macros.
+    those statements to protect them from rendering,
+    it may be preferable, as a last resort, 
+    to alter the **markers** for variables or blocks
+    used in Mkdocs-Macros.
 
 The parameters to control those markers are described in the
 documentation of the [high-level API for Jinja2](https://jinja.palletsprojects.com/en/3.1.x/api/#high-level-api).

@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 * Added: parameters `j2_comment_start_string` and
   `j2_comment_end_string` to plugin's parameters, 
   to specify alternate markers for comments.
+* Added the multiline parameter `force_render_paths` in the config file,
+  to specify directories or file patterns to be rendered for the case when `render_by_default = false`
+  (the `render_macros` parameter in the YAML header of the page
+  has the last word).
 
 ## 1.0.5, 2023-10-31
 

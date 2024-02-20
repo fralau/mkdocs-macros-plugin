@@ -251,7 +251,7 @@ class MacrosPlugin(BasePlugin):
     @property
     def page(self):
         """
-        The page information
+        The current page's information
         """
         try:
             return self._page
@@ -262,7 +262,7 @@ class MacrosPlugin(BasePlugin):
     @property
     def markdown(self):
         """
-        The markdown after interpretation
+        The markdown of the current page, after interpretation
         """
         try:
             return self._markdown
@@ -273,7 +273,7 @@ class MacrosPlugin(BasePlugin):
     @markdown.setter
     def markdown(self, value):
         """
-        Used to set the raw markdown
+        Used to set the raw markdown of the current page
         """
         if not isinstance(value, str):
             raise ValueError("Value provided to attribute markdown "
@@ -494,15 +494,27 @@ class MacrosPlugin(BasePlugin):
 
     def render(self, markdown: str, force_rendering:bool=False):
         """
-        Render a page through jinja2: it executes the macros.
-        It keeps account of the `render_macros` variable 
+        Render a page through jinja2: it reads the code and
+        executes the macros.
+        
+        It tests the `render_macros` metavariable 
         in the page's header to decide whether to actually
         render or not (but you can force it).
+
+        PRINCIPLE OF PRECAUTION:
+        If the YAML header of the page contains `render_macros: false`:
+        that takes priority:
+        NO rendering will be done, and the markdown will be returned
+        as is (even if `force_rendering` is set to true). 
+
 
         Arguments
         ---------
         - markdown: the markdown/HTML page (with the jinja2 macros)
-        - force_rendering: force the rendering anyway
+        - force_rendering: if True, it forces the rendering,
+          even if the page header doesn't say so
+          (used in the case when `render_by_default` is set to false
+          in the config file)
 
         Returns
         -------
@@ -510,10 +522,7 @@ class MacrosPlugin(BasePlugin):
 
         Notes
         -----
-        - Must called by '_on_page_markdown()'
-        - If the YAML header of the page contains `ignore_macros: true`
-          then NO rendering will be done, and the markdown will be returned
-          as is.
+        - Must called by _on_page_markdown()
         """
 
         # Process meta_variables
@@ -527,30 +536,31 @@ class MacrosPlugin(BasePlugin):
             # this is a premature rendering, no meta variables in the page
             meta_variables = {}
 
-        if force_rendering:
-            # [if force_render=True, it skips all the reasoning in the else]
-            pass
-        else:
-            # Warning this is ternary logic(True, False, None: nothing said)
-            ignore_macros = None # deprecated
-            render_macros = None
-            
-            if meta_variables:
-                # determine whether the page will be rendered or not
-                # the two formulations are accepted
-                ignore_macros = meta_variables.get('ignore_macros')
-                render_macros = meta_variables.get('render_macros')
 
-            if self.config['render_by_default']:
-                # opt-out: force of a page NOT to be interpreted,
-                opt_out = ignore_macros == True or render_macros == False
-                if opt_out:
-                    return markdown
+        # Warning this is ternary logic(True, False, None: nothing said)
+        render_macros = None
+        
+        if meta_variables:
+            # determine whether the page will be rendered or not
+            # the two formulations are accepted
+            render_macros = meta_variables.get('render_macros')
+            # ignore_macros should be phased out
+            if meta_variables.get('ignore_macros'):
+                raise ValueError("The metavariable `ignore_macros` "
+                      "is now FORBIDDEN "
+                      "in the header of markdown pages, "
+                      "use `render_macros` instead.")
+
+        # this takes precedence over any other consideration:
+        if render_macros == False:
+            return markdown
+        
+        if self.config['render_by_default'] == False:
+            # opt-in
+            if force_rendering or render_macros == True:
+                pass # opt-in
             else:
-                # opt-in: you must force a page to be interpreted
-                opt_in = render_macros == True or ignore_macros == False
-                if not opt_in:
-                    return markdown
+                return markdown
         
         # Update the page with meta variables
         # i.e. what's in the yaml header of the page
