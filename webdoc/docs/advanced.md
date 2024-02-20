@@ -260,6 +260,7 @@ or cause a syntax error, or some other error.
 That is because Mkdocs-Macros might confuse snippets in those pages
 with Jinja2 statements, try to render them and fail.
 
-This issue (as well as its solutions) is described under the 
+This issue (as well as its solutions) is described in the chapter 
+on [rendering](rendering.md). 
 
 

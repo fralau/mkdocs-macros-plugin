@@ -1,5 +1,5 @@
 # MIT License
-Copyright (C) 2018-2021 Laurent Franceschetti
+Copyright (C) 2018-2024 Laurent Franceschetti
 
 (see contributors for their respective portions)
 

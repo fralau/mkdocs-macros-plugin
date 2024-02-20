@@ -9,7 +9,7 @@ and [comments](https://jinja.palletsprojects.com/en/3.1.x/templates/#comments) i
     This page may be useful for **large MkDocs projects**
     that have decided to:
     
-    - adopt Mkdocs-Macros at a latet stage of their existence; 
+    - adopt Mkdocs-Macros at a later stage of their existence; 
     - include a **subproject** using Mkdocs-Macros into a main project
       that doesn't.
 
@@ -239,7 +239,8 @@ Mkdocs-Macros will _not_ attempt to render the other pages.
 
 _From version 1.1.0_
 
-When `render_macros`is set to `false`, the parameter `force_render_paths` 
+When `render_macros` is set to `false` in the config file,
+the parameter `force_render_paths` 
 can be used to specify a list of **exceptions** (**opt-in**) i.e.
 relative paths of pages within the documents directory
 (as well as file patterns) in which macros must be rendered.
