@@ -1,6 +1,6 @@
 ---
 # YAML header
-ignore_macros: true
+render_macros: false
 ---
 
 
