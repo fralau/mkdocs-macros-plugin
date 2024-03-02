@@ -786,8 +786,13 @@ class MacrosPlugin(BasePlugin):
             )
             # Convert macros in the title from render (if exists)
             # to answer 144
-            page.title = self.render(markdown=page.title,
-                                     force_rendering=force_rendering)
+            # There is a bizarre issue #215 where setting the title
+            # prevents interpretation of icons with pymdownx.emoji
+            debug("Page title:",page.title)
+            if "{" in page.title:
+                page.title = self.render(markdown=page.title,
+                                        force_rendering=force_rendering)
+                debug("Page title after macro rendering:",page.title)
 
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
