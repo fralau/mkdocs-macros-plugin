@@ -20,6 +20,7 @@ from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
+from mkdocs.structure.nav import Section
 
 from mkdocs_macros.errors import format_error
 from mkdocs_macros.context import define_env
@@ -282,7 +283,6 @@ class MacrosPlugin(BasePlugin):
         self.markdown
         self._markdown = value
 
-
     @property
     def raw_markdown(self):
         """
@@ -291,7 +291,7 @@ class MacrosPlugin(BasePlugin):
         trace("Property env.raw_markdown is removed "
                              "as of 1.1.0; use env.markdown instead!")
         return self.markdown(self)
-    
+
     @markdown.setter
     def raw_markdown(self, value):
         """
@@ -340,7 +340,7 @@ class MacrosPlugin(BasePlugin):
         except AttributeError:
             raise AttributeError("You called post_build_functions property "
                                  "too early. Does not exist yet !")
-        
+
     def force_page_rendering(self, filename:str)->bool:
         """
         Predicate: it defines whether the rendering of this page
@@ -536,10 +536,9 @@ class MacrosPlugin(BasePlugin):
             # this is a premature rendering, no meta variables in the page
             meta_variables = {}
 
-
         # Warning this is ternary logic(True, False, None: nothing said)
         render_macros = None
-        
+
         if meta_variables:
             # determine whether the page will be rendered or not
             # the two formulations are accepted
@@ -554,14 +553,14 @@ class MacrosPlugin(BasePlugin):
         # this takes precedence over any other consideration:
         if render_macros == False:
             return markdown
-        
+
         if self.config['render_by_default'] == False:
             # opt-in
             if force_rendering or render_macros == True:
                 pass # opt-in
             else:
                 return markdown
-        
+
         # Update the page with meta variables
         # i.e. what's in the yaml header of the page
         page_variables.update(meta_variables)
@@ -571,8 +570,7 @@ class MacrosPlugin(BasePlugin):
         # expand the template
         on_error_fail = self.config['on_error_fail']
         try:
-
-            # If title meta variable is present, 
+            # If title meta variable is present,
             # render the jinja2 template and update the title
             if meta_variables and meta_variables.get('title'):
                 self.variables["page"].meta["title"] = self.env.from_string(
@@ -647,7 +645,6 @@ class MacrosPlugin(BasePlugin):
             debug("Content of extra variables (config file):", extra)
         if self.filters:
             trace("Extra filters (module):", list(self.filters.keys()))
-        
 
         # Define the spec for the file paths whose rendering must be forced.
         # It will be used by the force_page_rendering() predicate:
@@ -655,7 +652,7 @@ class MacrosPlugin(BasePlugin):
         self._render_paths_spec = pathspec.PathSpec.from_lines(
                     'gitwildmatch', 
                     force_render_paths.splitlines())
-            
+
         # -------------------
         # Create the jinja2 environment:
         # -------------------
@@ -727,10 +724,26 @@ class MacrosPlugin(BasePlugin):
         # nav has useful properties like 'pages' and 'items'
         # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/nav.py
         self.variables['navigation'] = nav
+        # recurse through navigation to update titles
+        for curr_nav in nav:
+            self.recurse_nav(curr_nav)
         # files has collection of files discovered in docs_dir
         # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/files.py
         # NOTE: useful for writing macros that check for the existence of files; e.g., a macro to mark a link as disabled, if its target doesn't exist
         self.variables['files'] = files
+
+    def recurse_nav(self, nav):
+        """
+        for each Section / Page / View in nav: recurse and update the title
+        """
+        # Recurse if it is a section
+        if isinstance(nav, Section):
+            for child_nav in nav.children:
+                self.recurse_nav(child_nav)
+
+        # only update the title if it is not empty
+        if nav.title:
+            nav.title = self.env.from_string(nav.title).render(**self.variables)
 
     def on_serve(self, server, config, **kwargs):
         """
