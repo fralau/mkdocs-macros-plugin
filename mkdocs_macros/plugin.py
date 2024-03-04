@@ -571,6 +571,14 @@ class MacrosPlugin(BasePlugin):
         # expand the template
         on_error_fail = self.config['on_error_fail']
         try:
+
+            # If title meta variable is present, 
+            # render the jinja2 template and update the title
+            if meta_variables and meta_variables.get('title'):
+                self.variables["page"].meta["title"] = self.env.from_string(
+                    meta_variables["title"]
+                ).render(**page_variables)
+
             md_template = self.env.from_string(markdown)
             # Execute the jinja2 template and return
             return md_template.render(**page_variables)
@@ -784,15 +792,6 @@ class MacrosPlugin(BasePlugin):
                 markdown=self.markdown,
                 force_rendering=force_rendering
             )
-            # Convert macros in the title from render (if exists)
-            # to answer 144
-            # There is a bizarre issue #215 where setting the title
-            # prevents interpretation of icons with pymdownx.emoji
-            debug("Page title:",page.title)
-            if "{" in page.title:
-                page.title = self.render(markdown=page.title,
-                                        force_rendering=force_rendering)
-                debug("Page title after macro rendering:",page.title)
 
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
