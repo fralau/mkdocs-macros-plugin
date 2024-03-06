@@ -249,7 +249,91 @@ of conflict, the plugin will attempt to privilege the latest branch.
     algorithm might not work as you expect.
 
 
-Controlling the rendering of pages
+Using Macros in the title of the page (Navigation)
+-------------------------------
+
+### General Principle
+
+Standard MkDocs looks into the following pieces of data to give a **title** to each 
+page in the navigation of the website, in that order of priority
+(see [official documentation](https://www.mkdocs.org/user-guide/writing-your-docs/#meta-data)):
+
+1. The `nav` section in the config file (`My Title : page.md`).
+2. The YAML front-matter of the page (`title: My title`).
+3. The (first) header of level 1 in the page (`# My title`).
+4. The file name (`page.md`).
+
+!!! Warning
+    Note how the config file overrides
+    the YAML front-matter of the page.
+
+### MkDocs-Macros's policy
+
+**MkDocs does not interfere with that process**, except that it
+makes sure that (after the page itself has been rendered),
+**any macro found in the **title** is also rendered**.
+
+!!! Tip
+    It means that you can call macros in the title of a page,
+    in the front matter of the page, in the config file, or
+    in the (first) header 1. Whichever will be rendered correctly.
+
+### Front matter of the page (example)
+
+In file `page.md`:
+
+```yaml
+---
+address: Hello world
+title: My Title {address}
+---
+```
+
+
+### Config file (example)
+
+```yaml
+nav:
+   My Title {address} : page.md
+
+extra:
+   address: Hello world
+```
+
+### Heading 1 of the page (example)
+
+In file `page.md`:
+
+```markdown
+---
+address: Hello world
+---
+
+# My Title {address}
+```
+
+### Limitations with emojis
+
+[pymdownx.emoji](https://facelessuser.github.io/pymdown-extensions/extensions/emoji/)
+is a Markdown extension that used to convert special strings
+(e.g. `:material-robot-happy-outline:`) into actual emojis.
+
+For some obscure reason, the forced rendering of macros in the page's title
+prevents the rendering of those emoji strings by the pymdownx.emoji  extension
+in the title (see [issue 215](https://github.com/fralau/mkdocs-macros-plugin/issues/215)).
+
+To alleviate that problem, MkDocs-Macros does not attempt to render
+macros in the title of a page, when it is obvious that none is present.
+
+!!! Warning
+    Please note that currently, when a macro is present in a page title
+    AND a smiley string is also found , then the emoji will be
+    probably not be rendered.
+
+
+
+
+Controlling the rendering of pages (Syntax Issues)
 --------------------------------------------
 
 A frequent issue, when adding the Mkdocs-Macros plugin to an

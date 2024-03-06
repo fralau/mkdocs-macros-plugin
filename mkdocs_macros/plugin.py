@@ -190,7 +190,7 @@ class MacrosPlugin(BasePlugin):
             return self._filters
 
     @property
-    def project_dir(self):
+    def project_dir(self) -> str:
         "The directory of project"
         # we calculate it from the configuration file
         CONFIG_FILE = self.conf['config_file_path']
@@ -249,7 +249,7 @@ class MacrosPlugin(BasePlugin):
         return v
 
     @property
-    def page(self):
+    def page(self) -> Page:
         """
         The current page's information
         """
@@ -260,7 +260,7 @@ class MacrosPlugin(BasePlugin):
                                  "at this stage!")
 
     @property
-    def markdown(self):
+    def markdown(self) -> str:
         """
         The markdown of the current page, after interpretation
         """
@@ -284,7 +284,7 @@ class MacrosPlugin(BasePlugin):
 
 
     @property
-    def raw_markdown(self):
+    def raw_markdown(self) -> str:
         """
         Cancelled attribute
         """
@@ -750,8 +750,8 @@ class MacrosPlugin(BasePlugin):
             if el:
                 server.watch(el, builder)
 
-    def on_page_markdown(self, markdown, page, config,
-                         site_navigation=None, **kwargs):
+    def on_page_markdown(self, markdown, page:Page, 
+                         config, **kwargs):
         """
         Pre-rendering for each page of the website.
         It uses the jinja2 directives, together with
@@ -792,7 +792,7 @@ class MacrosPlugin(BasePlugin):
             if "{" in page.title:
                 page.title = self.render(markdown=page.title,
                                         force_rendering=force_rendering)
-                debug("Page title after macro rendering:",page.title)
+                debug("Page title after macro rendering:",page.title)      
 
             # execute the post-macro functions in the various modules
             for func in self.post_macro_functions:
