@@ -8,6 +8,7 @@
 
 import importlib
 import os
+import sys
 from copy import copy
 
 import yaml
@@ -110,6 +111,8 @@ class MacrosPlugin(BasePlugin):
         ('on_undefined',  PluginType(str, default=DEFAULT_UNDEFINED_BEHAVIOR)),
         # for CD/CI set that parameter to true
         ('on_error_fail', PluginType(bool, default=False)),
+        ('on_error_reraise', PluginType(bool, default=False)),
+        ('yaml_encoding', PluginType(str, default='')),
         ('verbose', PluginType(bool, default=False))
     )
 
@@ -373,7 +376,8 @@ class MacrosPlugin(BasePlugin):
             # Paths are be relative to the project root.
             filename = os.path.join(self.project_dir, filename)
             if os.path.isfile(filename):
-                with open(filename) as f:
+                encoding = self.config['yaml_encoding'] or sys.getdefaultencoding()
+                with open(filename, encoding=encoding) as f:
                     # load the yaml file
                     # NOTE: for the SafeLoader argument, see: https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
                     content = yaml.load(f, Loader=yaml.SafeLoader)
@@ -576,6 +580,8 @@ class MacrosPlugin(BasePlugin):
             return md_template.render(**page_variables)
 
         except Exception as error:
+            if self.config['on_error_reraise']:
+                raise error
             error_message = format_error(
                 error,
                 markdown=markdown,
