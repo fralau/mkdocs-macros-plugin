@@ -19,6 +19,8 @@ e.g. with php).
 The terminal's running log also displays errors when they occur.
 
 
+
+
 Is it possible to make the building process fail in case of page error?
 -----------------------------------------------------------
 Yes. In a context of CD/CI (Continuous Development/Continuous Integration)
@@ -32,7 +34,19 @@ That is the best way to advertise that something went wrong.
 It should then be possible to consult the log (console output)
 and track down the offending markdown file and line number.
 
-To activate that behavior, set the `on_error_fail` parameter to `true`
+
+There are two ways to achieve that:
+
+1. Instruct Mkdocs-Macros to fail in case of error
+2. Instruct Mkdocs to fail in case of any warning (strict mode)
+
+
+
+
+### Instructing Mkdocs-Macros to fail in case of error
+
+A simple way to make the build fail in case of a problem with variable/macro rendering,
+is to set the `on_error_fail` parameter to `true`
 in the config file:
 
 ```yaml
@@ -44,7 +58,7 @@ plugins:
 ```
 
 In that case, an error in a macro will terminate 
-the mkdocs-macros build or serve process with an **error 100**.
+the MkDocs build or serve process with an **error 100**.
 
 !!! Tip "Make the behavior depend on an environment variable"
 
@@ -74,7 +88,30 @@ Meaning that the parameter "`on_error_fail` should be set to the value of
         
             on_undefined: strict
         
+### Instructing Mkdocs to fail in case of any warning
 
+_From version 1.1.2_
+
+This approach can be useful for large projects with automated deployement.
+
+A WARNING message is generated when an error occurs in the rendering
+of variables or macros. 
+
+If you apply the `--strict` or `-s` switch (strict mode) the 
+make the serve or build process will fail when a warning is generated:
+
+```sh
+mkdocs serve --strict
+```
+
+In that case _any_ warning from any plugin (not only Mkdocs-Macros)
+will make the build fail, which is a default approach to warnings
+in plugins.
+
+!!! Tip
+    If you do not want to use the strict mode because other plugins are
+    generating warnings that you wish to ignore, then the first approach
+    (`on_error_fail:true` might be better).
 
 What happens if a variable is undefined?
 --------------------------------------
@@ -86,7 +123,7 @@ is called **keep** (DebugUndefined):
 
 1. Unknown variables are rendered as is (`{{ foobar }}` will be printed as such if 
   `foobar` is undefined).
-2. Any other cases (notably unknown attribute or function call) will cause the page
+1. Any other cases (notably unknown attribute or function call) will cause the page
    to **fail** (be rendered with an error message within the page plus the traceback).  
 
 !!! Tip Motivations for default behavior

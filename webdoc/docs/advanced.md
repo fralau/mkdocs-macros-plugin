@@ -1,4 +1,4 @@
-Advanced usage
+Advanced usage (large projects)
 ==============
 
 Introduction
@@ -6,10 +6,33 @@ Introduction
 
 The purpose of this page is to provide information 
 for **large projects**, or **projects with 
-specific technical requirements**.
+specific technical requirements**, typically with automated deployment.
 
 
+Gracefully handling variable and macro errors
+--------------------------------
 
+By default, Mkdocs-Macros does not render a page that contains
+a non-existent variable or non-existent macro, but displays an error
+page stating the error.
+
+_From version 1.1.2_
+
+A WARNING message is generated when this occur. 
+If the `--strict` or `-s` switch has been applied, the build process
+fails when this occus:
+
+```sh
+mkdocs serve --strict
+```
+
+You can, as well, change the default behavior of Mkdocs-Macros to make it
+stricter or laxer on various levels:
+
+- Make the build fail even if the `--strict` switch has not been applied.
+- Be more or less strict or lax with errors.
+
+See the [full description of troubleshooting/debugging options](troubleshooting.md).
 
 Including external files in pages
 ---------------------------------
@@ -17,7 +40,8 @@ Including external files in pages
 ### Usage
 
 To include external files within a page, you may use the
-[`include` directive of jinja2](https://jinja.palletsprojects.com/en/3.1.x/templates/#include), directly in your markdown code e.g.:
+[`include` directive of jinja2](https://jinja.palletsprojects.com/en/3.1.x/templates/#include), 
+directly in your markdown code e.g.:
 
 ```jinja2
 ## Paragraph
@@ -137,7 +161,7 @@ in the config file](#changing-the-directory-of-the-includes).
 
 
 Treating macros as variables?
-_____________________
+-----------------------------
 
 _From version 0.5.10._ 
 
