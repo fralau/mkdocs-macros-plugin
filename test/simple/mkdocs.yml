@@ -3,6 +3,7 @@ theme: mkdocs
 
 nav:
     - Home: index.md
+    - Error Page (intentional): second.md
 
 plugins:
   - search
