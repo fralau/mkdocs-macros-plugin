@@ -582,7 +582,7 @@ class MacrosPlugin(BasePlugin):
                 page=self.page,
             )
 
-            trace('ERROR', error_message)
+            trace('ERROR', error_message, level='warning')
             if on_error_fail:
                 exit(ERROR_MACRO)
 

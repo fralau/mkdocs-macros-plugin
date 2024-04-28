@@ -7,6 +7,7 @@ Utilities for mkdocs-macros
 import subprocess
 from copy import deepcopy
 import os, sys, importlib.util
+from typing import Literal
 from packaging.version import Version
 
 from termcolor import colored
@@ -34,33 +35,39 @@ def format_trace(*args):
     for the mkdocs-macros framework;
     it will appear if --verbose option is activated
     """
-    # full_prefix = colored(TRACE_PREFIX, TRACE_COLOR)
-    # args = [full_prefix] + [str(arg) for arg in args]
-    # msg = ' '.join(args)
     first = args[0]
     rest = [str(el) for el in args[1:]]
     text = "[%s] - %s" % (TRACE_PREFIX, first)
     emphasized = colored(text, TRACE_COLOR)
     return ' '.join([emphasized] + rest)
 
-# def trace(*args, prefix=TRACE_PREFIX, **kwargs):
-#     """
-#     General purpose print function, with first item emphasized (color)
-#     This is NOT debug: it will always be printed
-#     """
-#     first = args[0]
-#     rest = args[1:]
-#     text = "[%s] %s" % (prefix, first)
-#     emphasized = colored(text, TRACE_COLOR)
-#     print(emphasized, *rest, **kwargs)
-def trace(*args):
+
+TRACE_LEVELS = {
+    'debug'   : logging.DEBUG,
+    'info'    : logging.INFO,
+    'warning' : logging.WARNING,
+    'error'   : logging.ERROR,
+    'critical': logging.CRITICAL
+}
+
+def trace(*args, level:str='info'):
     """
     General purpose print function, as trace,
     for the mkdocs-macros framework;
-    it will appear unless --quiet option is activated
+    it will appear unless --quiet option is activated.
+
+    The level is 'debug', 'info', 'warning', 'error' or 'critical'.
     """
     msg = format_trace(*args)
-    LOG.info(msg)
+    try:
+        LOG.log(TRACE_LEVELS[level], msg)
+    except KeyError:
+        raise ValueError("Unknown level '%s' %s" % (level, 
+                                                  tuple(TRACE_LEVELS.keys())
+                                                  )
+                            )
+    return msg
+    # LOG.info(msg)
 
 
 
