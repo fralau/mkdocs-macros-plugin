@@ -142,6 +142,20 @@ you should also add the `search` plugin.
 If no `plugins` entry is set, MkDocs enables `search` by default; but
 if you use it, then you have to declare it explicitly.
 
+By default, undefined variables are printed to the page as-is. If you
+wish for a page to fail on undefined variables, you should use the
+below configuration instead:
+
+```yaml
+plugins:
+    - search
+    - macros
+          on_undefined: strict
+```
+
+For details and more options, see the [documentation](
+https://mkdocs-macros-plugin.readthedocs.io/en/latest/troubleshooting/#what-happens-if-a-variable-is-undefined).
+
 ### Check that it works
 The recommended way to check that the plugin works properly is to add the 
 following command in one of the pages of your site (let's say `info.md`):
