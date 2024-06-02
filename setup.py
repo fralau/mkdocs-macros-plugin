@@ -26,7 +26,7 @@ TEST_REQUIRE = ['mkdocs-macros-test', 'mkdocs-material>=6.2',
 
 def read_file(fname):
     "Read a local file"
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+    return open(os.path.join(os.path.dirname(__file__), fname), encoding="utf-8").read()
 
 
 setup(
