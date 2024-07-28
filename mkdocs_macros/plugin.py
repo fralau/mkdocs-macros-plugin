@@ -373,7 +373,7 @@ class MacrosPlugin(BasePlugin):
             # Paths are be relative to the project root.
             filename = os.path.join(self.project_dir, filename)
             if os.path.isfile(filename):
-                with open(filename) as f:
+                with open(filename, encoding="utf-8") as f:
                     # load the yaml file
                     # NOTE: for the SafeLoader argument, see: https://github.com/yaml/pyyaml/wiki/PyYAML-yaml.load(input)-Deprecation
                     content = yaml.load(f, Loader=yaml.SafeLoader)
