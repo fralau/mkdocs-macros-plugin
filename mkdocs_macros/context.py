@@ -323,7 +323,7 @@ def define_env(env):
 
     @env.macro
     def context(obj=env.variables):
-        "*Default mkdocs_macro* List the defined variables"
+        "*Default Mkdocs-Macro*: List the defined variables"
         try:
             return [(var, type(value).__name__, format_value(value))
                     for var, value in list_items(obj)]
@@ -336,7 +336,7 @@ def define_env(env):
     @env.filter
     def pretty(var_list):
         """
-        *Default mkdocs_macro* Prettify a dictionary or object 
+        *Default Mkdocs-Macro*: Prettify a dictionary or object 
         (used for environment documentation, or debugging).
 
         Note: it will work only on the product of the `context()` macro
@@ -360,7 +360,7 @@ def define_env(env):
     @env.macro
     def macros_info():
         """
-        Test/debug function:
+        *Test/debug function*:
         list useful documentation on the mkdocs_macro environment.
         """
         # NOTE: this is template
@@ -383,4 +383,16 @@ def define_env(env):
 
 
     # add the normal mkdocs url function
-    env.filter(normalize_url)
+    # env.filter(normalize_url)
+
+    @env.filter
+    def relative_url(path: str):
+        """
+        *Default Mkdocs-Macro*:
+        convert the path of any page according to MkDoc's internal logic,
+        into a URL relative to the current page
+        (implements the `normalize_url()` function from `mkdocs.util`).
+        Typically used to manage custom navigation:
+        `{{ page.url | relative_url }}`.
+        """
+        return normalize_url(path=path, page=env.page)   

@@ -60,6 +60,6 @@ These filters are provided as a standard by the macros plugin.
 ### Builtin Jinja2 Filters
 These filters are provided by Jinja2 as a standard.
 
-See also the [Jinja2 documentation on builtin filters](https://jinja.palletsprojects.com/en/2.11.x/templates/#builtin-filters)).
+See also the [Jinja2 documentation on builtin filters](https://jinja.palletsprojects.com/en/3.1.x/templates/#builtin-filterss).
 
 {{ context(filters_builtin) | pretty }}
