@@ -9,8 +9,6 @@ It contains in particular documentation functions.
 Laurent Franceschetti (c) 2020
 """
 from urllib.parse import urlparse
-from mkdocs.structure.nav import get_navigation
-from mkdocs.structure.files import File
 import os
 import sys
 import subprocess
@@ -22,6 +20,9 @@ from dateutil.parser import parse as date_parse
 from functools import partial
 
 import mkdocs
+from mkdocs.structure.nav import get_navigation
+from mkdocs.structure.files import File
+from mkdocs.utils import normalize_url
 import jinja2
 from jinja2 import Template
 from markdown import markdown
@@ -56,7 +57,7 @@ def list_items(obj):
         return enumerate(list(obj))
 
 
-def get_first_para(s):
+def get_first_para(s) -> str:
     "Get the first para of a docstring"
     first_lines = []
     for row in s.strip().splitlines():
@@ -377,3 +378,9 @@ def define_env(env):
 
     # add fix url function as macro
     env.macro(fix_url)
+
+
+
+
+    # add the normal mkdocs url function
+    env.filter(normalize_url)
