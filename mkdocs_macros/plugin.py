@@ -66,6 +66,20 @@ ERROR_MACRO = 100
 # Plugin
 # ------------------------------------------
 
+# little utility for updating a dictionary from another
+def register_items(category:str, ref:dict, additional:dict):
+    """
+    Register outside items (additional) into a ref dictionary.
+    Fail with KeyError the key already exists.
+
+    E.g: register_items('macro', self.macros, items)
+    """
+    for key, value in additional.items():
+        if key in ref:
+            raise KeyError("Registration error: "
+                        "%s %s already exists" % (category, key))
+        ref[key] = value
+
 
 class MacrosPlugin(BasePlugin):
     """
@@ -112,6 +126,15 @@ class MacrosPlugin(BasePlugin):
         ('on_error_fail', PluginType(bool, default=False)),
         ('verbose', PluginType(bool, default=False))
     )
+
+
+
+    # these are lists of external items (loaded last)
+    # in case they are declared before on_config is run
+    # (i.e. other plugin is running before this one)
+    _add_macros    = {}
+    _add_filters   = {}
+    _add_variables = {}
 
     def start_chatting(self, prefix: str, color: str = 'yellow'):
         "Generate a chatter function (trace for macros)"
@@ -300,6 +323,51 @@ class MacrosPlugin(BasePlugin):
         trace("Property env.raw_markdown is removed "
              "as of 1.1.0; use env.markdown instead!")
         self.markdown = value
+
+    # ----------------------------------
+    # Hooks for other applications
+    # ----------------------------------
+    @property
+    def register_macro(self, items:dict):
+        """
+        Register macros (hook for other plugins).
+        These will be added last, and raise an exception if already present.
+        """
+        try:
+            # after on_config
+            self._macros
+            register_items('macro', self.macros, items)
+        except AttributeError:
+            # before on_config: store for later
+            self._add_macros += items
+
+    @property
+    def register_filters(self, items:dict):
+        """
+        Register filters (hook for other plugins).
+        These will be added last, and raise an exception if already present.
+        """
+        try:
+            # after on_config
+            self._filters
+            register_items('filter', self.filters, items)
+        except AttributeError:
+            # before on_config: store for later
+            self._add_filters += items
+
+    @property
+    def register_variables(self, items:dict):
+        """
+        Register variables (hook for other plugins).
+        These will be added last, and raise an exception if already present.
+        """
+        try:
+            # after on_config
+            self._variables
+            register_items('variables', self.variables, items)
+        except AttributeError:
+            # before on_config: store for later
+            self._add_variables += items
 
     # ----------------------------------
     # Function lists, for later events
@@ -632,6 +700,20 @@ class MacrosPlugin(BasePlugin):
         # by design, this MUST be the last step, so that programmers have
         # full control on what happened in the configuration files
         self._load_modules()
+
+
+        # place where variables/macros/filters are registered
+        # if they they were declared before Mkdocs-Macros in the config file.
+        # self._add_variables['foo'] = 5
+        # def bar(x):
+        #     "Dummy function"
+        #     return x + 5
+        # self._add_macros['bar'] = bar
+        # self._add_filters['baz'] = lambda s: s.upper()
+        register_items('variable', self.variables, self._add_variables)
+        register_items('macro'   , self.macros   , self._add_macros   )
+        register_items('filter'  , self.filters  , self._add_filters  )
+
         # Provide information:
         debug("Variables:", list(self.variables.keys()))
         if len(extra):

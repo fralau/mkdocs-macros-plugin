@@ -31,7 +31,9 @@ def define_env(env):
     @env.macro
     def doc_env():
         "Document the environment"
-        return {name: getattr(env, name) for name in dir(env) if not name.startswith('_')}
+        return {name: getattr(env, name) 
+                for name in dir(env) if not 
+                  (name.startswith('_') or name.startswith('register'))}
 
     # Optional: a special function for making relative urls point to root
     fix_url = env.macros.fix_url
