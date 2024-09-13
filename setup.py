@@ -17,7 +17,7 @@ VERSION_NUMBER = '1.1.2'
 # required if you want to run document/test
 # pip install 'mkdocs-macros-plugin[test]'
 TEST_REQUIRE = ['mkdocs-macros-test', 'mkdocs-material>=6.2',
-                'mkdocs-include-markdown-plugin']
+                'mkdocs-include-markdown-plugin','click','pytest']
 
 # --------------------
 # Setup
