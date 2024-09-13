@@ -327,7 +327,6 @@ class MacrosPlugin(BasePlugin):
     # ----------------------------------
     # Hooks for other applications
     # ----------------------------------
-    @property
     def register_macro(self, items:dict):
         """
         Register macros (hook for other plugins).
@@ -341,7 +340,6 @@ class MacrosPlugin(BasePlugin):
             # before on_config: store for later
             self._add_macros += items
 
-    @property
     def register_filters(self, items:dict):
         """
         Register filters (hook for other plugins).
@@ -355,7 +353,6 @@ class MacrosPlugin(BasePlugin):
             # before on_config: store for later
             self._add_filters += items
 
-    @property
     def register_variables(self, items:dict):
         """
         Register variables (hook for other plugins).
