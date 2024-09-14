@@ -327,8 +327,7 @@ class MacrosPlugin(BasePlugin):
     # ----------------------------------
     # Hooks for other applications
     # ----------------------------------
-    @property
-    def register_macro(self, items:dict):
+    def register_macros(self, items:dict):
         """
         Register macros (hook for other plugins).
         These will be added last, and raise an exception if already present.
@@ -337,25 +336,26 @@ class MacrosPlugin(BasePlugin):
             # after on_config
             self._macros
             register_items('macro', self.macros, items)
+            self.variables["macros"].update(self.macros)
+            self.env.globals.update(self.macros)
         except AttributeError:
             # before on_config: store for later
-            self._add_macros += items
+            self._add_macros.update(items)
 
-    @property
     def register_filters(self, items:dict):
         """
         Register filters (hook for other plugins).
         These will be added last, and raise an exception if already present.
         """
         try:
-            # after on_config
             self._filters
             register_items('filter', self.filters, items)
+            self.variables["filters"].update(self.filters)
+            self.env.filters.update(self.filters)
         except AttributeError:
             # before on_config: store for later
-            self._add_filters += items
+            self._add_filters.update(items)
 
-    @property
     def register_variables(self, items:dict):
         """
         Register variables (hook for other plugins).
@@ -367,7 +367,7 @@ class MacrosPlugin(BasePlugin):
             register_items('variables', self.variables, items)
         except AttributeError:
             # before on_config: store for later
-            self._add_variables += items
+            self._add_variables.update(items)
 
     # ----------------------------------
     # Function lists, for later events
