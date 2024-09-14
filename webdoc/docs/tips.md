@@ -276,6 +276,142 @@ In your markdown page, add the call:
 Restart the mkdocs server (or rebuild the website) and _voilà_,
 you have the first five lines of your file!
 
+Macros do not respect indentation (they break admonitions)!
+-----------------------------------------------------------
+
+### Issue
+
+When a macro producing text with newlines is rendered in Markdown, 
+the additional lines will start from the first column.
+
+It often doesn't matter, but there are cases where **indentation**
+is a part of the Markdown syntax.
+
+This is particularly true with the [Admonition](https://python-markdown.github.io/extensions/admonition/) syntax extension, used for defining notes, warnings, etc. 
+(see also the [description in the documentation for Material for MkDocs](https://squidfunk.github.io/mkdocs-material/reference/admonitions/)).
+
+
+In order to be considered part of an admonition, 
+all the text needs to be indented with four columns:
+
+```markdown
+!!! note
+
+    I just want to say:
+
+    hello
+    there
+    world
+```
+
+It will be rendered as:
+!!! note
+
+    I just want to say:
+
+    hello
+    there
+    world
+
+
+Now consider the following macro, which defines the `say_hello()` macro:
+
+```python
+# main.py
+def define_env(env):
+    """
+    Hook for macros
+    """
+
+    @env.macro
+    def say_hello():
+        return "hello\nthere\nworld!"
+```
+
+### Incorrect
+
+If you have a page like this one, which defines a note:
+
+```markdown
+# Homepage
+
+{{ say_hello() }}
+
+Now inside an admonition
+
+!!! note
+
+    I just want to say:
+
+    {{ say_hello() }}
+```
+
+The result of the macros' expansion will be:
+
+```markdown
+# Homepage
+
+hello
+there
+world
+
+Now inside an admonition
+
+!!! note
+
+    I just want to say:
+
+    hello
+there
+world
+```
+
+The result of the rendering to HTML in the first case will work.
+However, the rendering of the call in the admonition will not be what you expect:
+
+![](admonition.png)
+
+The reason is that the Admonition syntax requires an **indentation**
+of 4 characters, for `there\nworld`n to be considered part of the note.
+
+### Correct
+
+This can be solved by using the standard [`indent()`](https://jinja.palletsprojects.com/en/3.1.x/templates/#jinja-filters.indent) filter provided by
+Jinja2, giving the number of columns as an argument:
+
+```markdown
+!!! note
+
+    I just want to say:
+
+    {{ say_hello() | indent(4) }}
+```
+
+The result of the macros' rendering into Markdown will be:
+
+```markdown
+!!! note
+
+    I just want to say:
+
+    hello
+    there
+    world
+```
+
+And the conversion of Markdown to HTML:
+!!! note
+
+    I just want to say:
+
+    hello
+    there
+    world
+
+The admonition now appears correctly.
+
+
+
 
 How can I discover all attributes and methods of the `env` object?
 ------------------------------------------------------------------

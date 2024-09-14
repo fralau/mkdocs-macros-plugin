@@ -112,7 +112,7 @@ in the same directory as the config file:
 ```Python
 def define_env(env):
     """
-    This is the hook for the functions (new form)
+    This is the hook for the variables, macros and filters.
     """
 
     @env.macro
