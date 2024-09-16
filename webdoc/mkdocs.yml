@@ -27,6 +27,7 @@ nav:
       - Controlling macros rendering: rendering.md
       - Post-production: post_production.md
       - Writing pluglets: pluglets.md
+      - Registering macros/variables/filters: registration.md
     - Faq:
       - "Tips and Tricks": tips.md
       - "Troubleshooting": troubleshooting.md
