@@ -507,8 +507,9 @@ class MacrosPlugin(BasePlugin):
         add_function('on_pre_page_macros',  self.pre_macro_functions)
         add_function('on_post_page_macros', self.post_macro_functions)
         add_function('on_post_build',       self.post_build_functions)
-        print(STANDARD_FUNCTIONS)
-        if not function_found:
+        if function_found:
+            trace("Functions found:", ','.join(STANDARD_FUNCTIONS))
+        else:
             raise NameError("None of the standard functions was found "
                             "in module '%s':\n%s" %
                             (module_name, STANDARD_FUNCTIONS))

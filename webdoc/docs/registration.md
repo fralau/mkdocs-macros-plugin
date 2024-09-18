@@ -1,5 +1,7 @@
 # Registering macros/variables/filters in MkDocs-Macros
 
+_As of 1.1.2 (Experimental)_ 
+
 !!! Info "Important note"
     This is technical documentation for writers of MkDocs Plugins. 
 

@@ -369,7 +369,9 @@ def define_env(env):
     @env.macro
     def now():
         """
-        Get the current time (returns a datetime object). 
+        *Default Mkdocs-Macro*:
+        Get the current time (at the moment of the project build).
+        It returns a datetime object. 
         Used alone, it provides a timestamp.
         To get the year use `now().year`, for the month number 
         `now().month`, etc.
