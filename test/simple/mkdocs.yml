@@ -9,3 +9,6 @@ plugins:
   - search
   - macros
 
+extra:
+  greeting: Hello World!
+

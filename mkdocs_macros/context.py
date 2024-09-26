@@ -322,8 +322,13 @@ def define_env(env):
         return env.render(s, force_rendering=True)
 
     @env.macro
-    def context(obj=env.variables):
-        "*Default Mkdocs-Macro*: List the defined variables"
+    def context(obj:dict=None):
+        """
+        *Default Mkdocs-Macro*: List an object
+        (by default the variables)
+        """
+        if not obj:
+            obj = env.variables
         try:
             return [(var, type(value).__name__, format_value(value))
                     for var, value in list_items(obj)]

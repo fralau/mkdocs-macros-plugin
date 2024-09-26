@@ -1,12 +1,13 @@
 import os
 
+SIGNATURE = 'MAIN'
 
 def define_env(env):
     """
     This is the hook for the functions (new form)
     """
     # activate trace
-    chatter = env.start_chatting("Simple module")
+    chatter = env.start_chatting(SIGNATURE)
 
     env.macros.cwd = os.getcwd()
 
@@ -64,5 +65,5 @@ def on_post_page_macros(env):
 def on_post_build(env):
     "Post build action"
     # activate trace
-    chatter = env.start_chatting("Simple module (post-build)")
+    chatter = env.start_chatting(SIGNATURE)
     chatter("This means `on_post_build(env)` works")

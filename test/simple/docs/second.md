@@ -1,6 +1,6 @@
 # Cause a warning
 
-This variable {{ foo() }} does not exist.
+This macro {{ foo() }} does not exist.
 
 In the default config (`on_undefined: keep`) it won't make the build fail.
 But it will generate a warning, so this page is NOT displayed.

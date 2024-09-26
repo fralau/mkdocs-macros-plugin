@@ -1,4 +1,4 @@
-site_name: Main test site
+site_name: Test with a module (test)
 theme: 
     name: material
     palette:

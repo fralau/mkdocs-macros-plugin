@@ -6,12 +6,21 @@ Utilities for mkdocs-macros
 
 import subprocess
 from copy import deepcopy
-import os, sys, importlib.util
+import os, sys, importlib.util, shutil
 from typing import Literal
 from packaging.version import Version
+import json
+import inspect
+from datetime import datetime
+from typing import Any
+
+
 
 from termcolor import colored
 import mkdocs
+import hjson
+
+
 
 # ------------------------------------------
 # Trace and debug
@@ -29,14 +38,18 @@ if Version(mkdocs.__version__) < Version(MKDOCS_LOG_VERSION):
     LOG.addFilter(warning_filter)
 
 
-def format_trace(*args):
+def format_trace(*args, payload:str=''):
     """
     General purpose print function, as trace,
     for the mkdocs-macros framework;
     it will appear if --verbose option is activated
+
+    The payload is simply some text that will be added after a newline.
     """
     first = args[0]
     rest = [str(el) for el in args[1:]]
+    if payload:
+        rest.append(f"\n{payload}")
     text = "[%s] - %s" % (TRACE_PREFIX, first)
     emphasized = colored(text, TRACE_COLOR)
     return ' '.join([emphasized] + rest)
@@ -50,15 +63,18 @@ TRACE_LEVELS = {
     'critical': logging.CRITICAL
 }
 
-def trace(*args, level:str='info'):
+def trace(*args, payload:str='', level:str='info'):
     """
     General purpose print function, as trace,
     for the mkdocs-macros framework;
     it will appear unless --quiet option is activated.
 
+    Payload is an information that goes to the next lines
+    (typically a json dump)
+
     The level is 'debug', 'info', 'warning', 'error' or 'critical'.
     """
-    msg = format_trace(*args)
+    msg = format_trace(*args, payload=payload)
     try:
         LOG.log(TRACE_LEVELS[level], msg)
     except KeyError:
@@ -71,14 +87,20 @@ def trace(*args, level:str='info'):
 
 
 
-def debug(*args):
+def debug(*args, payload:str=''):
     """
     General purpose print function, as trace,
     for the mkdocs-macros framework;
     it will appear if --verbose option is activated
     """
-    msg = format_trace(*args)
+    msg = format_trace(*args, payload=payload)
     LOG.debug(msg)
+
+
+def get_log_level(level_name:str) -> bool:
+    "Get the log level (INFO, DEBUG, etc.)"
+    level = getattr(logging, level_name.upper(), None)
+    return LOG.isEnabledFor(level)
 
 
 def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
@@ -91,6 +113,31 @@ def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
     args = [full_prefix] + [str(arg) for arg in args]
     msg = ' '.join(args)
     return msg
+
+
+
+from collections import UserDict
+
+class CustomEncoder(json.JSONEncoder):
+    """
+    Custom encoder for JSON serialization.
+    Used for debugging purposes.
+    """
+    def default(self, obj: Any) -> Any:
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        if isinstance(obj, UserDict):
+            # for objects used by MkDocs (config, plugin, etc.s)
+            return dict(obj)
+
+        elif inspect.isfunction(obj):
+            return f"Function: %s %s" % (inspect.signature(obj),
+                                        obj.__doc__)
+        try:
+            return super().default(obj)
+        except TypeError:
+            print(f"CANNOT INTERPRET {obj.__class__}")
+            return str(obj)
 
 
 
@@ -162,7 +209,7 @@ def import_local_module(project_dir, module_name):
 
 
 # ------------------------------------------
-# Utilities
+# Arithmetic
 # ------------------------------------------
 def update(d1, d2):
     """
@@ -198,16 +245,112 @@ class SuperDict(dict):
     except for standard methods
     """
 
-    def __getattr__(self, name):
+    def __init__(self, *args, **kwargs):
+        # Call the superclass's __init__ method
+        super().__init__(*args, **kwargs)
+        self.__post_init__()
+
+    def __post_init__(self):
+        "Recursively transform sub-dictionary"
+        for key, value in self.items():
+            if isinstance(value, dict):
+                self[key] = SuperDict(value)
+
+    def __getattr__(self, name:str):
         "Allow dot notation on reading"
+        ERR_MSG = "Cannot find attribute '%s'" % name
+        # if name.startswith('_'):
+        #     raise AttributeError(ERR_MSG)
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("Cannot find attribute '%s" % name)
+            raise AttributeError(ERR_MSG)
 
     def __setattr__(self, name, value):
         "Allow dot notation on writing"
+        # ERR_MSG = "Cannot assign an attribute starting with _ ('%s')" % name
+        # if name.startswith('_'):
+        #     raise AttributeError(ERR_MSG)     
         self[name] = value
+
+    @property
+    def _attributes(self):
+        "Make a list of the valid attributes"
+        return list(self.keys())
+    
+    def _codewords(self):
+        "Make a list of the codewords"
+        return
+    
+    def __dir__(self):
+        "List all attributes (for autocompletion, etc.)"
+        return super().__dir__() + self._attributes
+    
+    
+    
+    # -------------------------------------
+    # Output
+    # -------------------------------------
+    
+    def to_json(self):
+        "Convert to json"
+        return json.dumps(self, cls=CustomEncoder)
+    
+    def to_hjson(self):
+        """
+        Convert to hjson
+        """
+        python_dict = json.loads(self.to_json())
+        return hjson.dumps(python_dict)
+
+
+    def __str__(self):
+        "Print a superdict"
+        return self.to_hjson()
+        return self.to_yaml()
+        # r = [f"{self.__class__.__name__}:"]
+        # r.extend([f"  - {key}: {value}" for key, value in self.items()])
+        # return("\n".join(r))
+    
+    def __rich__(self):
+        "Print a superdict (for rich)"
+        r = [f"[bold red]{self.__class__.__name__}:[/]"]
+        r.append(self.to_hjson())
+        return("\n".join(r))       
+
+
+
+# ------------------------------------------
+# File system
+# ------------------------------------------
+
+
+def setup_directory(reference_dir: str, dir_name: str,
+                    recreate:bool=True) -> str:
+    """
+    Create a new directory beside the specified one.
+    
+    Parameters:
+    - reference_dir (str): The path of the current (reference) directory.
+    - dir_name (str): The name of the new directory to be created beside the current directory.
+    
+    Returns
+    - the directory
+    """
+    # Find the parent directory and define new path:
+    parent_dir = os.path.dirname(reference_dir)
+    new_dir = os.path.join(parent_dir, dir_name)
+    # Safety: prevent deletion of current_dir
+    if new_dir == parent_dir:
+        raise FileExistsError("Cannot recreate the current dir!")
+    # Safety: check if the new directory exists
+    if os.path.exists(new_dir):
+        # If it exists, empty its contents
+        shutil.rmtree(new_dir)
+    # Recreate the new directory
+    if recreate:
+        os.makedirs(new_dir)
+    return new_dir
 
 if __name__ == '__main__':
     # test merging of dictionaries
