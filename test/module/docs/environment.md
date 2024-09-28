@@ -17,7 +17,7 @@ bingo: Hello
 {% endfor %}
 
 
-## Mkdocs.yaml file (portion)
+## Mkdocs.yal file (portion)
 
 ```
 {{ include_file('mkdocs.yml', 0, 5)}}

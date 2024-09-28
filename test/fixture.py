@@ -191,7 +191,7 @@ def get_frontmatter(text:str) -> tuple[str, dict]:
             markdown = parts[2]
         except IndexError:
             markdown = ''
-        return (markdown, frontmatter, metadata)
+        return (markdown.strip(), frontmatter, metadata)
     else:
         return (text, '', {})
     
@@ -214,6 +214,9 @@ def find_in_html(html: str,
     -------
     The line where the pattern was found, or None
     """
+    if not isinstance(pattern, str):
+        pattern = str(pattern)
+
     soup = BeautifulSoup(html, 'html.parser')
     
     # Compile regex patterns with case-insensitive flag
@@ -505,14 +508,22 @@ class TestMarkdownPage(MarkdownPage):
     @property
     def is_rendered(self) -> bool:
         """
-        "Rendered" means that the target markdown is different from the source.
+        "Rendered" means that the target markdown 
+        is different from the source;
+        more accurately, that the source markdown is not 
+        contained in the target markdown.
 
-        Hence "not rendered" covers these two cases: 
+        Hence "not rendered" is a "nothing happened". 
+        It covers these cases: 
         1. An order to render was given, but there where actually 
            NO jinja2 directives.
-        2. A jinja2 rendering has not taken place at all.
+        2. A jinja2 rendering has not taken place at all
+           (some order to exclude the page).
+        3. A header and/or footer were added (in `on_pre_page_macros()
+            or in `on_post_page_macro()`) but the text itself
+            was not modified. 
         """
-        return self.markdown != self.source_page.markdown
+        return self.source_page.markdown not in self.markdown
     
 
 

@@ -16,7 +16,7 @@ except ImportError:
                         find_in_html)
 
 
-@click.command()
+
 def test_low_level_fixtures():
     "Test the low level fixtures"
 
@@ -119,7 +119,7 @@ INFO    -  [macros - MAIN] - This means `on_post_build(env)` works
     print(find_in_html(html_doc, 'under the main', header='Main header'))
     print(find_in_html(html_doc, 'under the', header='sub header'))
 
-@click.command()
+
 def test_high_level_fixtures():
     """
     Test a project

@@ -1,0 +1,14 @@
+site_name: Null test case (no Jinja2)
+theme: mkdocs
+
+nav:
+    - Home: index.md
+    - Next page: second.md
+
+plugins:
+  - search
+  - macros
+
+extra:
+  greeting: Hello World!
+

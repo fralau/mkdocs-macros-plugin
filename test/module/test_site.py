@@ -6,6 +6,7 @@ Testing the project
 
 
 import pytest
+import re
 
 from test.fixture import DocProject, find_after
 
@@ -39,7 +40,23 @@ def test_pages():
     assert VARIABLE_NAME in PROJECT.config.extra
     price = PROJECT.config.extra.unit_price
 
-    
+
+    # check the page metadata
+    # those metadata are not in the config file
+    metadata = page.metadata
+    assert 'user' in metadata
+    assert 'bottles' in metadata
+    assert 'announcement' in metadata
+
+    assert metadata.user == 'Joe'
+    assert page.find(metadata.user, header='Installed', header_level=4)
+    assert page.find(metadata.announcement, header='Accessing meta')
+    assert page.find(metadata.bottles.lemonade, header='Dot notation')
+    assert not page.find(metadata.user * 2, header='Macro') # negative test
+
+    assert 'bottles' not in PROJECT.config.extra
+    assert 'bottles' not in PROJECT.variables
+
     # check that the `greeting` variable is rendered:
     assert VARIABLE_NAME in PROJECT.variables
     assert f"{price} euros" in page.markdown
@@ -58,7 +75,34 @@ def test_pages():
     # ----------------
     page = PROJECT.get_page('environment')
 
+    # read a few things that are in the tables
+    assert page.find('unit_price = 50', header='General list')
+    # there are two headers containing 'Macros':
+    assert page.find('say_hello', header='Macros$') 
 
+
+    # test the `include_file()` method (used for the mkdocs.yaml file)
+    HEADER = r"^mkdocs.*portion"
+    assert page.find('site_name:', header=HEADER)
+    assert page.find('name: material', header=HEADER)
+    assert not page.find('foobar 417', header=HEADER) # negative control
+
+    # ----------------
+    # Literal page
+    # ----------------
+    page = PROJECT.get_page('literal')
+    # instruction not to render:
+    assert page.metadata.render_macros == False
+
+    assert page.is_rendered == False, f"Target: {page.markdown}, \nSource:{page.source_page.markdown}"
+
+    # Latex is not interpreted:
+    latex = re.escape(r"\begin{tabular}{|ccc|}")
+    assert page.find(latex, header='Offending Latex')
+
+    # Footer is processed (but not rendered)
+    assert page.find(r'now()', header='Pre-macro')
+    assert page.find('Not interpreted', header='Post-macro')
 
 
 def test_strict():
