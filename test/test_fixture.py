@@ -6,18 +6,16 @@ Testing the tester
 import click
 import os
 
-try:
-    from .fixture import (PROJECTS, get_tables, parse_log, h1, h2, h3,
-                       std_print, DocProject, REF_DIR, list_markdown_files,
-                       find_in_html)
-except ImportError:
-    from fixture import (PROJECTS, get_tables, parse_log, h1, h2, h3,
-                        std_print, DocProject, REF_DIR, list_markdown_files,
-                        find_in_html)
+
+from .fixture import PROJECTS, DocProject, REF_DIR, parse_log 
+from .fixture_util import (
+        h1, h2, h3, std_print, 
+        get_tables, list_markdown_files, find_in_html, find_page)
 
 
 
-def test_low_level_fixtures():
+
+def test_functions():
     "Test the low level fixtures"
 
     h1("Unit tests")
@@ -112,13 +110,32 @@ INFO    -  [macros - MAIN] - This means `on_post_build(env)` works
     </html>
     """
 
-    
+    print(html_doc)
     print(find_in_html(html_doc, 'more text'))
     print(find_in_html(html_doc, 'MORE TEXT'))
     print(find_in_html(html_doc, 'under the main', header='Main header'))
     print(find_in_html(html_doc, 'under the main', header='Main header'))
     print(find_in_html(html_doc, 'under the', header='sub header'))
+    assert 'More text' in find_in_html(html_doc, 'more text')
 
+def test_find_pages():
+    """
+    Low level tests for search
+    """
+    h2("Search pages")
+
+    PAGES = ['foo.md', 'hello/world.md', 'no_foo/bar.md', 'foo/bar.md']
+    for name in ('foo', 'world', 'hello/world', 'foo/bar'):
+        print(f"{name} -> {find_page(name, PAGES)}")
+    assert find_page('foo.md', PAGES)         == 'foo.md'
+    assert find_page('world', PAGES)          == 'hello/world.md'
+    assert find_page('world.md', PAGES)       == 'hello/world.md'
+    assert find_page('hello/world', PAGES)    == 'hello/world.md'
+    assert find_page('hello/world.md', PAGES) == 'hello/world.md'
+    # doesn't accidentally mismatch directory:
+    assert find_page('foo/bar.md', PAGES)     != 'no_foo/bar.md'
+
+    
 
 
 
@@ -218,11 +235,15 @@ def test_high_level_fixtures():
 @click.option('--short', is_flag=True, 
               help='Test low-level fixtures only')
 def command_line(short:bool):
+    LOW_LEVEL = [test_functions, test_find_pages]
+    HIGH_LEVEL = [test_high_level_fixtures]
     if short:
-        test_low_level_fixtures()
+        TESTS = LOW_LEVEL
     else:
-        test_low_level_fixtures()
-        test_high_level_fixtures()
+        TESTS = HIGH_LEVEL + HIGH_LEVEL
+    # run:
+    for test in TESTS:
+        test()
 
 
 if __name__ == '__main__':
