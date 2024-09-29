@@ -1,5 +1,5 @@
 ---
-render_macros: false # opt-in
+render_macros: false # opt-out
 ---
 # Opt-out by page header (priority)
 

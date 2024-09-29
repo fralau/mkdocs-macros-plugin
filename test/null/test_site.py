@@ -9,7 +9,7 @@ import pytest
 
 from test.fixture import DocProject
 
-CURRENT_PROJECT = 'simple'
+CURRENT_PROJECT = 'null'
 
 
 
@@ -27,7 +27,8 @@ def test_pages():
 
 
     page = PROJECT.get_page('index')
-    assert not page.is_rendered
+    ERROR_MSG = f"Is rendered!:\n{page.markdown}\n---SOURCE:\n{page.source_page.markdown}\n---"
+    assert not page.is_rendered, ERROR_MSG
     assert not page.has_error
     
 

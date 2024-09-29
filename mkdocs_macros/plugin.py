@@ -950,7 +950,7 @@ class MacrosPlugin(BasePlugin):
         """
         self._page = page
         if not self.variables:
-            return markdown
+            self.markdown = markdown
         else:
             trace("Rendering source page:", page.file.src_path)
             # Update the page info in the document
@@ -986,12 +986,12 @@ class MacrosPlugin(BasePlugin):
             for func in self.post_macro_functions:
                 func(self)
             
-            # save the rendered page, with its YAML header
-            if get_log_level('DEBUG'):
-                self._save_debug_file(page, 
-                                      rendered_markdown=self.markdown)
+        # save the rendered page, with its YAML header
+        if get_log_level('DEBUG'):
+            self._save_debug_file(page, 
+                                    rendered_markdown=self.markdown)
 
-            return self.markdown
+        return self.markdown
 
     def on_post_build(self, config: config_options.Config):
         """

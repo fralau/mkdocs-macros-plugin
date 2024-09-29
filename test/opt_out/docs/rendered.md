@@ -1,7 +1,9 @@
 ---
-render_macros: true # opt-in
 title: Rendered title
+signal: Hello World
 ---
 # {{ title }}
+
+{{ title }}
 
 {{ macros_info() }}

@@ -14,7 +14,7 @@ from dataclasses import dataclass, field
 from typing import List
 import json
 from typing import Any, List
-import difflib
+import inspect
 
 
 # from rich import print
@@ -306,12 +306,25 @@ def get_tables(markdown_text:str) -> dict[pd.DataFrame]:
 
 
 
-
+# ---------------------------
+# OS Functions
+# ---------------------------
 def run_command(command, *args) -> subprocess.CompletedProcess:
     "Execute a command"
     full_command = [command] + list(args)
     return subprocess.run(full_command, capture_output=True, text=True)
 
+def get_caller_directory():
+    "Get the caller's directory name (to be called from a function)"
+    # Get the current frame
+    current_frame = inspect.currentframe()
+    # Get the caller's frame
+    caller_frame = inspect.getouterframes(current_frame, 2)
+    # Get the file name of the caller
+    caller_file = caller_frame[1].filename
+    # Get the absolute path of the directory containing the caller file
+    directory_abspath = os.path.abspath(os.path.dirname(caller_file))
+    return directory_abspath
 
 # ---------------------------
 # Log parsing
@@ -523,9 +536,15 @@ class TestMarkdownPage(MarkdownPage):
             or in `on_post_page_macro()`) but the text itself
             was not modified. 
         """
-        return self.source_page.markdown not in self.markdown
+        # make sure that the source is stripped, to be sure.
+        return self.source_page.markdown.strip() not in self.markdown
     
 
+    def __repr__(self):
+        """
+        Important for error printout
+        """
+        return f"Markdown page ({self.filename}):\n{self.text}"
 
 # ---------------------------
 # Main class
@@ -535,7 +554,11 @@ class DocProject(object):
 
     def __init__(self, directory:str=''):
         "Initialize"
-        self._project_dir = os.path.join(REF_DIR, directory)
+        project_dir = os.path.join(REF_DIR, directory)
+        if not os.path.isdir(project_dir):
+            raise FileNotFoundError(f"Doc directory '{directory}' "
+                                    "does not exist.")
+        self._project_dir = project_dir
         # test existence of YAML file or fail
         self.config_file
 
@@ -802,9 +825,23 @@ class DocProject(object):
         
     def get_page(self, name:str):
         "Get the page by its filename or a substring"
+        print("SEARCHING:", name)
         for page in self.pages:
-            if name in page.filename:
+            # give priority to exact matches
+            if name == page.filename:
                 return page
+            # try without extension
+            stem, _ = os.path.splitext(page.filename)
+            if name == stem:
+                return page
+        # try again without full path
+        for page in self.pages:
+            if page.filename.endswith(name):
+                return page
+            stem, _ = os.path.splitext(page.filename)
+            if stem.endswith(name):
+                return page
+        print("- NOT FOUND")
             
     def get_plugin(self, name:str) -> SuperDict:
         "Get the plugin by its plugin name"

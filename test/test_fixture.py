@@ -120,11 +120,13 @@ INFO    -  [macros - MAIN] - This means `on_post_build(env)` works
     print(find_in_html(html_doc, 'under the', header='sub header'))
 
 
+
+
 def test_high_level_fixtures():
     """
     Test a project
     """
-    MYPROJECT = 'opt-in'
+    MYPROJECT = 'opt_in'
     # MYPROJECT = 'simple'
     h1(f"TESTING MKDOCS-MACROS PROJECT ({MYPROJECT})")
 

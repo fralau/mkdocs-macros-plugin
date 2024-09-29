@@ -9,7 +9,7 @@ nav:
 plugins:
   - search
   - macros:
-      # do not render the pages by default
+      # do render the pages by default
       # this is the default case
       render_by_default: true
 
