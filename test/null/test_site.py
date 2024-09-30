@@ -7,14 +7,14 @@ Testing the project
 
 import pytest
 
-from test.fixture import DocProject
+from test.fixture import MacrosDocProject
 
 CURRENT_PROJECT = 'null'
 
 
 
 def test_pages():
-    PROJECT = DocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject(CURRENT_PROJECT)
     build_result = PROJECT.build(strict=False)
     # did not fail
     return_code = PROJECT.build_result.returncode
@@ -44,7 +44,7 @@ def test_pages():
     
 def test_strict():
     "This project must fail"
-    PROJECT = DocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject(CURRENT_PROJECT)
 
     # it must not fail with the --strict option,
     PROJECT.build(strict=True)

@@ -7,7 +7,8 @@ import click
 import os
 
 
-from .fixture import PROJECTS, DocProject, REF_DIR, parse_log 
+from .fixture import (PROJECTS, DocProject, MacrosDocProject, 
+                      REF_DIR, parse_log) 
 from .fixture_util import (
         h1, h2, h3, std_print, 
         get_tables, list_markdown_files, find_in_html, find_page)
@@ -137,9 +138,48 @@ def test_find_pages():
 
     
 
+def test_doc_project():
+    """
+    Test a project
+    """
+    MYPROJECT = 'null'
+    # MYPROJECT = 'simple'
+    h1(f"TESTING MKDOCS PROJECT ({MYPROJECT})")
+
+    h2("Config")
+    myproject = DocProject(MYPROJECT)
+    config = myproject.config
+    print(config)
 
 
-def test_high_level_fixtures():
+
+    h2("Build")
+    result = myproject.build()
+    assert result == myproject.build_result
+    
+    h2("Log")
+    assert myproject.trace == result.stderr
+    std_print(myproject.trace)
+
+
+
+
+    h2("Filtering the log by severity")
+    infos = myproject.find_entries(severity='INFO')
+    print(f"There are {len(infos)} info items.")
+    print('\n'.join(f"  {i} - {item.title}" for i, item in enumerate(infos)))
+
+
+    h2("Page objects")                          
+    for page in myproject.pages:
+        h3(f"PAGE: {page.filename}")
+        print("- Main title:", page.h1)
+        print("- Filename:", page.filename)
+        print("- Markdown(start):", page.markdown[:50])
+
+
+
+def test_macros_doc_project():
     """
     Test a project
     """
@@ -148,7 +188,7 @@ def test_high_level_fixtures():
     h1(f"TESTING MKDOCS-MACROS PROJECT ({MYPROJECT})")
 
     h2("Config")
-    myproject = DocProject(MYPROJECT)
+    myproject = MacrosDocProject(MYPROJECT)
     config = myproject.config
     print(config)
 
@@ -236,11 +276,11 @@ def test_high_level_fixtures():
               help='Test low-level fixtures only')
 def command_line(short:bool):
     LOW_LEVEL = [test_functions, test_find_pages]
-    HIGH_LEVEL = [test_high_level_fixtures]
+    HIGH_LEVEL = [test_doc_project, test_macros_doc_project]
     if short:
         TESTS = LOW_LEVEL
     else:
-        TESTS = HIGH_LEVEL + HIGH_LEVEL
+        TESTS = LOW_LEVEL + HIGH_LEVEL
     # run:
     for test in TESTS:
         test()

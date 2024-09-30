@@ -5,7 +5,7 @@ Testing the project
 """
 import pytest
 
-from test.fixture import DocProject
+from test.fixture import MacrosDocProject
 
 CURRENT_PROJECT = 'opt_in'
 
@@ -13,7 +13,7 @@ CURRENT_PROJECT = 'opt_in'
 
 
 def test_opt_in():
-    PROJECT = DocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject(CURRENT_PROJECT)
     PROJECT.build()
     # did not fail
     assert not PROJECT.build_result.returncode

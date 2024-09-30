@@ -61,11 +61,7 @@ PROJECTS = list_doc_projects(REF_DIR)
 "The default docs directory"
 DOCS_DEFAULT_DIRNAME = 'docs'
 
-"The directory containing the macros rendered"
-RENDERED_MACROS_DIRNAME = '__docs_macros_rendered'
 
-"The error string"
-MACRO_ERROR_STRING = '# _Macro Rendering Error_'
 
 # ---------------------------
 # Log parsing
@@ -150,7 +146,7 @@ def parse_log(mkdocs_log: str) -> list[LogEntry]:
     return [SuperDict(item) for item in log_entries]
 
 # ---------------------------
-# Target file
+# An Mkdocs Documentation project
 # ---------------------------
 @dataclass
 class MarkdownPage(object):
@@ -229,69 +225,12 @@ class MarkdownPage(object):
                             header=header, header_level=header_level)
 
 
-@dataclass
-class TestMarkdownPage(MarkdownPage):
-    "A subclass of markdown page, for MkDocs-Macros purposes"
 
-    "The source markdown page (before the rendering of macros)"
-    source_page: MarkdownPage = field(init=False)
-
-    "The source doc dir (normally the docs dir)"
-    source_doc_dir: str = DOCS_DEFAULT_DIRNAME
-
-    # "Difference of the source"
-    # diff_markdown: str = field(init=False)
-
-
-    def __post_init__(self):
-        "Additional actions after the rest"
-        super().__post_init__()
-        self.source_page = MarkdownPage(self.filename, 
-                                        project_dir=self.project_dir,
-                                        doc_dir=self.source_doc_dir)
-        # this should be the case, always, or something is wrong
-        assert self.filename == self.source_page.filename
-        assert self.metadata == self.source_page.metadata
-
-
-    @property
-    def has_error(self) -> bool:
-        "Checks whether there is an error"
-        return self.markdown.startswith(MACRO_ERROR_STRING)
-
-    @property
-    def is_rendered(self) -> bool:
-        """
-        "Rendered" means that the target markdown 
-        is different from the source;
-        more accurately, that the source markdown is not 
-        contained in the target markdown.
-
-        Hence "not rendered" is a "nothing happened". 
-        It covers these cases: 
-        1. An order to render was given, but there where actually 
-           NO jinja2 directives.
-        2. A jinja2 rendering has not taken place at all
-           (some order to exclude the page).
-        3. A header and/or footer were added (in `on_pre_page_macros()
-            or in `on_post_page_macro()`) but the text itself
-            was not modified. 
-        """
-        # make sure that the source is stripped, to be sure.
-        return self.source_page.markdown.strip() not in self.markdown
-    
-
-    def __repr__(self):
-        """
-        Important for error printout
-        """
-        return f"Markdown page ({self.filename}):\n{self.text}"
-
-# ---------------------------
-# Main class
-# ---------------------------
 class DocProject(object):
-    "An object that describes the current MkDocs project being tested."
+    """
+    An object that describes the current MkDocs project being tested
+    (any plugin).
+    """
 
     def __init__(self, directory:str=''):
         "Initialize"
@@ -337,16 +276,23 @@ class DocProject(object):
             return self._config
         
 
-    
     @property
-    def target_doc_dir(self):
+    def source_doc_dir(self):
         "The target directory of markdown files (rendered macros)"
         return os.path.join(REF_DIR, 
                             self.project_dir, 
-                            RENDERED_MACROS_DIRNAME)
+                            DOCS_DEFAULT_DIRNAME)
+
+    
+
     
 
 
+    
+
+    # ----------------------------------
+    # Build
+    # ----------------------------------
 
 
     def build(self, strict:bool=False,
@@ -493,6 +439,173 @@ class DocProject(object):
         else:
             return None
 
+    # ----------------------------------
+    # Get the Markdown pages
+    # ----------------------------------
+
+
+    @property
+    def pages(self) -> List[MarkdownPage]:
+        "The list of Markdown pages + the HTML produced by the build (TBD)"
+        try:
+            return self._pages
+        except AttributeError:
+            # Make the list and 
+            full_project_dir = os.path.join(REF_DIR, self.project_dir)
+            full_doc_dir = os.path.join(REF_DIR, self.source_doc_dir)
+            self._pages = [MarkdownPage(el, 
+                            project_dir = full_project_dir,
+                            doc_dir=DOCS_DEFAULT_DIRNAME
+                            ) 
+                            for el in list_markdown_files(full_doc_dir)]
+            return self._pages
+        
+    def get_page(self, name:str):
+        """
+        Find a name in the list of Markdown pages (filenames)
+        using a name (full or partial, with or without extension).
+        """
+        # get all the filenames of pages:
+        filenames = [page.filename for page in self.pages]
+        # get the filename we want, from that list:
+        filename = find_page(name, filenames)
+        # return the corresponding page:
+        for page in self.pages:
+            if page.filename == filename:
+                return page
+        
+            
+    def get_plugin(self, name:str) -> SuperDict:
+        "Get the plugin by its plugin name"
+        for el in self.config.plugins:
+            if name in el:
+                if isinstance(el, str):
+                    return SuperDict()
+                elif isinstance(el, dict):
+                    plugin = el[name]
+                    return SuperDict(plugin)
+                else:
+                    raise ValueError(f"Unexpected content of plugin {name}!")
+        return SuperDict(self.config.plugins.get(name))
+
+
+
+# ---------------------------
+# The Macros Doc project
+# ---------------------------
+
+"The directory containing the macros rendered"
+RENDERED_MACROS_DIRNAME = '__docs_macros_rendered'
+
+"The error string"
+MACRO_ERROR_STRING = '# _Macro Rendering Error_'
+
+@dataclass
+class TestMarkdownPage(MarkdownPage):
+    "A subclass of markdown page, for MkDocs-Macros purposes"
+
+    "The source markdown page (before the rendering of macros)"
+    source_page: MarkdownPage = field(init=False)
+
+    "The source doc dir (normally the docs dir)"
+    source_doc_dir: str = DOCS_DEFAULT_DIRNAME
+
+    # "Difference of the source"
+    # diff_markdown: str = field(init=False)
+
+
+    def __post_init__(self):
+        "Additional actions after the rest"
+        super().__post_init__()
+        self.source_page = MarkdownPage(self.filename, 
+                                        project_dir=self.project_dir,
+                                        doc_dir=self.source_doc_dir)
+        # this should be the case, always, or something is wrong
+        assert self.filename == self.source_page.filename
+        assert self.metadata == self.source_page.metadata
+
+
+    @property
+    def has_error(self) -> bool:
+        "Checks whether there is an error"
+        return self.markdown.startswith(MACRO_ERROR_STRING)
+
+    @property
+    def is_rendered(self) -> bool:
+        """
+        "Rendered" means that the target markdown 
+        is different from the source;
+        more accurately, that the source markdown is not 
+        contained in the target markdown.
+
+        Hence "not rendered" is a "nothing happened". 
+        It covers these cases: 
+        1. An order to render was given, but there where actually 
+           NO jinja2 directives.
+        2. A jinja2 rendering has not taken place at all
+           (some order to exclude the page).
+        3. A header and/or footer were added (in `on_pre_page_macros()
+            or in `on_post_page_macro()`) but the text itself
+            was not modified. 
+        """
+        # make sure that the source is stripped, to be sure.
+        return self.source_page.markdown.strip() not in self.markdown
+    
+
+    def __repr__(self):
+        """
+        Important for error printout
+        """
+        return f"Markdown page ({self.filename}):\n{self.text}"
+
+
+
+
+class MacrosDocProject(DocProject):
+    """
+    An object that describes the current MkDocs-Macros project
+    being tested.
+
+    The difference is that it relies heavily on the Markdown
+    pages rendered by Jinja2. These are produced at the end of
+    the `on_page_markdown()` method of the plugin.
+
+    The pages() property has thus been redefined.
+    """
+
+
+    @property
+    def target_doc_dir(self):
+        "The target directory of markdown files (rendered macros)"
+        return os.path.join(REF_DIR, 
+                            self.project_dir, 
+                            RENDERED_MACROS_DIRNAME)
+
+    @property
+    def pages(self) -> List[TestMarkdownPage]:
+        """
+        The list of Markdown pages produced by the build.
+        It must be called after the build.
+        """
+        try:
+            return self._pages
+        except AttributeError:
+            # Make the list and 
+            full_project_dir = os.path.join(REF_DIR, self.project_dir)
+            full_target_dir = os.path.join(REF_DIR, self.target_doc_dir)
+            self._pages = [TestMarkdownPage(el, 
+                            project_dir = full_project_dir,
+                            doc_dir=RENDERED_MACROS_DIRNAME,
+                            source_doc_dir=DOCS_DEFAULT_DIRNAME
+                            ) 
+                            for el in list_markdown_files(full_target_dir)]
+            return self._pages
+    
+    @property
+    def macros_plugin(self) -> SuperDict:
+        "Return the plugin config"
+        return self.get_plugin('macros')
+    
 
     # ----------------------------------
     # Smart properties (from log, etc.)
@@ -546,55 +659,3 @@ class DocProject(object):
         entry = self.find_entry('config filters', severity='debug')
         if entry and entry.payload:
             return SuperDict(json.loads(entry.payload))
-
-    @property
-    def pages(self) -> List[TestMarkdownPage]:
-        "The list of Markdown pages produced by the build"
-        try:
-            return self._pages
-        except AttributeError:
-            # Make the list and 
-            full_project_dir = os.path.join(REF_DIR, self.project_dir)
-            full_target_dir = os.path.join(REF_DIR, self.target_doc_dir)
-            self._pages = [TestMarkdownPage(el, 
-                            project_dir = full_project_dir,
-                            doc_dir=RENDERED_MACROS_DIRNAME,
-                            source_doc_dir=DOCS_DEFAULT_DIRNAME
-                            ) 
-                            for el in list_markdown_files(full_target_dir)]
-            return self._pages
-        
-    def get_page(self, name:str):
-        """
-        Find a name in the list of Markdown pages (filenames)
-        using a name (full or partial, with or without extension).
-        """
-        # get all the filenames of pages:
-        filenames = [page.filename for page in self.pages]
-        # get the filename we want, from that list:
-        filename = find_page(name, filenames)
-        # return the corresponding page:
-        for page in self.pages:
-            if page.filename == filename:
-                return page
-        
-            
-    def get_plugin(self, name:str) -> SuperDict:
-        "Get the plugin by its plugin name"
-        for el in self.config.plugins:
-            if name in el:
-                if isinstance(el, str):
-                    return SuperDict()
-                elif isinstance(el, dict):
-                    plugin = el[name]
-                    return SuperDict(plugin)
-                else:
-                    raise ValueError(f"Unexpected content of plugin {name}!")
-        return SuperDict(self.config.plugins.get(name))
-    
-    @property
-    def macros_plugin(self) -> SuperDict:
-        "Return the plugin config"
-        return self.get_plugin('macros')
-
-

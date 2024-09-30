@@ -8,14 +8,14 @@ Testing the project
 import pytest
 import re
 
-from test.fixture import DocProject, find_after
+from test.fixture import MacrosDocProject, find_after
 
 CURRENT_PROJECT = 'module'
 
 
 
 def test_pages():
-    PROJECT = DocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject(CURRENT_PROJECT)
     PROJECT.build()
     # did not fail
     assert not PROJECT.build_result.returncode
@@ -107,7 +107,7 @@ def test_pages():
 
 def test_strict():
     "This project must fail"
-    PROJECT = DocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject(CURRENT_PROJECT)
 
     # it must fail with the --strict option,
     # because the second page contains an error
