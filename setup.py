@@ -45,7 +45,9 @@ setup(
         'mkdocs>=0.17',
         'jinja2',
         'termcolor',
-        'pyyaml', 'hjson',
+        'pyyaml',
+        'hjson',
+        'pathspec',
         'python-dateutil',
         'packaging'
     ],
