@@ -1,6 +1,6 @@
 # --------------------------------------------
 # Main part of the plugin
-# Defines the VariablesPlugin class
+# Defines the MacrosPlugin class
 #
 # Laurent Franceschetti (c) 2018
 # MIT License
@@ -12,11 +12,13 @@ from copy import copy
 import pathspec
 import json
 from datetime import datetime
-
 import yaml
+
 from jinja2 import (
     Environment, FileSystemLoader, Undefined, DebugUndefined, StrictUndefined,
 )
+from super_collections import SuperDict
+
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
 from mkdocs.plugins import BasePlugin
@@ -26,8 +28,9 @@ from mkdocs_macros.errors import format_error
 from mkdocs_macros.context import define_env
 from mkdocs_macros.util import (
     install_package, parse_package, trace, debug,
-    update, SuperDict, import_local_module, format_chatter, LOG, get_log_level,
-    setup_directory, CustomEncoder
+    update, import_local_module, format_chatter, LOG, get_log_level,
+    setup_directory, CustomEncoder,
+    # SuperDict, 
 )
 
 # ------------------------------------------

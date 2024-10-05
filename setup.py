@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 # Initialization
 # --------------------
 
-VERSION_NUMBER = '1.3.2'
+VERSION_NUMBER = '1.3.3'
 
 # required if you want to run document/test
 # pip install 'mkdocs-macros-plugin[test]'
@@ -49,7 +49,8 @@ setup(
         'hjson',
         'pathspec',
         'python-dateutil',
-        'packaging'
+        'packaging',
+        'super-collections'
     ],
     extras_require={
         'test': TEST_REQUIRE,
@@ -67,7 +68,7 @@ setup(
     packages=find_packages(exclude=['*.tests']),
     entry_points={
         'mkdocs.plugins': [
-            'macros = mkdocs_macros.plugin:MacrosPlugin'
+            'macros = mkdocs_macros.plugin:MacrosPlugin',
         ]
     }
 )

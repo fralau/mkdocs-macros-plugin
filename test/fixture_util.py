@@ -18,7 +18,7 @@ import markdown
 import pandas as pd
 from bs4 import BeautifulSoup
 
-from mkdocs_macros.util import SuperDict
+from super_collections import SuperDict
 
 # ---------------------------
 # Print functions

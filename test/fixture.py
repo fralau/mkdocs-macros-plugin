@@ -4,7 +4,7 @@ This program must be in the test directory.
 
 This is the two classes:
 
-- DocProject
+- MacrosDocProject
 - TestMarkdownPage
  
 
@@ -18,7 +18,8 @@ import json
 from typing import Any, List
 
 
-from mkdocs_macros.util import SuperDict
+from super_collections import SuperDict
+
 from .fixture_util import list_markdown_files, find_after
 from .docproject import (MarkdownPage, DocProject, REF_DIR, 
                          DOCS_DEFAULT_DIRNAME)

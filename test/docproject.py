@@ -9,10 +9,8 @@ import json
 from typing import Any, List
 
 from bs4 import BeautifulSoup
+from super_collections import SuperDict
 
-
-"A dictionary where the keys are also accessible with the dot notation"
-from mkdocs_macros.util import SuperDict
 from .fixture_util import (get_frontmatter, markdown_to_html, get_first_h1,
                 find_in_html, find_after, list_markdown_files, find_page,
                 run_command) 

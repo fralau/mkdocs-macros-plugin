@@ -37,6 +37,8 @@ View the [mkdocs-macro documentation](https://mkdocs-macros-plugin.readthedocs.i
 markdown-toc -i README.md 
 -->
 
+<!-- toc -->
+
 ## Overview
 **mkdocs-macros-plugin** is a plugin that makes it easier for contributors
 of an [MkDocs](https://www.mkdocs.org/) website to produce richer and more beautiful pages. It transforms the markdown pages
