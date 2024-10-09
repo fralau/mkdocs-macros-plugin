@@ -8,6 +8,7 @@ nav:
 plugins:
   - search
   - macros
+  - test
 
 extra:
   greeting: Hello World!

@@ -21,5 +21,6 @@ plugins:
         rendered/
         # this pattern of files will be rendered:
         render_*.md
+  - test
 
 

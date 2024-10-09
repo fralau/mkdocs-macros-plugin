@@ -712,43 +712,6 @@ class MacrosPlugin(BasePlugin):
             else:
                 return error_message
 
-    def _save_debug_file(self, page:Page, 
-                         rendered_markdown:str) -> str:
-        """
-        Saves a page to disk for debug/testing purposes,
-        with a reconstituted YAML front matter.
-
-        Argument:
-        - page: the Page (page.markdown contains the old markdown)
-        - rendered_mardkown (the new markdown)
-
-        Returns the saved document.
-        """
-        dest_file = os.path.join(self.rendered_macros_dir,
-                                        page.file.src_path)
-        debug(f"Saving page '{page.title}' in destination file:",
-              dest_file)
-        # Create the subdirectory hierarchy if necessary
-        os.makedirs(os.path.dirname(dest_file), exist_ok=True)
-        if page.meta:
-            # recreate the YAML header:
-            yaml_values = yaml.dump(dict(page.meta), 
-                default_flow_style=False, sort_keys=False)
-            document = '\n'.join([  '---', 
-                                    YAML_HEADER_WARNING,
-                                    yaml_values.strip(), 
-                                    '---', 
-                                    rendered_markdown
-                                ])
-        else:
-            # re-generate the document with YAML header
-            document = rendered_markdown
-        # write on file:
-        debug("Saved ")
-        with open(dest_file, 'w') as f:
-            f.write(document)
-        return document
-
 
     # ----------------------------------
     # Standard Hooks for a mkdocs plugin
@@ -989,11 +952,6 @@ class MacrosPlugin(BasePlugin):
             for func in self.post_macro_functions:
                 func(self)
             
-        # save the rendered page, with its YAML header
-        if get_log_level('DEBUG'):
-            self._save_debug_file(page, 
-                                    rendered_markdown=self.markdown)
-
         return self.markdown
 
     def on_post_build(self, config: config_options.Config):

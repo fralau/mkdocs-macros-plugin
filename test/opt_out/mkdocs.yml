@@ -3,7 +3,7 @@ theme: mkdocs
 
 nav:
     - Home: index.md
-    - Second: page_with_macros.md
+    - Second: rendered.md
 
 
 plugins:
@@ -12,4 +12,5 @@ plugins:
       # do render the pages by default
       # this is the default case
       render_by_default: true
+  - test
 

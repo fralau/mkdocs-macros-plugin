@@ -7,17 +7,17 @@ Testing the project
 
 import pytest
 
-from test.fixture import MacrosDocProject
+from mkdocs_test import DocProject
 
-CURRENT_PROJECT = 'simple'
+
 
 
 
 def test_pages():
-    PROJECT = MacrosDocProject(CURRENT_PROJECT)
-    build_result = PROJECT.build(strict=False)
+    project = DocProject(".")
+    build_result = project.build(strict=False)
     # did not fail
-    return_code = PROJECT.build_result.returncode
+    return_code = project.build_result.returncode
     assert not return_code, f"Build returned with {return_code} {build_result.args})" 
 
     # ----------------
@@ -26,36 +26,38 @@ def test_pages():
     VARIABLE_NAME = 'greeting'
 
     # it is defined in the config file (extra)
-    assert VARIABLE_NAME in PROJECT.config.extra
+    assert VARIABLE_NAME in project.config.extra
 
-    page = PROJECT.get_page('index')
-    assert page.is_rendered
+    page = project.get_page('index')
+    assert page.is_markdown_rendered
     
-    # check that the `greeting` variable is rendered:
-    assert VARIABLE_NAME in PROJECT.variables
-    assert PROJECT.variables[VARIABLE_NAME] in page.markdown
+    # check that the `greeting` variable (defined under 'extra') is rendered:
+    variables = project.config.extra
+    assert VARIABLE_NAME in variables
+    assert variables.greeting in page.markdown
     
 
     # ----------------
     # Second page
     # ----------------
     # there is intentionally an error (`foo` does not exist)
-    page = PROJECT.get_page('second')
-    assert 'foo' not in PROJECT.config.extra
-    assert page.is_rendered
-    assert page.has_error
+    page = project.get_page('second')
+    assert 'foo' not in project.config.extra
+    assert page.is_markdown_rendered
+    assert page.find('Macro Rendering Error')
     
 def test_strict():
     "This project must fail"
-    PROJECT = MacrosDocProject(CURRENT_PROJECT)
+    project = DocProject(".")
 
     # it must fail with the --strict option,
     # because the second page contains an error
-    PROJECT.build(strict=True)
-    assert PROJECT.build_result.returncode
-    warning = PROJECT.find_entry("Macro Rendering", 
+    project.build(strict=True)
+    assert project.build_result.returncode
+    warning = project.find_entry("Macro Rendering", 
                               severity='warning')
     assert warning, "No warning found"
+    print(warning)
 
 
 

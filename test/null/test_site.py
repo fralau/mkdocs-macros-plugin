@@ -7,14 +7,14 @@ Testing the project
 
 import pytest
 
-from test.fixture import MacrosDocProject
 
-CURRENT_PROJECT = 'null'
+import test
+from test.fixture import MacrosDocProject
 
 
 
 def test_pages():
-    PROJECT = MacrosDocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject()
     build_result = PROJECT.build(strict=False)
     # did not fail
     return_code = PROJECT.build_result.returncode
@@ -27,9 +27,11 @@ def test_pages():
 
 
     page = PROJECT.get_page('index')
-    ERROR_MSG = f"Is rendered!:\n{page.markdown}\n---SOURCE:\n{page.source_page.markdown}\n---"
-    assert not page.is_rendered, ERROR_MSG
-    assert not page.has_error
+    print("Has error:", page.has_error)
+    assert not page.has_error()
+    ERROR_MSG = f"Is rendered!:\n{page.markdown}\n---SOURCE:\n{page.source.markdown}\n---"
+    assert not page.is_markdown_rendered(), ERROR_MSG
+
     
 
 
@@ -39,12 +41,11 @@ def test_pages():
     # there is intentionally an error (`foo` does not exist)
     page = PROJECT.get_page('second')
 
-    assert not page.is_rendered
-    assert not page.has_error
+    assert not page.is_markdown_rendered()
     
 def test_strict():
     "This project must fail"
-    PROJECT = MacrosDocProject(CURRENT_PROJECT)
+    PROJECT = MacrosDocProject()
 
     # it must not fail with the --strict option,
     PROJECT.build(strict=True)

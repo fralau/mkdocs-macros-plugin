@@ -8,60 +8,61 @@ Testing the project
 import pytest
 import re
 
-from test.fixture import MacrosDocProject, find_after
+from mkdocs_test.common import find_after
+from test.fixture import MacrosDocProject
 
-CURRENT_PROJECT = 'module'
+CURRENT_project = '.'
 
 
 
 def test_pages():
-    PROJECT = MacrosDocProject(CURRENT_PROJECT)
-    PROJECT.build()
+    project = MacrosDocProject(CURRENT_project)
+    project.build()
     # did not fail
-    assert not PROJECT.build_result.returncode
+    assert not project.build_result.returncode
 
     # ----------------
     # Check that the chatter works
     # ----------------
-    entries = PROJECT.find_entries(source='main')
+    entries = project.find_entries(source='main')
     assert len(entries) > 0
     # the post-built worked:
-    assert PROJECT.find_entry(source='main', title='post_build')
+    assert project.find_entry(source='main', title='post_build')
 
     # ----------------
     # First page
     # ----------------
-    page = PROJECT.get_page('index')
-    assert page.is_rendered
+    page = project.get_page('index')
+    assert page.is_markdown_rendered()
 
     VARIABLE_NAME = 'unit_price'
 
     # it is defined in the config file (extra)
-    assert VARIABLE_NAME in PROJECT.config.extra
-    price = PROJECT.config.extra.unit_price
+    assert VARIABLE_NAME in project.config.extra
+    price = project.config.extra.unit_price
 
 
-    # check the page metadata
-    # those metadata are not in the config file
-    metadata = page.metadata
-    assert 'user' in metadata
-    assert 'bottles' in metadata
-    assert 'announcement' in metadata
+    # check the page meta
+    # those meta are not in the config file
+    meta = page.meta
+    assert 'user' in meta
+    assert 'bottles' in meta
+    assert 'announcement' in meta
 
-    assert metadata.user == 'Joe'
-    assert page.find(metadata.user, header='Installed', header_level=4)
-    assert page.find(metadata.announcement, header='Accessing meta')
-    assert page.find(metadata.bottles.lemonade, header='Dot notation')
-    assert not page.find(metadata.user * 2, header='Macro') # negative test
+    assert meta.user == 'Joe'
+    assert page.find(meta.user, header='Installed', header_level=4)
+    assert page.find(meta.announcement, header='Accessing meta')
+    assert page.find(meta.bottles.lemonade, header='Dot notation')
+    assert not page.find(meta.user * 2, header='Macro') # negative test
 
-    assert 'bottles' not in PROJECT.config.extra
-    assert 'bottles' not in PROJECT.variables
+    assert 'bottles' not in project.config.extra
+    assert 'bottles' not in project.variables
 
     # check that the `greeting` variable is rendered:
-    assert VARIABLE_NAME in PROJECT.variables
+    assert VARIABLE_NAME in project.variables
     assert f"{price} euros" in page.markdown
 
-    assert f"{PROJECT.macros_plugin.include_dir}" in page.markdown
+    assert f"{project.macros_plugin.include_dir}" in page.markdown
 
     # check that both on_pre/post_page_macro() worked
     assert "Added Footer (Pre-macro)" in page.markdown, f"Not in {page.markdown}"
@@ -73,7 +74,7 @@ def test_pages():
     # ----------------
     # Environment page
     # ----------------
-    page = PROJECT.get_page('environment')
+    page = project.get_page('environment')
 
     # read a few things that are in the tables
     assert page.find('unit_price = 50', header='General list')
@@ -90,11 +91,11 @@ def test_pages():
     # ----------------
     # Literal page
     # ----------------
-    page = PROJECT.get_page('literal')
+    page = project.get_page('literal')
     # instruction not to render:
-    assert page.metadata.render_macros == False
+    assert page.meta.render_macros == False
 
-    assert page.is_rendered == False, f"Target: {page.markdown}, \nSource:{page.source_page.markdown}"
+    assert page.is_markdown_rendered() == False, f"Target: {page.markdown}, \nSource:{page.source_page.markdown}"
 
     # Latex is not interpreted:
     latex = re.escape(r"\begin{tabular}{|ccc|}")
@@ -107,13 +108,13 @@ def test_pages():
 
 def test_strict():
     "This project must fail"
-    PROJECT = MacrosDocProject(CURRENT_PROJECT)
+    project = MacrosDocProject(CURRENT_project)
 
     # it must fail with the --strict option,
     # because the second page contains an error
-    PROJECT.build(strict=True)
-    assert not PROJECT.build_result.returncode
-    warning = PROJECT.find_entry("Macro Rendering", 
+    project.build(strict=True)
+    assert not project.build_result.returncode
+    warning = project.find_entry("Macro Rendering", 
                               severity='warning')
     assert not warning, "Warning found, shouldn't!"
 
