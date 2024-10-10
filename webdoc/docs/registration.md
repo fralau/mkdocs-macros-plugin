@@ -114,6 +114,8 @@ exported by the `MacrosPlugin` class (itself based on `BasePlugin`).
 
 ### Practice
 
+#### Using a plugin
+
 You want to register those macros/filters/variables
 at the `on_config()` method of your plugin, providing
 the MkDocs-Macros plugin is declared. 
@@ -167,5 +169,58 @@ class MyPlugin(BasePlugin):
       macros_plugin.register_filters(MY_VARIABLES)
 ```
 
+#### Using an MkDocs script
+
+_As of MkDocs version 1.4_
+
+Writing a **plugin** requires a lot of work. 
+If the purpose is to solve a specific
+problem for a specific documentation project, 
+then it may not be worth the effort.
 
 
+Fortunately, we now have another solution for implementing
+these event-processing
+functions (`on_config()`, `on_page_markdown()`, etc.).
+
+This can be done through Python **hook scripts** written for the specific 
+documentation project, by using
+MkDocs [hook](https://www.mkdocs.org/user-guide/configuration/#hooks) facility.  Those hooks are simply functions that implement
+these events.
+
+The first thing is to declare the script in the config file,
+relative to the source directory of the project (here `hooks.py`):
+
+```yaml
+site_name: Testing the hooks
+
+nav:
+  - ...
+
+hooks:
+  # Mkdocs hook for testing the Mkdocs-Macros hook
+  - hooks.py
+
+plugins:
+  - search
+  - macros
+```
+
+The only difference with the script above, is that `on_config()`
+is declared as a function, instead as a method of the plugin.
+
+Otherwise, the code is identical:
+
+```python
+def on_config(config, **kwargs):
+    "Add the functions variables and filters to the mix"
+    # get MkdocsMacros plugin, but only if present
+    macros_plugin = config.plugins.get("macros")
+    macros_plugin.register_macros(MY_FUNCTIONS)
+    macros_plugin.register_variables(MY_VARIABLES)
+    macros_plugin.register_filters(MY_FILTERS)
+```
+
+
+!!! Tip "Difference between MkDocs hook scripts and MkDocs modules?"
+    See the [explanation](macros.md#hook-scripts-standard-versus-mkdocs-macros-modules).

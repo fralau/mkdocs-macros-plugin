@@ -43,8 +43,7 @@ YAML_VARIABLES = 'extra'
 # The default name of the Python module:
 DEFAULT_MODULE_NAME = 'main'  # main.py
 
-# the directory where the rendered macros must go
-RENDERED_MACROS_DIRNAME = '__docs_macros_rendered'
+
 
 
 
@@ -295,20 +294,7 @@ class MacrosPlugin(BasePlugin):
 
 
 
-    @property
-    def rendered_macros_dir(self):
-        """
-        The directory, beside the docs_dir, that contains
-        the rendered pages from the macros.
-        """
-        try:
-            r = self._rendered_macros_dir
-        except AttributeError:
-            raise AttributeError("Rendered macros directory is undefined")
-        if not os.path.isdir(self._rendered_macros_dir):
-            raise FileNotFoundError("Rendered macros directory is defined "
-                                    "but does not exists")
-        return r
+
 
 
     # ------------------------------------------------
@@ -378,6 +364,7 @@ class MacrosPlugin(BasePlugin):
         Register macros (hook for other plugins).
         These will be added last, and raise an exception if already present.
         """
+        trace(f"Registering external macros: {list(items)}")
         try:
             # after on_config
             self._macros
@@ -393,6 +380,7 @@ class MacrosPlugin(BasePlugin):
         Register filters (hook for other plugins).
         These will be added last, and raise an exception if already present.
         """
+        trace(f"Registering external filters: {list(items)}")
         try:
             self._filters
             register_items('filter', self.filters, items)
@@ -407,6 +395,7 @@ class MacrosPlugin(BasePlugin):
         Register variables (hook for other plugins).
         These will be added last, and raise an exception if already present.
         """
+        trace(f"Registering external variables: {list(items)}")
         try:
             # after on_config
             self._variables
@@ -723,6 +712,7 @@ class MacrosPlugin(BasePlugin):
         From the configuration file, builds a Jinj2 environment
         with variables, functions and filters.
         """
+        trace("Configuring the macros environment...")
         # WARNING: this is not the config argument:
         trace("Macros arguments\n", self.config)
         # define the variables and macros as dictionaries
@@ -770,18 +760,7 @@ class MacrosPlugin(BasePlugin):
         register_items('macro'   , self.macros   , self._add_macros   )
         register_items('filter'  , self.filters  , self._add_filters  )
 
-        # Provide information:
-        trace("Config variables:", list(self.variables.keys()))
-        debug("Config variables:\n", payload=json.dumps(self.variables, 
-                                                    cls=CustomEncoder))
-        if self.macros:
-            trace("Config macros:", list(self.macros.keys()))
-            debug("Config macros:", payload=json.dumps(self.macros,
-                                                    cls=CustomEncoder))
-        if self.filters:
-            trace("Config filters:", list(self.filters.keys()))
-            debug("Config filters:", payload=json.dumps(self.filters,
-                                                    cls=CustomEncoder))
+
         # if len(extra):
         #     trace("Extra variables (config file):", list(extra.keys()))
         #     debug("Content of extra variables (config file):\n", dict(extra))
@@ -856,16 +835,26 @@ class MacrosPlugin(BasePlugin):
         # update environment with the custom filters:
         self.env.filters.update(self.filters)
 
-        # -------------------
-        # Setup the markdown (rendered) directory
-        # -------------------
-        docs_dir = config['docs_dir']
-        abs_docs_dir = os.path.abspath(docs_dir)
-        # recreate only if debug (otherewise delete):
-        recreate = get_log_level('DEBUG')
-        self._rendered_macros_dir = setup_directory(abs_docs_dir,
-                                                    RENDERED_MACROS_DIRNAME,
-                                                    recreate=recreate)
+        trace("End of environment config")
+        
+    def on_pre_build(self, *, config):
+        """
+        Provide information on the variables.
+        It is put here, in case some plugin hooks into the config,
+        after the execution of the `on_config()` of this plugin.
+        """
+        trace("Config variables:", list(self.variables.keys()))
+        debug("Config variables:\n", payload=json.dumps(self.variables, 
+                                                    cls=CustomEncoder))
+        if self.macros:
+            trace("Config macros:", list(self.macros.keys()))
+            debug("Config macros:", payload=json.dumps(self.macros,
+                                                    cls=CustomEncoder))
+        if self.filters:
+            trace("Config filters:", list(self.filters.keys()))
+            debug("Config filters:", payload=json.dumps(self.filters,
+                                                    cls=CustomEncoder))
+
 
     def on_nav(self, nav, config, files):
         """

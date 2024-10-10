@@ -344,9 +344,9 @@ def define_env(env):
 
 ```
 
+## Notes on Modules
 
-
-## A caution about security
+### A caution about security
 
 
 !!! Warning
@@ -368,7 +368,7 @@ web pages** (for business applications).
 
 
 
-## What you can and can't do with `define_env()`
+### What you can and can't do with `define_env()`
 
 The fact is that you **cannot** actually access page information
 in the `define_env()` function, since
@@ -403,3 +403,38 @@ At that point, **you don't have access to specific pages**
 
     Whatever you do in that way, is likely to be branded **black magic**.
 
+
+### Hook scripts (standard) versus MkDocs-Macros Modules
+
+#### Similarities
+**Hook scripts** (offered as standard by MkDocs)
+and **[modules](macros.md)** provided by MkDocs-Macros are python programs
+that operate on the same principle : they use **hooks**,
+which are special predefined 
+functions that will be called at specific point
+of the code, so that you can customize the behavior of the software 
+according to your needs.
+
+Those scripts take a special object as an argument:
+
+1. `config` for MkDocs hook scripts
+2. `env` for Mkdocs-Macros modules
+
+
+#### Differences
+Their purpose is, however, very different. To explain this
+in a simple way: 
+
+1. You can think of a standard hook script
+    as built over a **barebone plugin**
+    that doesn't do anything more than MkDocs,
+    except providing those hooks.
+
+2. An MkDocs-Macros module is exploiting the
+    full power of the **MkDocs-Macros plugin**, which relies 
+    on its Jinja2 templating engine and the manipulation
+    of macros, variables and filters.
+
+A standard hook script is usually called `hooks.py`, while
+an Mkdocs-Macros module is called `main.py` by default, though you can
+change these names if you wish.

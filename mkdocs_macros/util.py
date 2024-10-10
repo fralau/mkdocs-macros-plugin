@@ -136,7 +136,7 @@ class CustomEncoder(json.JSONEncoder):
         try:
             return super().default(obj)
         except TypeError:
-            print(f"CANNOT INTERPRET {obj.__class__}")
+            debug(f"json: cannot encode {obj.__class__}")
             return str(obj)
 
 

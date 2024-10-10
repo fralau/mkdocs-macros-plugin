@@ -1,0 +1,19 @@
+site_name: Testing the hooks
+theme: readthedocs
+
+nav:
+    - Home: index.md
+    - Next page: second.md
+
+hooks:
+  # Mkdocs hook for testing the Mkdocs-Macros hook
+  - hooks.py
+
+plugins:
+  - search
+  - macros
+  - test
+
+extra:
+  greeting: Hello World!
+

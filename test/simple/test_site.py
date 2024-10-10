@@ -29,7 +29,7 @@ def test_pages():
     assert VARIABLE_NAME in project.config.extra
 
     page = project.get_page('index')
-    assert page.is_markdown_rendered
+    assert page.is_markdown_rendered()
     
     # check that the `greeting` variable (defined under 'extra') is rendered:
     variables = project.config.extra
@@ -43,7 +43,7 @@ def test_pages():
     # there is intentionally an error (`foo` does not exist)
     page = project.get_page('second')
     assert 'foo' not in project.config.extra
-    assert page.is_markdown_rendered
+    assert page.is_markdown_rendered()
     assert page.find('Macro Rendering Error')
     
 def test_strict():
