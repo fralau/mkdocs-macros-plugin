@@ -712,9 +712,9 @@ class MacrosPlugin(BasePlugin):
         From the configuration file, builds a Jinj2 environment
         with variables, functions and filters.
         """
-        trace("Configuring the macros environment...")
+        debug("Configuring the macros environment...")
         # WARNING: this is not the config argument:
-        trace("Macros arguments\n", self.config)
+        debug("Macros arguments\n", self.config)
         # define the variables and macros as dictionaries
         # (for update function to work):
         self._variables = SuperDict()
@@ -835,7 +835,7 @@ class MacrosPlugin(BasePlugin):
         # update environment with the custom filters:
         self.env.filters.update(self.filters)
 
-        trace("End of environment config")
+        debug("End of environment config")
         
     def on_pre_build(self, *, config):
         """
@@ -907,7 +907,7 @@ class MacrosPlugin(BasePlugin):
         if not self.variables:
             self.markdown = markdown
         else:
-            trace("Rendering source page:", page.file.src_path)
+            debug("Rendering source page:", page.file.src_path)
             # Update the page info in the document
             # page is an object with a number of properties (title, url, ...)
             # see: https://github.com/mkdocs/mkdocs/blob/master/mkdocs/structure/pages.py
