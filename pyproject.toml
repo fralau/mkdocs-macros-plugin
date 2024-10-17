@@ -1,0 +1,58 @@
+[project]
+name = "mkdocs-macros-plugin"
+
+# This version number is the REFERENCE for the rest of the project,
+# particularly for update_pypi.sh
+version = "1.3.6"
+
+description = "Unleash the power of MkDocs with macros and variables"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+authors = [
+    { name = "Laurent Franceschetti", email = "info@settlenext.com" },
+]
+keywords = [
+    "macros",
+    "markdown",
+    "mkdocs",
+    "python",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.5",
+]
+dependencies = [
+    "hjson",
+    "jinja2",
+    "mkdocs>=0.17",
+    "packaging",
+    "pathspec",
+    "python-dateutil",
+    "pyyaml",
+    "super-collections",
+    "termcolor",
+]
+
+[tool.setuptools]
+packages = { find = { exclude = ["*.tests"] } }
+
+[project.optional-dependencies]
+test = [
+    "mkdocs-include-markdown-plugin",
+    "mkdocs-macros-test",
+    "mkdocs-material>=6.2",
+    "mkdocs-test",
+]
+
+[project.entry-points."mkdocs.plugins"]
+macros = "mkdocs_macros.plugin:MacrosPlugin"
+
+[project.urls]
+Homepage = "https://github.com/fralau/mkdocs_macros_plugin"
+
