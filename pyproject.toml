@@ -48,6 +48,7 @@ test = [
     "mkdocs-macros-test",
     "mkdocs-material>=6.2",
     "mkdocs-test",
+    "mkdocs-d2-plugin"
 ]
 
 [project.entry-points."mkdocs.plugins"]

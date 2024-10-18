@@ -1,0 +1,17 @@
+
+# Documentation name
+site_name: 'Compatibility with d2 plugin'
+
+# Your repository URL and name
+repo_url: https://gitlab.com/karreg/mkdocs-macros-d2-issue
+repo_name: mkdocs-macros-d2-issue
+
+# Plugins
+plugins:
+  - search
+  - d2
+  - macros
+
+# Documentation content
+nav:
+  - Home: 'index.md'
