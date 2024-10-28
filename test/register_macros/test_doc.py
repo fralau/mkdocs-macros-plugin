@@ -46,15 +46,15 @@ def test_pages():
     # variable
     value = MY_VARIABLES['x2']
     print(f"Check if x2 ('{value}') is present")
-    assert page.find(value, header="Variables")
+    assert page.find_text(value, header="Variables")
     # macro
     print("Check macro: bar")
-    assert page.find(bar(2, 5), header="Macros")
+    assert page.find_text(bar(2, 5), header="Macros")
     # filter
     message = page.meta.message
     result = scramble(message)
     print(f"Check filter: scramble('{message}') --> '{result}'")
-    assert page.find(result, header="Filters")
+    assert page.find_text(result, header="Filters")
     
     
     

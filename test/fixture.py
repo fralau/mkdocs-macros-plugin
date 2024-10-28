@@ -18,7 +18,8 @@ class MacrosPage(MkDocsPage):
 
     def has_error(self:MkDocsPage):
             "Predicate: check whether the page has an error"
-            return self.find('Macro Rendering Error')
+            return self.find_text('Macro Rendering Error')
+    
     @property
     def is_rendered(self):
         "Accomodate earlier formulation"

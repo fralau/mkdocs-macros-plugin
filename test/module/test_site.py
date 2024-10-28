@@ -50,10 +50,10 @@ def test_pages():
     assert 'announcement' in meta
 
     assert meta.user == 'Joe'
-    assert page.find(meta.user, header='Installed', header_level=4)
-    assert page.find(meta.announcement, header='Accessing meta')
-    assert page.find(meta.bottles.lemonade, header='Dot notation')
-    assert not page.find(meta.user * 2, header='Macro') # negative test
+    assert page.find_text(meta.user, header='Installed', header_level=4)
+    assert page.find_text(meta.announcement, header='Accessing meta')
+    assert page.find_text(meta.bottles.lemonade, header='Dot notation')
+    assert not page.find_text(meta.user * 2, header='Macro') # negative test
 
     assert 'bottles' not in project.config.extra
     assert 'bottles' not in project.variables
@@ -66,27 +66,27 @@ def test_pages():
 
     # check that both on_pre/post_page_macro() worked
     assert "Added Footer (Pre-macro)" in page.markdown, f"Not in {page.markdown}"
-    assert page.find(r'is \d{4}-\d{2}-\d{2}', header='Pre-macro')
+    assert page.find_text(r'is \d{4}-\d{2}-\d{2}', header='Pre-macro')
 
     assert "Added Footer (Post-macro)" in page.markdown
     assert find_after(page.plain_text, 'name of the page', 'home')
-    assert page.find('Home', header='Post-macro')
+    assert page.find_text('Home', header='Post-macro')
     # ----------------
     # Environment page
     # ----------------
     page = project.get_page('environment')
 
     # read a few things that are in the tables
-    assert page.find('unit_price = 50', header='General list')
+    assert page.find_text('unit_price = 50', header='General list')
     # there are two headers containing 'Macros':
-    assert page.find('say_hello', header='Macros$') 
+    assert page.find_text('say_hello', header='Macros$') 
 
 
     # test the `include_file()` method (used for the mkdocs.yaml file)
     HEADER = r"^mkdocs.*portion"
-    assert page.find('site_name:', header=HEADER)
-    assert page.find('name: material', header=HEADER)
-    assert not page.find('foobar 417', header=HEADER) # negative control
+    assert page.find_text('site_name:', header=HEADER)
+    assert page.find_text('name: material', header=HEADER)
+    assert not page.find_text('foobar 417', header=HEADER) # negative control
 
     # ----------------
     # Literal page
@@ -99,11 +99,11 @@ def test_pages():
 
     # Latex is not interpreted:
     latex = re.escape(r"\begin{tabular}{|ccc|}")
-    assert page.find(latex, header='Offending Latex')
+    assert page.find_text(latex, header='Offending Latex')
 
     # Footer is processed (but not rendered)
-    assert page.find(r'now()', header='Pre-macro')
-    assert page.find('Not interpreted', header='Post-macro')
+    assert page.find_text(r'now()', header='Pre-macro')
+    assert page.find_text('Not interpreted', header='Post-macro')
 
 
 def test_strict():
