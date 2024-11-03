@@ -10,7 +10,7 @@ readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.8"
 authors = [
-    { name = "Laurent Franceschetti", email = "info@settlenext.com" },
+    { name = "Laurent Franceschetti"},
 ]
 keywords = [
     "macros",

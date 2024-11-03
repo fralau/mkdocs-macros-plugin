@@ -1,8 +1,11 @@
-# Changelog: Mkdocs-Dacros
+# Changelog: Mkdocs-Macros
 
 All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 1.3.7, 2024-10-18
+* Fixed: incompatibility with the d2 module (#249)
 
 ## 1.3.6, 2024-10-17
 * Added: complete test framework, using pytest and Mkdocs-Test (#244)
