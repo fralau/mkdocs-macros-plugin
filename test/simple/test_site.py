@@ -35,6 +35,14 @@ def test_pages():
     variables = project.config.extra
     assert VARIABLE_NAME in variables
     assert variables.greeting in page.markdown
+
+    # test built-in filters (#253)
+    header = 'built-in filters'
+    assert page.find_text("result", header)
+    assert page.find_text("result is: 17.5", header) # abs
+    assert page.find_text("saying: HELLO WORLD", header) # upper
+    assert page.find_text("length is: 12", header) # length
+    
     
 
     # ----------------
