@@ -27,7 +27,7 @@ from mkdocs.structure.pages import Page
 from mkdocs_macros.errors import format_error
 from mkdocs_macros.context import define_env
 from mkdocs_macros.util import (
-    install_package, parse_package, trace, debug,
+    trace, debug,
     update, import_local_module, format_chatter, LOG, get_log_level,
     setup_directory, CustomEncoder,
     # SuperDict, 
@@ -560,24 +560,13 @@ class MacrosPlugin(BasePlugin):
         if modules:
             trace("Preinstalled modules: ", ','.join(modules))
         for m in modules:
-            # split the name of package in source (pypi) and module name
-            source_name, module_name = parse_package(m)
-            try:
-                module = importlib.import_module(module_name)
-            except ModuleNotFoundError:
-                try:
-                    # if absent, install (from pypi)
-                    trace("Module '%s' not found, installing (source: '%s')" %
-                          (module_name, source_name))
-                    install_package(source_name)
-                    # install package raises NameError
-                    module = importlib.import_module(module_name)
-                except (NameError, ModuleNotFoundError):
-                    raise ModuleNotFoundError("Could not import installed "
-                                              "module '%s' (missing?)" %
-                                              module_name,
-                                              name=module_name)
-            self._load_module(module, module_name)
+            if ":" in m:
+                raise ModuleNotFoundError(f"pluglets are no longer "
+                                          "auto-installable for security "
+                                          "reasons; not attempting to "
+                                          "install {m!r}")
+            module = importlib.import_module(m)
+            self._load_module(module, m)
         # local module (file or dir)
         local_module_name = self.config['module_name']
         debug("Project dir '%s'" % self.project_dir)

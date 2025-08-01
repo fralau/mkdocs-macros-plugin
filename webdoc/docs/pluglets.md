@@ -85,36 +85,6 @@ plugins:
       modules: [mkdocs_macros_foo, mkdocs_macros_bar]
 ```
 
-### Auto-installable pluglets
-
-**Every pluglet specified in the `modules`list should be available.**
-
-However, if the pluglet cannot be found, mkdocs will attempt to install it
-(with `pip3 install`) from the standard repositories ([Pypi](https://pypi.org/) and others [defined locally](https://pip.pypa.io/en/stable/topics/configuration/#configuration-files)). If not, mkdocs will fail and exit.
-
-!!! Tip "Make installations easier!"
-    The purpose of this feature is to facilitate the management of environments with several mkdocs websites, typically when a pluglet is designed for a whole
-    company, project, etc.
-
-    In this way, the macros and filters declared in the pluglet will work out
-    of the box, as long as the pluglet is properly defined in the config file
-    (and the pluglet is auto-installable).
-
-
-In some cases, the name of the source package i:
-
-``` {.yaml}
-plugins:
-  ...
-  - macros:
-      modules: [mkdocs-macros-test:mkdocs_macros_test]
-```
-
-In the example above `mkdocs-macros-test` is the package source, and
-`mkdocs_macros_test` is the package name for the `import` statement.
-
-If those names are correct everything should fall into place when you type the `mkdocs serve` or `mkdocs build` commands.
-
 ## Implementing a new pluglet
 
 ### General Principles
