@@ -187,6 +187,7 @@ class MacrosPlugin(BasePlugin):
 
     # ------------------------------------------------
     # These properties are available in the env object
+    # in macros
     # ------------------------------------------------
 
     @property
@@ -600,6 +601,20 @@ class MacrosPlugin(BasePlugin):
     # ----------------------------------
     # output elements
     # ----------------------------------
+    @property
+    def env(self) -> Environment:
+        """
+        The templating environment for Jinja2.
+
+        It is a core component of the macros engine.
+        It is defined in `on_config`.
+
+        NOTE: Do NOT confuse with the env argument in a module.
+        """
+        try:
+            return self._env
+        except AttributeError:
+            raise AttributeError("Jinja2 environment is not defined yet!")
 
     def render(self, markdown: str, force_rendering:bool=False) -> str:
         """
@@ -700,6 +715,24 @@ class MacrosPlugin(BasePlugin):
 
             else:
                 return error_message
+            
+
+    def has_j2(self, s:str) -> bool:
+        """
+        Defines whether a string might contain j2 code.
+
+        The criterion is: does it contain any start strings,
+        such as, e.g., `{{`?
+
+        It takes into account the j2_..._start_string
+        parameters of the config file.
+        """
+        env = self.env
+        CANDIDATES = [env.variable_start_string, 
+                      env.block_start_string,
+                      env.comment_start_string]
+        return any(item in s for item in CANDIDATES)
+        
 
 
     # ----------------------------------
@@ -814,7 +847,7 @@ class MacrosPlugin(BasePlugin):
                 env_config[variable_name] = value
 
         # finally build the environment:
-        self.env = Environment(**env_config)
+        self._env = Environment(**env_config)
 
         # -------------------
         # Process macros
@@ -836,7 +869,11 @@ class MacrosPlugin(BasePlugin):
         self.env.filters.update(self.filters)
 
         debug("End of environment config")
-        
+
+
+
+
+
     def on_pre_build(self, *, config):
         """
         Provide information on the variables.
@@ -932,7 +969,7 @@ class MacrosPlugin(BasePlugin):
             # There is a bizarre issue #215 where setting the title
             # prevents interpretation of icons with pymdownx.emoji
             debug("Page title:",page.title)
-            if "{" in page.title:
+            if self.has_j2(page.title):
                 page.title = self.render(markdown=page.title,
                                         force_rendering=force_rendering)
                 debug("Page title after macro rendering:",page.title)      
