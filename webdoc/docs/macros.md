@@ -17,13 +17,13 @@ Location of the modules
 ### Local module
 
 By default, the Python code must go into **one** `main.py` file in the main
-website's project directory (generally beside the `mkdocs.yml` file).
+website's project directory (generally beside the config (`mkdocs.yml`) file.
 
 
 **If no `main` module is available, this is ignored.**
 
 If you wish, you can change the name of that module by adding a
-`module_name` entry to the `mkdocs.yml` file (no need to add the `.py`
+`module_name` entry to the config file (no need to add the `.py`
 suffix):
 
 ``` {.yaml}
@@ -33,7 +33,10 @@ plugins:
         module_name: source_code
 ```
 
-** If you specify a module name, it must be available, or this will 
+You may also specify a path relative to the directory of the config file
+(e.g. `module_name: include/source_code`).
+
+**If you specify a module name, it must be available, or this will 
 raise an error.**
 
 !!! Note
