@@ -7,14 +7,14 @@
 #
 # -------------------------------------------------------------
 function warn {
-    GREEN='\033[0;32m'
-    NORMAL='\033[0m'
-    echo -e "${GREEN}$1${NORMAL}"
+  GREEN='\033[0;32m'
+  NORMAL='\033[0m'
+  echo -e "${GREEN}$1${NORMAL}"
 }
 
 function get_value {
-    # get the value from the config file (requires the Python toml package)
-    toml get --toml-path pyproject.toml $1
+  # get the value from the config file (requires the Python toml package)
+  toml get --toml-path pyproject.toml $1
 }
 
 # Clean the subdirs, for safety and to guarantee integrity
@@ -28,19 +28,21 @@ fi
 
 # get the project inform
 package_name=$(get_value project.name)
-package_version=v$(get_value project.version) # add a 'v' in front (git convention) 
+package_version=v$(get_value project.version) # add a 'v' in front (git convention)
 
 # update Pypi
 warn "Rebuilding $package_name..."
 rm -rf build dist *.egg-info # necessary to guarantee integrity
-python3 -m build
-if twine upload dist/* ; then
-    git push # just in case
-    warn "... create tag $package_version, and push to remote git repo..."
-    git tag $package_version
-    git push --tags
-    warn "Done ($package_version)!"
+PYTHON=$(which python3.11)
+$PYTHON -m build
+if twine upload dist/*; then
+  git push # just in case
+  warn "... create tag $package_version, and push to remote git repo..."
+  git tag $package_version
+  git push --tags
+  warn "Done ($package_version)!"
 else
-    warn "Failed ($package_version)!"
-    exit 1
-fi   
+  warn "Failed ($package_version)!"
+  exit 1
+fi
+
