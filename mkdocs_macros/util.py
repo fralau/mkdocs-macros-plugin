@@ -151,31 +151,6 @@ class CustomEncoder(json.JSONEncoder):
 # Packages and modules
 # ------------------------------------------
 
-def parse_package(package:str):
-    """
-    Parse a package name
-
-    if it is in the forme 'foo:bar' then 'foo' is the source, 
-    and 'bar' is the (import) package name
-
-    Returns the source name (for pip install) and the package name (for import)
-    """
-    l =  package.split(':')
-    if len(l) == 1:
-        source_name = package_name = l[0]
-    else:
-        source_name, package_name = l[:2]
-    return source_name, package_name
-
-def install_package(package:str):
-    """
-    Install a package from pip
-    """
-    try:
-        subprocess.check_call(["pip3", "install", package])
-    except subprocess.CalledProcessError:
-        raise NameError("Could not install package '%s'" % package)
-
 
 def import_local_module(project_dir, module_name):
     """
