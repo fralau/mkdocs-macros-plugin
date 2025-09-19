@@ -17,7 +17,8 @@ import yaml
 from jinja2 import (
     Environment, FileSystemLoader, Undefined, DebugUndefined, StrictUndefined,
 )
-from super_collections import SuperDict
+from super_collections import SuperDict, yaml_support
+yaml_support()
 
 from mkdocs.config import config_options
 from mkdocs.config.config_options import Type as PluginType
@@ -29,7 +30,7 @@ from mkdocs_macros.context import define_env
 from mkdocs_macros.util import (
     install_package, parse_package, trace, debug,
     update, import_local_module, format_chatter, LOG, get_log_level,
-    setup_directory, CustomEncoder,
+    setup_directory
     # SuperDict, 
 )
 
@@ -881,16 +882,13 @@ class MacrosPlugin(BasePlugin):
         after the execution of the `on_config()` of this plugin.
         """
         trace("Config variables:", list(self.variables.keys()))
-        debug("Config variables:\n", payload=json.dumps(self.variables, 
-                                                    cls=CustomEncoder))
+        debug("Config variables:\n", payload=SuperDict(self.variables).to_json())
         if self.macros:
             trace("Config macros:", list(self.macros.keys()))
-            debug("Config macros:", payload=json.dumps(self.macros,
-                                                    cls=CustomEncoder))
+            debug("Config macros:", payload=SuperDict(self.macros).to_json())
         if self.filters:
             trace("Config filters:", list(self.filters.keys()))
-            debug("Config filters:", payload=json.dumps(self.filters,
-                                                    cls=CustomEncoder))
+            debug("Config filters:", payload=SuperDict(self.filters).to_json())
 
 
     def on_nav(self, nav, config, files):

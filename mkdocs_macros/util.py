@@ -9,6 +9,7 @@ from copy import deepcopy
 import os, sys, importlib.util, shutil
 from typing import Literal
 from packaging.version import Version
+import pkg_resources
 import json
 import inspect
 from datetime import datetime
@@ -116,32 +117,7 @@ def format_chatter(*args, prefix:str, color:str=TRACE_COLOR):
 
 
 
-from collections import UserDict
 
-class CustomEncoder(json.JSONEncoder):
-    """
-    Custom encoder for JSON serialization.
-    Used for debugging purposes.
-    """
-    def default(self, obj: Any) -> Any:
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        if isinstance(obj, UserDict):
-            # for objects used by MkDocs (config, plugin, etc.s)
-            return dict(obj)
-
-        elif inspect.isfunction(obj):
-            return f"Function: %s %s" % (inspect.signature(obj),
-                                        obj.__doc__)
-        try:
-            return super().default(obj)
-        except TypeError:
-            debug(f"json: cannot encode {obj.__class__}")
-            try:
-                return str(obj)
-            except Exception:
-                # in case something happens along the line
-                return f"!Non printable object: {obj.__class__}"
 
 
 
@@ -166,6 +142,20 @@ def parse_package(package:str):
     else:
         source_name, package_name = l[:2]
     return source_name, package_name
+
+
+
+def is_package_installed(source_name: str) -> bool:
+    """
+    Check if a package is installed, with its source name
+    (not it is Python import name).
+    """
+    try:
+        pkg_resources.get_distribution(source_name)
+        return True
+    except pkg_resources.DistributionNotFound:
+        return False
+
 
 def install_package(package:str):
     """
