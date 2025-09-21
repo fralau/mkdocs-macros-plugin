@@ -85,23 +85,28 @@ plugins:
       modules: [mkdocs_macros_foo, mkdocs_macros_bar]
 ```
 
-### Auto-installable pluglets
+### Finding pluglets
 
-**Every pluglet specified in the `modules`list should be available.**
+**Every pluglet specified in the `modules`list should be already installed.**
 
-However, if the pluglet cannot be found, mkdocs will attempt to install it
-(with `pip3 install`) from the standard repositories ([Pypi](https://pypi.org/) and others [defined locally](https://pip.pypa.io/en/stable/topics/configuration/#configuration-files)). If not, mkdocs will fail and exit.
+*As of 1.4.0*
 
-!!! Tip "Make installations easier!"
-    The purpose of this feature is to facilitate the management of environments with several mkdocs websites, typically when a pluglet is designed for a whole
-    company, project, etc.
+!!! Tip "No more auto-install of pluglets"
+    However, if a pluglet cannot be found, mkdocs will no longer attempt to install it
+    (with `pip3 install`) from the standard repositories ([Pypi](https://pypi.org/) and others [defined locally](https://pip.pypa.io/en/stable/topics/configuration/#configuration-files)). 
 
-    In this way, the macros and filters declared in the pluglet will work out
-    of the box, as long as the pluglet is properly defined in the config file
-    (and the pluglet is auto-installable).
+If a plugin is available on Pypi and it was not installed, `mkdocs serve` and `mkdocs build` will fail
+with a ModuleNotFound exception and a meaningful message, making debugging easier on a new install:
 
+```
+Could not import pluglet 'mkdocs_macros_foo'. Please install it from Pypi:
 
-In some cases, the name of the source package i:
+    pip install mkdocs_macros_foo
+```
+
+If the plugin name is different from the Python import name, you _should_ specify it
+in the `modules` parameter so that MkDocs-Macros can check for its existence on Pypi,
+in case it is not installed.
 
 ``` {.yaml}
 plugins:
@@ -113,7 +118,7 @@ plugins:
 In the example above `mkdocs-macros-test` is the package source, and
 `mkdocs_macros_test` is the package name for the `import` statement.
 
-If those names are correct everything should fall into place when you type the `mkdocs serve` or `mkdocs build` commands.
+If those names are correct, the `mkdocs serve` or `mkdocs build` will give the correct error message.
 
 ## Implementing a new pluglet
 

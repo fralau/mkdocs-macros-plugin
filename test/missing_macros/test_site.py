@@ -23,7 +23,7 @@ def test_build():
     print("Result:", result)
     # fails, declaring that the pluglet exists and must be installed.
     assert build_result.returncode != 0 # failure 
-    assert "Pluglet" in result
+    assert "pluglet" in result
     assert "pip install" in result
 
     

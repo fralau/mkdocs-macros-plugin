@@ -568,8 +568,8 @@ class MacrosPlugin(BasePlugin):
                 module = importlib.import_module(module_name)
             except ModuleNotFoundError:
                 if is_on_pypi(source_name, fail_silently=True):
-                    err_msg = (f"Pluglet '{source_name}' exists on PyPI. "
-                                f"Please install it:\n\n    pip install {source_name}")
+                    err_msg = (f"Counld not import pluglet '{source_name}'. "
+                                f"Please install it from Pypi:\n\n    pip install {source_name}")
                     raise ModuleNotFoundError(err_msg, name=module_name)
                 else:
                     raise ModuleNotFoundError(f"Could not import "
