@@ -12,20 +12,32 @@ from test.fixture import MacrosDocProject
 
 from .hooks import MY_VARIABLES, MY_FUNCTIONS, MY_FILTERS, bar, scramble
 
+project = None
 
-def test_pages():
+
+def test_build_project():
+    global project
     project = MacrosDocProject(".")
     build_result = project.build(strict=True)
     # did not fail
     return_code = project.build_result.returncode
     assert not return_code, f"Build returned with {return_code} {build_result.args})" 
+    print("Build successful")
+    
+    print("Variables?")
+    # entry = project.find_entries("config variables", severity="debug")
+    # print(entry)
 
+def test_variables():
     # check the presence of variables in the environment
     print("Variables:", list(project.variables.keys()))
     for variable in MY_VARIABLES:
+        print(f"{variable}...")
         assert variable in project.variables
-        print(f"{variable}: {project.variables[variable]}")
+        print(f"...{project.variables[variable]}")
 
+def test_macros_and_filters():
+    print("Macros:", project.macros)
     print("Macros:", list(project.macros.keys()))
     for macro in MY_FUNCTIONS:
         assert macro in project.macros
@@ -36,6 +48,8 @@ def test_pages():
         assert filter in project.filters
         print(f"{filter}: {project.filters[filter]}") 
 
+
+def test_pages():
     # ----------------
     # First page
     # ----------------

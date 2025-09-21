@@ -9,9 +9,9 @@ from copy import deepcopy
 import os, sys, importlib.util, shutil
 from typing import Literal
 from packaging.version import Version
-import pkg_resources
 import json
 import inspect
+import requests
 from datetime import datetime
 from typing import Any
 
@@ -131,8 +131,9 @@ def parse_package(package:str):
     """
     Parse a package name
 
-    if it is in the forme 'foo:bar' then 'foo' is the source, 
-    and 'bar' is the (import) package name
+    if it is in the forme 'foo:bar' then it is a pluglet: 
+    - 'foo' is the source, 
+    - 'bar' is the (import) package name.
 
     Returns the source name (for pip install) and the package name (for import)
     """
@@ -145,16 +146,29 @@ def parse_package(package:str):
 
 
 
-def is_package_installed(source_name: str) -> bool:
+def is_on_pypi(source_name: str, fail_silently: bool = False) -> bool:
     """
-    Check if a package is installed, with its source name
-    (not it is Python import name).
+    Check if a package is available on PyPI.
+
+    Parameters:
+    - source_name: the name of the package to check
+    - fail_silently: if True, return False on network error; if False, raise the error
+
+    Returns:
+    - True if the package exists on PyPI
+    - False if not found.
+      (will raise a RunTime error on network error, 
+      unless fail_silently=True: will report False)
     """
+    url = f"https://pypi.org/pypi/{source_name}/json"
     try:
-        pkg_resources.get_distribution(source_name)
-        return True
-    except pkg_resources.DistributionNotFound:
-        return False
+        response = requests.get(url, timeout=3)
+        return response.status_code == 200
+    except requests.exceptions.RequestException as e:
+        if fail_silently:
+            return False
+        raise RuntimeError(f"Unable to reach PyPI to check for '{source_name}': {e}")
+
 
 
 def install_package(package:str):

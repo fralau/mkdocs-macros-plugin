@@ -1,0 +1,17 @@
+site_name: My own
+theme: mkdocs
+
+nav:
+    - Home: index.md
+    - Error Page (intentional): second.md
+
+plugins:
+  - search
+  - macros:
+      # the first doesn't exist on pypi, the second does
+      modules: ['mkdocs_plugin_daon_macros']
+  - test
+
+extra:
+  greeting: Hello World!
+

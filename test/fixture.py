@@ -56,50 +56,59 @@ class MacrosDocProject(DocProject):
     # ------------------------------------
     @property
     def variables(self):
-         "Return the variables"
-         try:
-              return self._variables
-         except AttributeError:
-            entry = self.find_entry("config variables",
-                                          source='macros',
-                                          severity='debug')
-            if entry and entry.payload:
-                self._variables = SuperDict(json.loads(entry.payload))
-            else:
-                 print(entry)
-                 raise ValueError("Cannot find variables")
-            return self._variables
+          "Return the variables"
+          try:
+               return self._variables
+          except AttributeError:
+               print("ENTRIES:", self.find_entries("config variables",
+                                             source='',
+                                             severity='debug'))
+               print("ENTRIES:", self.find_entries("config variables",
+                                             source='macros'))
+               entry = self.find_entry("config variables",
+                                             source='macros',
+                                             severity='debug')
+               if entry and entry.payload:
+                    payload = json.loads(entry.payload)
+                    self._variables = SuperDict(payload)
+               else:
+                    # print(entry)
+                    # raise ValueError("Cannot find variables")
+                    self._variables = {}
+               return self._variables
 
 
     @property
     def macros(self):
-         "Return the macros"
-         try:
+          "Return the macros"
+          try:
               return self._macros
-         except AttributeError:
-            entry = self.find_entry("config macros",
+          except AttributeError:
+               entry = self.find_entry("config macros",
                                           source='macros',
                                           severity='debug')
-            if entry and entry.payload:
-                self._macros = SuperDict(json.loads(entry.payload))
-            else:
-                 print(entry)
-                 raise ValueError("Cannot find macros")
-            return self._macros
+               if entry and entry.payload:
+                    self._macros = SuperDict(json.loads(entry.payload))
+               else:
+                    # print(entry)
+                    # raise ValueError("Cannot find macros")
+                    self._macros = {}
+               return self._macros
          
 
     @property
     def filters(self):
-         "Return the filters"
-         try:
+          "Return the filters"
+          try:
               return self._filters
-         except AttributeError:
-            entry = self.find_entry("config filters",
-                                          source='macros',
-                                          severity='debug')
-            if entry and entry.payload:
-                self._filters = SuperDict(json.loads(entry.payload))
-            else:
-                 print(entry)
-                 raise ValueError("Cannot find filters")
-            return self._filters
+          except AttributeError:
+               entry = self.find_entry("config filters",
+                                             source='macros',
+                                             severity='debug')
+               if entry and entry.payload:
+                    self._filters = SuperDict(json.loads(entry.payload))
+               else:
+                    #   print(entry)
+                    #   raise ValueError("Cannot find filters")
+                    self._filters = {}
+               return self._filters

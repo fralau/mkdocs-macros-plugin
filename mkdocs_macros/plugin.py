@@ -28,7 +28,7 @@ from mkdocs.structure.pages import Page
 from mkdocs_macros.errors import format_error
 from mkdocs_macros.context import define_env
 from mkdocs_macros.util import (
-    install_package, parse_package, trace, debug,
+    install_package, is_on_pypi, parse_package, trace, debug,
     update, import_local_module, format_chatter, LOG, get_log_level,
     setup_directory
     # SuperDict, 
@@ -330,7 +330,7 @@ class MacrosPlugin(BasePlugin):
         Used to set the raw markdown of the current page.
         
         [Especially used in the `on_pre_page_macros()` and
-        `on_ost_page_macros()` hooks.]
+        `on_post_page_macros()` hooks.]
         """
         if not isinstance(value, str):
             raise ValueError("Value provided to attribute markdown "
@@ -567,18 +567,13 @@ class MacrosPlugin(BasePlugin):
             try:
                 module = importlib.import_module(module_name)
             except ModuleNotFoundError:
-                try:
-                    # if absent, install (from pypi)
-                    trace("Module '%s' not found, installing (source: '%s')" %
-                          (module_name, source_name))
-                    install_package(source_name)
-                    # install package raises NameError
-                    module = importlib.import_module(module_name)
-                except (NameError, ModuleNotFoundError):
-                    raise ModuleNotFoundError("Could not import installed "
-                                              "module '%s' (missing?)" %
-                                              module_name,
-                                              name=module_name)
+                if is_on_pypi(source_name, fail_silently=True):
+                    err_msg = (f"Pluglet '{source_name}' exists on PyPI. "
+                                f"Please install it:\n\n    pip install {source_name}")
+                    raise ModuleNotFoundError(err_msg, name=module_name)
+                else:
+                    raise ModuleNotFoundError(f"Could not import "
+                        "module '{module_name}' (missing?)")
             self._load_module(module, module_name)
         # local module (file or dir)
         local_module_name = self.config['module_name']
@@ -877,12 +872,14 @@ class MacrosPlugin(BasePlugin):
 
     def on_pre_build(self, *, config):
         """
-        Provide information on the variables.
-        It is put here, in case some plugin hooks into the config,
-        after the execution of the `on_config()` of this plugin.
+        Provide information on the variables, so that mkdocs-test
+        can capture the trace (for testing)
+        It is put here, in case some plugin hooks into the config
+        to add some variables, macros or filters, after the execution
+        of the `on_config()` of this plugin.
         """
         trace("Config variables:", list(self.variables.keys()))
-        debug("Config variables:\n", payload=SuperDict(self.variables).to_json())
+        debug("Config variables:", payload=SuperDict(self.variables).to_json())
         if self.macros:
             trace("Config macros:", list(self.macros.keys()))
             debug("Config macros:", payload=SuperDict(self.macros).to_json())
