@@ -170,17 +170,6 @@ def is_on_pypi(source_name: str, fail_silently: bool = False) -> bool:
         raise RuntimeError(f"Unable to reach PyPI to check for '{source_name}': {e}")
 
 
-
-def install_package(package:str):
-    """
-    Install a package from pip
-    """
-    try:
-        subprocess.check_call(["pip3", "install", package])
-    except subprocess.CalledProcessError:
-        raise NameError("Could not install package '%s'" % package)
-
-
 def import_local_module(project_dir, module_name):
     """
     Import a module from a pathname.

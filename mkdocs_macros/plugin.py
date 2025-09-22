@@ -28,7 +28,7 @@ from mkdocs.structure.pages import Page
 from mkdocs_macros.errors import format_error
 from mkdocs_macros.context import define_env
 from mkdocs_macros.util import (
-    install_package, is_on_pypi, parse_package, trace, debug,
+    is_on_pypi, parse_package, trace, debug,
     update, import_local_module, format_chatter, LOG, get_log_level,
     setup_directory
     # SuperDict, 
