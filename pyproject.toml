@@ -28,7 +28,8 @@ dependencies = [
     "pathspec",
     "python-dateutil",
     "pyyaml",
-    "super-collections >= 0.5.7",
+    "requests",
+    "super-collections >= 0.6.2",
     "termcolor",
 ]
 
