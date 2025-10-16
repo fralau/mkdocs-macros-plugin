@@ -116,6 +116,7 @@ class MacrosPlugin(BasePlugin):
     """
 
     # what is under the 'macros' namespace (will go into the config property):
+    J2_STRING = PluginType(str, default='')
     J2_STRING_LIST = ListOfItems(J2_STRING, default=[])
     config_scheme = (
         # main python module:
