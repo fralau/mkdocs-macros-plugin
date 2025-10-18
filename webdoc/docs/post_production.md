@@ -172,13 +172,13 @@ env.markdown contains the markdown of the page, before rendering
 
 env.page contains notably the following information:
 
-| Attribute       | Value                                                                                                                             |
-| --------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `title`         | title of the page                                                                                                                 |
-| `abs_url`       | the absolute url of the page from the top of the hierarchy                                                                        |
-| `canonical_url` | the complete url of the page (typically with `https://...`)                                                                       |
-| `markdown`      | the whole markdown code (before or after rendering). |
-| `meta`          | the meta data dictionary, as updated (typically) from the YAML header.                                                            |
+| Attribute       | Value                                                                  |
+| --------------- | ---------------------------------------------------------------------- |
+| `title`         | title of the page                                                      |
+| `abs_url`       | the absolute url of the page from the top of the hierarchy             |
+| `canonical_url` | the complete url of the page (typically with `https://...`)            |
+| `markdown`      | the whole markdown code (before or after rendering).                   |
+| `meta`          | the meta data dictionary, as updated (typically) from the YAML header. |
 
 ---
 
@@ -347,6 +347,8 @@ my_HTML = None
 
 def define_env(env):
     "Definition of the module"
+    # necessary if you want to modify a global variable
+    global my_html
 
     # put here your HTML content
     my_HTML = ......
