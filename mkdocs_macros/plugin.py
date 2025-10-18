@@ -21,6 +21,7 @@ from super_collections import SuperDict, yaml_support
 yaml_support()
 
 from mkdocs.config import config_options
+from mkdocs.config.config_options import ListOfItems
 from mkdocs.config.config_options import Type as PluginType
 from mkdocs.plugins import BasePlugin
 from mkdocs.structure.pages import Page
@@ -116,6 +117,7 @@ class MacrosPlugin(BasePlugin):
 
     # what is under the 'macros' namespace (will go into the config property):
     J2_STRING = PluginType(str, default='')
+    J2_STRING_LIST = ListOfItems(J2_STRING, default=[])
     config_scheme = (
         # main python module:
         ('module_name',  PluginType(str,
@@ -142,6 +144,9 @@ class MacrosPlugin(BasePlugin):
         ('j2_variable_end_string',   J2_STRING),
         ('j2_comment_start_string',  J2_STRING),
         ('j2_comment_end_string',    J2_STRING),
+        # for including j2 extensions:
+        # https://jinja.palletsprojects.com/en/stable/extensions/
+        ('j2_extensions', J2_STRING_LIST),
         # for behavior of unknown macro (e.g. other plugin):
         ('on_undefined',  PluginType(str, default=DEFAULT_UNDEFINED_BEHAVIOR)),
         # for CD/CI set that parameter to true
