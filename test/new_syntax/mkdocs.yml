@@ -1,4 +1,5 @@
 # The purpose of this config is to test change of variable/block syntax
+# as well as the insertion of Jinja2 extensions
 site_name: Altered syntax
 theme: mkdocs
 
@@ -14,6 +15,9 @@ plugins:
       j2_variable_end_string: ']]'
       j2_comment_start_string: '[#'
       j2_comment_end_string: '#]'
+      # testing extensions, as well
+      j2_extensions: [jinja2.ext.i18n, jinja2.ext.loopcontrols]
+  - test # indispensable for testing
 
 extra:
   unit_price: 50 # this is overriden in the page
