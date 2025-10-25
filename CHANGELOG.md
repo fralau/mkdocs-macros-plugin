@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## 1.4.1, 2025-10-18
 * Added: support for j2_extensions paramater in config file (#272)
+* Fixed: missing dependency declaration on `requests` (#269)
 
 ## 1.4.0, 2025-09-21
 * Removed: auto-install of missing pluglet (meaningful error message #262)
