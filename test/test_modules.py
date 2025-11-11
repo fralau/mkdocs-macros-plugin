@@ -80,33 +80,7 @@ def config_with_module(name:str, module_position: str, config:Dict=None):
     cost = UNIT_PRICE*QUANTITY
     assert page.find_text(f'{cost} euros'), f"Could not find expected cost ({cost}):\n{page.plain_text}" 
 
-# -------------------------------------
-# Simple test
-# -------------------------------------
 
-def test_simple():
-    """
-    Create a site without module, test the prepare_site() functin
-    """
-    p = prepare_site()
-    p.add_source_page("index.md",
-                      """
-                      # First page
-
-                      The unit price is {{ unit_price}} euros.
-                      """
-                      )
-
-
-    p.build()
-    assert p.success
-
-    print("Pages:", p.pages)
-
-    # first page
-    page = p.get_page('index')
-    assert page is not None, "Page not found"
-    assert page.find_text(f'{UNIT_PRICE} euros')
 
 # -------------------------------------
 # Tests with modules
@@ -128,7 +102,8 @@ def test_module_simple_other_sub():
     """
     Create a site with simple module, different name
     """
-    config_with_module('Simple Other Sub', 'docs/macros/mymodule.py', config={'module_name': 'docs/macros/mymodule'})
+    config_with_module('Simple Other Sub', 'docs/macros/mymodule.py', 
+                       config={'module_name': 'docs/macros/mymodule'})
 
 def test_module_package():
     """
@@ -140,13 +115,25 @@ def test_module_package_other():
     """
     Create a site with module as directory 
     """
-    config_with_module('Package Other', 'foo/__init__.py', config={'module_name': 'foo'})
+    config_with_module('Package Other', 'foo/__init__.py',
+                       config={'module_name': 'foo'})
+
+def test_module_package_other_error():
+    """
+    Create a site with module as directory, 
+    with config error (bar instead of foo)
+    """
+    # Unfortunately MkdocsTest doesn't fail in error, if the build fails
+    with pytest.raises((ImportError, AssertionError)):
+        config_with_module('Package Other Error', 'foo/__init__.py', 
+                           config={'module_name': 'bar'})
 
 def test_module_package_other_sub():
     """
     Create a site with simple module, different name
     """
-    config_with_module('Package Other Sub', 'docs/macros/mymodule/__init__.py', config={'module_name': 'docs/macros/mymodule'})
+    config_with_module('Package Other Sub', 'docs/macros/mymodule/__init__.py',
+                       config={'module_name': 'docs/macros/mymodule'})
 
 
 
