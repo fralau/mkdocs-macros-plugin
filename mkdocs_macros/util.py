@@ -188,8 +188,9 @@ def import_local_module(project_dir, module_name):
         spec.loader.exec_module(module)
         return module
     elif os.path.isdir(pathname_dir):
-        # directory
-        sys.path.insert(0, project_dir)
+        # get the parent director
+        parent_dir = os.path.dirname(pathname_dir)
+        sys.path.insert(0, parent_dir)
         # If the import is relative, then the package name must be given,
         # so that Python always knows how to call it.
         try:
@@ -202,6 +203,7 @@ def import_local_module(project_dir, module_name):
             module_name = os.path.basename(module_name)
             return importlib.import_module(module_name, package='main')
     else:
+        # This is made necessary by the logic
         return None
 
 

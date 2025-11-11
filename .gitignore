@@ -2,6 +2,7 @@
 *~
 .py~
 .python-version
+journals/
 
 #Byte-compiled led / optimized / DLL files
 __pycache__/
@@ -38,4 +39,6 @@ cache*
 .DS_Store
 
 # JetBrains PyCharm and other IntelliJ based IDEs
-.idea/
+**/journal/
+**/_temp/
+
