@@ -203,8 +203,7 @@ def import_local_module(project_dir, module_name):
             module_name = os.path.basename(module_name)
             return importlib.import_module(module_name, package='main')
     else:
-        # This is made necessary by the logic
-        return None
+        raise ImportError(f"Cannot import module '{module_name}'")
 
 
 # ------------------------------------------

@@ -583,13 +583,12 @@ class MacrosPlugin(BasePlugin):
         # local module (file or dir)
         local_module_name = self.config['module_name']
         debug("Project dir '%s'" % self.project_dir)
-        module = import_local_module(self.project_dir, local_module_name)
-        if module:
+        try:
+            module = import_local_module(self.project_dir, local_module_name)
             trace("Found local Python module '%s' in:" % local_module_name,
                   self.project_dir)
             self._load_module(module, local_module_name)
-
-        else:
+        except ImportError:
             if local_module_name == DEFAULT_MODULE_NAME:
                 # do not do anything if there is no main module
                 trace("No default module `%s` found" % DEFAULT_MODULE_NAME)

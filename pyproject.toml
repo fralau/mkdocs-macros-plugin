@@ -38,6 +38,7 @@ packages = { find = { exclude = ["*.tests"] } }
 
 [project.optional-dependencies]
 test = [
+    "pytest",
     "mkdocs-include-markdown-plugin",
     "mkdocs-macros-test",
     "mkdocs-material>=6.2",
