@@ -7,9 +7,6 @@ import sys
 
 import pytest
 
-if sys.version_info < (3, 10):
-    pytest.skip("Skipping MkDocs-Test tests: Python 3.10+ required.")
-
 
 
 from .fixture import MacrosDocProject
