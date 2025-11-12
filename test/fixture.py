@@ -12,7 +12,7 @@ import subprocess
 
 from super_collections import SuperDict
 from mkdocs_test import DocProject, MkDocsPage
-
+import os
 
 class MacrosPage(MkDocsPage):
     "Specific for MkDocs-Macros"

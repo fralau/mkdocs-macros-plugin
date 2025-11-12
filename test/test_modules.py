@@ -3,6 +3,12 @@ Testing the module configurations
 """
 
 import os
+import sys
+
+if sys.version_info < (3, 10):
+    print("Skipping MkDocs-Test tests: Python 3.10+ required.")
+    sys.exit(0)
+
 import pytest
 
 from .fixture import MacrosDocProject
