@@ -14,15 +14,10 @@ Requires d2
 REQUIRED = "d2"
 
 import pytest
-import subprocess
+import shutil
 
 def is_d2_installed():
-    try:
-        subprocess.run(["brew", "list", REQUIRED], check=True, 
-                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return True
-    except subprocess.CalledProcessError:
-        return False
+    return shutil.which("d2") is not None
 
 
 import test
