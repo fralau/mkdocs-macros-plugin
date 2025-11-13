@@ -4,6 +4,10 @@ All notable changes to this project are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.5.0, 2025-11-13
+* Added: For each push, testing on github for versions Python 3.8 to 3.12
+* Fixed: bug in import of packages when not in source dir (#278)
+
 ## 1.4.1, 2025-10-18
 * Added: support for j2_extensions paramater in config file (#272)
 * Fixed: missing dependency declaration on `requests` (#269)
