@@ -42,7 +42,7 @@ test = [
     "mkdocs-include-markdown-plugin",
     "mkdocs-macros-test",
     "mkdocs-material>=6.2",
-    "mkdocs-test",
+    "mkdocs-test>=0.6.0",
     "mkdocs-d2-plugin",
 ]
 
