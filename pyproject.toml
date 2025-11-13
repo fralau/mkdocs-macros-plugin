@@ -42,7 +42,7 @@ test = [
     "mkdocs-include-markdown-plugin",
     "mkdocs-macros-test",
     "mkdocs-material>=6.2",
-    "mkdocs-test; python_version >= '3.10'",
+    "mkdocs-test",
     "mkdocs-d2-plugin",
 ]
 
