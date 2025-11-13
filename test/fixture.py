@@ -8,6 +8,7 @@ import os
 import warnings
 import json
 import subprocess
+from typing import Dict
 
 
 from super_collections import SuperDict
@@ -40,7 +41,7 @@ class MacrosDocProject(DocProject):
           super().build(strict=strict, verbose=True)
 
      @property
-     def pages(self) -> dict[MacrosPage]:
+     def pages(self) -> Dict[str, MacrosPage]:
           "List of pages"
           pages = super().pages
           return {key: MacrosPage(value) for key, value in pages.items()}
