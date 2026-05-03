@@ -144,6 +144,8 @@ class MacrosPlugin(BasePlugin):
         ('j2_variable_end_string',   J2_STRING),
         ('j2_comment_start_string',  J2_STRING),
         ('j2_comment_end_string',    J2_STRING),
+        ('j2_line_statement_prefix', J2_STRING),
+        ('j2_line_comment_prefix', J2_STRING),
         # for including j2 extensions:
         # https://jinja.palletsprojects.com/en/stable/extensions/
         ('j2_extensions', J2_STRING_LIST),
