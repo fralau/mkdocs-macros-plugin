@@ -590,8 +590,12 @@ class MacrosPlugin(BasePlugin):
             trace("Found local Python module '%s' in:" % local_module_name,
                   self.project_dir)
             self._load_module(module, local_module_name)
-        except ImportError:
+        except ImportError as e:
             if local_module_name == DEFAULT_MODULE_NAME:
+                module_path = os.path.join(self.project_dir,
+                                           local_module_name + '.py')
+                if os.path.isfile(module_path):
+                    raise
                 # do not do anything if there is no main module
                 trace("No default module `%s` found" % DEFAULT_MODULE_NAME)
             else:
