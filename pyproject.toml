@@ -38,7 +38,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = { find = { exclude = ["*.tests"] } }
+packages = { find = { include = ["mkdocs_macros"] } }
 
 [project.optional-dependencies]
 test = [
